@@ -1,0 +1,32 @@
+# Local IDE and build-tool state
+*.iml
+.idea/
+.gradle/
+.kotlin/
+local.properties
+.claude/settings.local.json
+
+# Build output and generated captures
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.hprof
+
+# Local credentials and signing keys
+.env
+.env.*
+!.env.example
+key.properties
+keystore.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+
+# Operating system files
+.DS_Store
+Thumbs.db
