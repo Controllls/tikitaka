@@ -18,12 +18,13 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var button: android.widget.Button
+    private lateinit var button: RecordingButtonView
     private lateinit var monitor: VehicleSeatMonitor
     private var resumed = false
     private var pendingBoarding = false
     private var pendingStart = false
     private var consent: AlertDialog? = null
+    private var lastRenderedPhase: RecordingPhase? = null
     private val observer: (RecordingState) -> Unit = { render(it) }
     private val preferences by lazy { getSharedPreferences("recording_ui", MODE_PRIVATE) }
 
@@ -64,6 +65,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
         findViewById<android.view.View>(R.id.history_button).setOnClickListener { openHistory() }
+        findViewById<android.view.View>(R.id.recent_card).setOnClickListener { openHistory() }
+        findViewById<android.view.View>(R.id.home_button).setOnClickListener {
+            findViewById<android.widget.ScrollView>(R.id.dashboard_scroll).smoothScrollTo(0, 0)
+        }
         monitor = VehicleSeatMonitor(this,
             onOccupancy = { occupied ->
                 findViewById<TextView>(R.id.boarding_status).setText(when (occupied) {
@@ -93,6 +98,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         RecordingStore.observe(observer)
+        refreshDashboard()
         findViewById<TextView>(R.id.boarding_status).setText(R.string.boarding_connecting)
         monitor.start()
     }
@@ -215,7 +221,23 @@ class MainActivity : AppCompatActivity() {
         else startActivity(Intent(this, RecordingsActivity::class.java))
     }
 
+    private fun refreshDashboard() {
+        val recordings = runCatching { RecordingFiles.list(this) }.getOrElse {
+            findViewById<TextView>(R.id.latest_title).setText(R.string.archive_load_failed)
+            return
+        }
+        findViewById<TextView>(R.id.recording_count).text = getString(R.string.recording_count, recordings.size)
+        findViewById<TextView>(R.id.total_duration).text = formatDuration(recordings.sumOf { it.durationMs })
+        val latest = recordings.firstOrNull()
+        findViewById<TextView>(R.id.latest_title).text = latest?.title ?: getString(R.string.no_recent_title)
+        findViewById<TextView>(R.id.latest_details).text = latest?.details ?: getString(R.string.no_recent_description)
+    }
+
     private fun render(state: RecordingState) {
+        if (lastRenderedPhase != state.phase) {
+            lastRenderedPhase = state.phase
+            if (!state.busy) refreshDashboard()
+        }
         val title = when (state.phase) {
             RecordingPhase.IDLE -> R.string.idle_title
             RecordingPhase.STARTING -> R.string.starting_title
@@ -238,7 +260,7 @@ class MainActivity : AppCompatActivity() {
                     R.color.recording_accent else R.color.sample_primary))
         }
         findViewById<TextView>(R.id.recording_time).text = formatDuration(state.durationMs())
-        button.setText(when (state.phase) {
+        findViewById<TextView>(R.id.recording_action).setText(when (state.phase) {
             RecordingPhase.RECORDING -> R.string.stop_recording
             RecordingPhase.STARTING -> R.string.starting_status
             RecordingPhase.STOPPING -> R.string.saving_status
@@ -248,7 +270,7 @@ class MainActivity : AppCompatActivity() {
             state.message ?: if (state.phase == RecordingPhase.RECORDING) R.string.recording_hint
             else R.string.idle_hint
         )
-        button.isEnabled = state.phase != RecordingPhase.STARTING &&
-            state.phase != RecordingPhase.STOPPING
+        button.show(state.phase == RecordingPhase.RECORDING, state.level,
+            state.phase != RecordingPhase.STARTING && state.phase != RecordingPhase.STOPPING)
     }
 }

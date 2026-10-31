@@ -33,6 +33,7 @@ class RecordingsActivity : AppCompatActivity() {
         }
         rows = findViewById(R.id.recording_rows)
         findViewById<View>(R.id.back_button).setOnClickListener { finish() }
+        findViewById<View>(R.id.archive_home).setOnClickListener { finish() }
     }
 
     override fun onStart() {
@@ -54,8 +55,9 @@ class RecordingsActivity : AppCompatActivity() {
             empty.findViewById<View>(R.id.return_to_recorder).setOnClickListener { finish() }
             rows.addView(empty)
         }
-        recordings.forEach { recording ->
+        recordings.forEachIndexed { index, recording ->
             val row = layoutInflater.inflate(R.layout.item_recording, rows, false)
+            row.findViewById<TextView>(R.id.item_number).text = getString(R.string.recording_number, recordings.size - index)
             row.findViewById<TextView>(R.id.item_title).text = recording.title
             row.findViewById<TextView>(R.id.item_details).text = recording.details
             row.setOnClickListener { openRecording(recording) }

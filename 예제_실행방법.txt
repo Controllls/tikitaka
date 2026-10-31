@@ -1,0 +1,132 @@
+이동 기록 — 탑승 안내 + 대화 녹음 예제
+작성일: 2026-10-31
+프로젝트: C:\Users\whdrm\AndroidStudioProjects\HD_project
+
+1. 실행
+
+Android Studio에서 이 프로젝트를 열고 실행 구성 app,
+실행 대상 Pleos_Connect_v2.1.0을 선택한 뒤 Run을 누릅니다.
+앱 이름은 '이동 기록'입니다.
+APK: app\build\outputs\apk\debug\app-debug.apk
+
+2. 화면 사용
+
+- 가운데 마이크 버튼: 녹음 안내를 확인한 뒤 녹음을 시작합니다.
+- 첫 사용: 마이크 권한을 허용합니다. 알림도 허용하면 앱 밖에서 종료할 수 있습니다.
+- 녹음 중: 가운데 버튼이 정지 모양으로 바뀌고, 주변 원형 파동과 경과 시간을 표시합니다.
+  파동의 크기는 MediaRecorder.maxAmplitude의 실제 입력 크기에 반응합니다.
+  작은 기본 맥동은 녹음 동작 상태를 나타냅니다. 스피커 소리는 재생하지 않습니다.
+- 가운데 정지 버튼: 녹음을 종료하고 파일을 저장합니다.
+- 하단 '저장된 기록' 또는 오른쪽 '최근 기록' 카드: 저장된 녹음을 재생하거나 삭제합니다.
+- 홈 화면으로 이동해도 이미 시작한 녹음은 이어집니다.
+  시스템 알림의 '녹음 종료'로도 저장하고 끝낼 수 있습니다.
+- '이번에는 안 함'을 선택하거나 마이크 권한을 거절하면 녹음하지 않습니다.
+- 함께 탄 사람에게 녹음 사실을 알리고 동의를 확인한 뒤 시작합니다.
+
+3. 탑승 질문 시험
+
+앱 화면이 열려 있는 동안 운전석(앞좌석 왼쪽) 점유 상태를 관찰합니다.
+좌석에 사람이 있는 상태가 1.2초 유지되면 '이번 이동을 기록할까요?'를 표시합니다.
+이미 탑승한 상태에서 앱을 처음 열어도 질문할 수 있습니다.
+동일한 탑승 상태에서는 질문을 반복하지 않습니다.
+빈 좌석 상태가 1.2초 유지된 뒤 다시 탑승하면 질문할 수 있습니다.
+센서 연결에 실패해도 가운데 버튼으로 직접 녹음을 시작할 수 있습니다.
+
+에뮬레이터의 Virtual Console에서:
+- Seat / Occupancy(좌석 점유) → Driver(운전석)를 OFF로 설정하고 2초 기다립니다.
+- Driver를 ON으로 바꾸면 앱에 질문이 표시됩니다.
+- 콘솔 페이지를 열어 둔 상태에서 조작합니다.
+  콘솔은 브라우저 연결 신호가 없으면 HTTP 조작을 거절합니다.
+
+콘솔 접속이 필요하면 PowerShell에서:
+  & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" -s emulator-5554 forward tcp:18088 tcp:8088
+브라우저에서 http://127.0.0.1:18088/ 을 엽니다.
+콘솔은 시험용 차량 상태 조작 도구이며, 이용자에게 보여줄 앱 화면이 아닙니다.
+
+4. 에뮬레이터에서 목소리 입력
+
+에뮬레이터의 확장 설정(...) → Microphone에서
+'Virtual microphone uses host audio input'을 켭니다.
+명령으로 설정하려면:
+  & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" -s emulator-5554 emu avd hostmicon
+끈 상태에서는 PC 목소리가 녹음되지 않습니다.
+Windows에서도 Android Emulator의 마이크 접근이 허용되어 있어야 합니다.
+
+이번 자동 검증에서는 PC 주변 대화를 수집하지 않도록 hostmicoff로 시험했습니다.
+마이크 입력 장치 설정은 사용자가 위 방법으로 켤 수 있습니다.
+시험용 녹음은 앱에서 삭제했습니다.
+
+5. 저장과 동작 범위
+
+- AAC / M4A, 모노, 44.1 kHz, 96 kbps로 저장합니다.
+- 앱 전용 noBackupFilesDir/recordings에 보관합니다.
+- 네트워크 업로드나 대화 전사, AI 요약 기능은 포함하지 않았습니다.
+- 녹음 파일은 Android 백업 및 기기 이전 대상에서 제외됩니다.
+- 앱 삭제 시 녹음도 삭제됩니다. 파일 내보내기는 아직 없습니다.
+- 매우 짧은 녹음이나 저장 실패를 성공으로 표시하지 않습니다.
+- 명시적으로 시작한 녹음만 마이크 포그라운드 서비스로 유지합니다.
+- 좌석에서 내리는 것만으로 자동 종료하지 않습니다. 버튼이나 알림으로 종료합니다.
+- 앱 화면이 닫혀 있는 동안 새 탑승을 기다리는 기능,
+  강제 종료된 앱의 자동 실행, 시동 연동 자동 실행은 구현하지 않았습니다.
+- 강제 종료나 기기 전원 차단으로 중단된 .pending 파일의 복구는 구현하지 않았습니다.
+- 실제 차량의 마이크 접근 권한, 입력 경로, 통화/음성 비서와의 충돌은 실차 검증이 필요합니다.
+
+6. 현재 SDK의 좌석 값 호환 처리
+
+조합: ai.pleos.playground:Vehicle:2.3.2 + Pleos Connect v2.1.0
+
+실제 콘솔 시험 결과:
+  Driver occupied OFF → SDK Boolean true
+  Driver occupied ON  → SDK Boolean false
+
+SDK 배포 소스에서도 확인:
+  SeatImpl.getCurrentSeatOccupancy: raw.toIntOrNull() == 1
+  PropertyCallback의 SeatOccupancyListener: raw.toInt() == 1
+이 에뮬레이터의 좌석 값은 1=빈 좌석, 2=점유입니다.
+따라서 PleosSeatOccupancyCompat.kt에서 Boolean을 반전해 사용합니다.
+SDK/에뮬레이터/차량 버전을 바꾸면 이 처리를 반드시 재확인해야 합니다.
+SDK가 일부 미확인 원시 값도 false로 변환하므로 이 Boolean API만으로
+모든 '미확인' 상태를 복구할 수는 없습니다. 탑승 판단은 질문을 띄우는 용도로만 쓰며,
+어떤 좌석 값도 녹음 동의를 대신하지 않습니다.
+
+참조:
+- 로컬 SDK 소스: build/pleos-reference/Vehicle-2.3.2-sources.jar
+- Android 좌석 점유 원시 값:
+  https://android.googlesource.com/platform/packages/services/Car/+/28471e0859/car-lib/src/android/car/VehicleSeatOccupancyState.java
+- 마이크 포그라운드 서비스:
+  https://developer.android.com/develop/background-work/services/fgs/service-types#microphone
+- MediaRecorder:
+  https://developer.android.com/reference/android/media/MediaRecorder
+
+7. 코드 위치
+
+app/src/main/java/com/example/hd_project/
+  MainActivity.kt                화면 상태와 녹음 동의/권한
+  VehicleSeatMonitor.kt          좌석 capability 조회, 구독, 1.2초 안정화
+  PleosSeatOccupancyCompat.kt    현재 SDK 좌석 값 보정
+  BoardingPromptGate.kt          같은 탑승에서 중복 질문 방지
+  RecordingButtonView.kt        마이크/정지 버튼과 입력 크기 파동
+  RecordingService.kt           실제 녹음, 알림, 백그라운드 유지
+  RecordingState.kt             녹음 상태와 경과 시간 공유
+  RecordingFiles.kt             앱 내부 파일 저장과 목록
+  RecordingsActivity.kt         저장 목록, 재생, 삭제
+
+app/src/main/res/layout/activity_main.xml     헤더, 소개, 하단 메뉴
+app/src/main/res/layout/panel_recorder.xml    큰 녹음 카드
+app/src/main/res/layout/panel_details.xml     탑승 상태, 기록 통계, 최근 기록
+app/src/main/res/layout-w900dp/               넓은 창의 2열 배치
+app/src/main/res/layout/activity_recordings.xml  저장 목록 화면
+app/src/main/res/values/colors.xml            남색 바탕과 주황색 강조
+app/src/main/res/values-night/colors.xml      같은 팔레트의 야간 화면
+
+8. 검증 결과
+
+- assembleDebug, testDebugUnitTest, lintDebug 통과.
+- 탑승 질문 / 동의 이전 녹음 없음 / 건너뛰기 / 다음 탑승 질문 확인.
+- 마이크 권한 거절 시 녹음 시작하지 않음 확인.
+- 홈 화면 이동 후 녹음 유지, 앱 재진입 시 상태와 시간 복원 확인.
+- 앱 버튼 및 시스템 알림 버튼으로 녹음 종료 확인.
+- M4A 저장, 재생, 일시정지, 삭제 확인.
+- 생성 파일 ffprobe 검사: AAC, 44100 Hz, mono, 약 26.10초 정상 미디어.
+- 주변 음성 수집을 피한 에뮬레이터 검증이며 실제 차량 음질 검증은 아닙니다.
+- 스크린샷 및 시험 스크립트: build/recording-verification/

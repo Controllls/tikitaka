@@ -1,31 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
-    android:fillViewport="true">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:gravity="center_horizontal" android:padding="24dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="@string/app_name" android:textSize="28sp" />
-        <Button android:id="@+id/history_button" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:minHeight="56dp" android:text="@string/recordings" />
-        <TextView android:id="@+id/boarding_status" android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_marginTop="24dp"
-            android:text="@string/boarding_connecting" />
-        <TextView android:id="@+id/recording_title" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginTop="24dp"
-            android:gravity="center" android:text="@string/idle_title" android:textSize="28sp" />
-        <Button android:id="@+id/record_button" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:minHeight="64dp"
-            android:layout_marginTop="24dp" android:text="@string/start_recording" />
-        <TextView android:id="@+id/recording_status" android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:text="@string/ready_status" android:textSize="20sp" />
-        <TextView android:id="@+id/recording_time" android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_marginTop="16dp"
-            android:text="@string/empty_duration" android:textSize="40sp" />
-        <TextView android:id="@+id/recording_hint" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:gravity="center"
-            android:layout_marginTop="16dp" android:text="@string/idle_hint" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="32dp" android:gravity="center" android:text="@string/local_storage" />
+    android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="88dp"
+        android:paddingHorizontal="@dimen/page_padding" android:gravity="center_vertical">
+        <ImageView android:layout_width="48dp" android:layout_height="48dp"
+            android:src="@drawable/ic_mic" app:tint="@color/sample_primary"
+            android:background="@drawable/bg_accent_tile" android:padding="12dp"
+            android:importantForAccessibility="no" />
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:layout_marginStart="14dp" android:orientation="vertical">
+            <TextView style="@style/Text.Journal.Title" android:text="@string/app_name" />
+            <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/brand_caption"
+                android:layout_marginTop="3dp" />
+        </LinearLayout>
+        <TextView style="@style/Text.Journal.Body" android:text="@string/private_badge"
+            android:background="@drawable/bg_status" android:paddingHorizontal="18dp"
+            android:paddingVertical="12dp" app:drawableStartCompat="@drawable/ic_shield"
+            android:drawablePadding="10dp" app:drawableTint="@color/sample_primary" />
     </LinearLayout>
-</ScrollView>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
+    <ScrollView android:id="@+id/dashboard_scroll" android:layout_width="match_parent"
+        android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true"
+        android:clipToPadding="false" android:scrollbars="none">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="@dimen/page_padding">
+            <TextView style="@style/Text.Journal.Headline" android:text="@string/dashboard_title" />
+            <TextView style="@style/Text.Journal.Body" android:text="@string/dashboard_subtitle"
+                android:layout_marginTop="8dp" android:layout_marginBottom="24dp" />
+            <include layout="@layout/dashboard_panels" />
+        </LinearLayout>
+    </ScrollView>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="80dp"
+        android:paddingHorizontal="@dimen/page_padding" android:gravity="center_vertical">
+        <com.google.android.material.button.MaterialButton android:id="@+id/home_button"
+            style="@style/Widget.Journal.Navigation.Selected" android:text="@string/home"
+            app:icon="@drawable/ic_home" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/history_button"
+            style="@style/Widget.Journal.Navigation" android:text="@string/recordings"
+            android:layout_marginStart="12dp" app:icon="@drawable/ic_history" />
+        <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+        <TextView android:id="@+id/footer_caption" style="@style/Text.Journal.Eyebrow"
+            android:text="@string/footer_caption" android:visibility="@integer/wide_footer_visibility" />
+    </LinearLayout>
+</LinearLayout>

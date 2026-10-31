@@ -1,6 +1,20 @@
 <resources>
     <style name="Theme.HD_project" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/sample_primary</item>
+        <item name="colorPrimaryVariant">@color/sample_primary</item>
+        <item name="colorOnPrimary">@color/button_text</item>
         <item name="colorSecondary">@color/sample_primary</item>
+        <item name="android:windowBackground">@color/screen_background</item>
+        <item name="android:statusBarColor">@color/screen_background</item>
+        <item name="android:navigationBarColor">@color/screen_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="colorSurface">@color/card_background</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:colorAccent">@color/sample_primary</item>
+        <item name="shapeAppearanceMediumComponent">@style/Shape.Journal</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Journal.Dialog</item>
     </style>
 </resources>

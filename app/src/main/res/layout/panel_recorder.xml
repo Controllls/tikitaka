@@ -1,0 +1,37 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Journal.Card" app:strokeColor="@color/accent_outline">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:padding="28dp" android:background="@drawable/bg_recorder">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+            <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/recorder_eyebrow"
+                android:textColor="@color/sample_primary" android:layout_width="0dp" android:layout_weight="1" />
+            <TextView android:id="@+id/recording_status" style="@style/Text.Journal.Body"
+                android:text="@string/ready_status" android:textColor="@color/sample_primary"
+                android:background="@drawable/bg_accent_tile" android:paddingHorizontal="14dp"
+                android:paddingVertical="8dp" android:textSize="14sp" android:accessibilityLiveRegion="polite" />
+        </LinearLayout>
+        <TextView android:id="@+id/recording_title" style="@style/Text.Journal.Title"
+            android:layout_width="match_parent" android:text="@string/idle_title"
+            android:layout_marginTop="22dp" android:lineSpacingExtra="4dp" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_weight="1" android:orientation="vertical" android:gravity="center"
+            android:paddingTop="10dp" android:paddingBottom="10dp">
+            <com.example.hd_project.RecordingButtonView android:id="@+id/record_button"
+                android:layout_width="match_parent" android:layout_height="@dimen/recorder_size"
+                android:clickable="true" android:focusable="true"
+                android:contentDescription="@string/start_recording" />
+            <TextView android:id="@+id/recording_action" style="@style/Text.Journal.Section"
+                android:text="@string/start_recording" android:layout_marginTop="4dp" />
+            <TextView android:id="@+id/recording_time" style="@style/Text.Journal"
+                android:text="@string/empty_duration" android:fontFamily="sans-serif-light"
+                android:fontFeatureSettings="tnum" android:textSize="58sp" android:letterSpacing="0.04"
+                android:layout_marginTop="18dp" />
+        </LinearLayout>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
+        <TextView android:id="@+id/recording_hint" style="@style/Text.Journal.Body"
+            android:layout_width="match_parent" android:gravity="center" android:text="@string/idle_hint"
+            android:layout_marginTop="18dp" android:minHeight="46dp" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

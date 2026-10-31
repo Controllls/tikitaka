@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="page_padding">32dp</dimen>
+    <dimen name="headline_size">36sp</dimen>
+    <dimen name="recorder_size">380dp</dimen>
+    <integer name="wide_footer_visibility">0</integer>
+</resources>

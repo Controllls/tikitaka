@@ -1,18 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/archive_root" android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical">
-    <Button android:id="@+id/back_button" android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:minHeight="56dp" android:text="@string/back" />
-    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="88dp"
+        android:paddingHorizontal="@dimen/page_padding" android:gravity="center_vertical">
+        <com.google.android.material.button.MaterialButton android:id="@+id/back_button"
+            style="@style/Widget.Journal.Navigation" android:layout_width="56dp"
+            android:minWidth="0dp" android:paddingHorizontal="16dp" app:iconPadding="0dp"
+            app:icon="@drawable/ic_back" android:contentDescription="@string/back" />
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:layout_marginStart="14dp" android:orientation="vertical">
+            <TextView style="@style/Text.Journal.Title" android:text="@string/recordings" />
+            <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/archive_caption"
+                android:layout_marginTop="3dp" />
+        </LinearLayout>
+        <ImageView android:layout_width="26dp" android:layout_height="26dp" android:src="@drawable/ic_shield"
+            app:tint="@color/sample_primary" android:contentDescription="@string/private_badge" />
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:fillViewport="true">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="vertical" android:padding="24dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="@string/recordings" android:textSize="28sp" />
-            <TextView android:id="@+id/archive_summary" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginVertical="16dp" />
+            android:orientation="vertical" android:padding="@dimen/page_padding">
+            <TextView style="@style/Text.Journal.Headline" android:text="@string/archive_description" />
+            <TextView android:id="@+id/archive_summary" style="@style/Text.Journal.Body"
+                android:layout_marginTop="12dp" android:layout_marginBottom="28dp" />
             <LinearLayout android:id="@+id/recording_rows" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="80dp"
+        android:paddingHorizontal="@dimen/page_padding" android:gravity="center_vertical">
+        <com.google.android.material.button.MaterialButton android:id="@+id/archive_home"
+            style="@style/Widget.Journal.Navigation" android:text="@string/home" app:icon="@drawable/ic_home" />
+        <com.google.android.material.button.MaterialButton style="@style/Widget.Journal.Navigation.Selected"
+            android:text="@string/recordings" android:layout_marginStart="12dp" app:icon="@drawable/ic_history"
+            android:clickable="false" android:focusable="false" />
+        <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+        <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/local_storage"
+            android:visibility="@integer/wide_footer_visibility" />
+    </LinearLayout>
 </LinearLayout>

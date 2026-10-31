@@ -1,0 +1,73 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+    <com.google.android.material.card.MaterialCardView style="@style/Widget.Journal.Card"
+        android:layout_weight="1">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+            android:orientation="vertical" android:padding="26dp" android:gravity="center_vertical">
+            <TextView style="@style/Text.Journal.Section" android:text="@string/current_trip"
+                app:drawableStartCompat="@drawable/ic_car" app:drawableTint="@color/sample_primary"
+                android:drawablePadding="12dp" />
+            <TextView android:id="@+id/boarding_status" style="@style/Text.Journal.Section"
+                android:text="@string/boarding_connecting" android:textSize="21sp"
+                android:layout_marginTop="24dp" android:textColor="@color/sample_primary"
+                android:accessibilityLiveRegion="polite" />
+            <TextView style="@style/Text.Journal.Body" android:text="@string/trip_explanation"
+                android:layout_marginTop="10dp" />
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:layout_marginTop="22dp" android:layout_marginBottom="18dp" android:background="@color/outline" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:baselineAligned="false">
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:orientation="vertical">
+                    <TextView style="@style/Text.Journal.Body" android:text="@string/saved_conversations" android:textSize="14sp" />
+                    <TextView android:id="@+id/recording_count" style="@style/Text.Journal.Section"
+                        android:text="@string/zero_recordings" android:layout_marginTop="8dp" android:textSize="28sp" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:orientation="vertical">
+                    <TextView style="@style/Text.Journal.Body" android:text="@string/total_duration" android:textSize="14sp" />
+                    <TextView android:id="@+id/total_duration" style="@style/Text.Journal.Section"
+                        android:text="@string/empty_duration" android:layout_marginTop="8dp" android:textSize="28sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView android:id="@+id/recent_card"
+        style="@style/Widget.Journal.Card" android:layout_marginTop="20dp" android:layout_weight="1"
+        android:clickable="true" android:focusable="true" android:contentDescription="@string/view_recordings">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+            android:orientation="vertical" android:padding="26dp" android:gravity="center_vertical">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+                <TextView style="@style/Text.Journal.Section" android:text="@string/recent_recording"
+                    android:layout_width="0dp" android:layout_weight="1" />
+                <ImageView android:layout_width="24dp" android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow" app:tint="@color/text_secondary" android:importantForAccessibility="no" />
+            </LinearLayout>
+            <ImageView android:layout_width="52dp" android:layout_height="52dp" android:layout_marginTop="24dp"
+                android:src="@drawable/ic_audio" app:tint="@color/sample_primary" android:padding="12dp"
+                android:background="@drawable/bg_accent_tile" android:importantForAccessibility="no" />
+            <TextView android:id="@+id/latest_title" style="@style/Text.Journal.Section"
+                android:layout_width="match_parent" android:text="@string/no_recent_title"
+                android:textSize="19sp" android:layout_marginTop="16dp" />
+            <TextView android:id="@+id/latest_details" style="@style/Text.Journal.Body"
+                android:layout_width="match_parent" android:text="@string/no_recent_description"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.card.MaterialCardView style="@style/Widget.Journal.Card"
+        android:layout_marginTop="20dp" app:cardBackgroundColor="@color/accent_surface"
+        app:strokeColor="@color/accent_outline">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:padding="24dp" android:gravity="center_vertical">
+            <ImageView android:layout_width="36dp" android:layout_height="36dp"
+                android:src="@drawable/ic_shield" app:tint="@color/sample_primary" android:importantForAccessibility="no" />
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:layout_marginStart="18dp" android:orientation="vertical">
+                <TextView style="@style/Text.Journal.Section" android:text="@string/privacy_title" android:textSize="18sp" />
+                <TextView style="@style/Text.Journal.Body" android:text="@string/privacy_description"
+                    android:layout_marginTop="8dp" android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>
