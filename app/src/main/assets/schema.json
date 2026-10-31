@@ -1,0 +1,59 @@
+{
+  "packageName": "com.example.hd_project",
+  "appDescription": "A driving audio journal that finds and plays laughter-based highlight clips from saved recordings.",
+  "invokeWord": "이동 기록",
+  "version": "1.0",
+  "actionCalls": [
+    {
+      "type": "function",
+      "function": {
+        "component": "activity",
+        "name": "FIND_RECORDING_HIGHLIGHTS",
+        "description": "Start local laughter-based highlight analysis of a saved recording and acknowledge the request while analysis continues.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "recordingId": {
+              "type": "string",
+              "description": "An already known recording identifier; omit it to analyze the most recent saved recording."
+            }
+          },
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "component": "activity",
+        "name": "SHOW_RECORDING_HIGHLIGHTS",
+        "description": "Display the most recently analyzed recording's saved laughter-based highlight candidates and their playback numbers.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "component": "activity",
+        "name": "PLAY_RECORDING_HIGHLIGHT",
+        "description": "Play a saved highlight by its number in the displayed highlight list.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "highlightNumber": {
+              "type": "number",
+              "description": "The one-based highlight number from one to three in the displayed list."
+            }
+          },
+          "required": [
+            "highlightNumber"
+          ]
+        }
+      }
+    }
+  ]
+}

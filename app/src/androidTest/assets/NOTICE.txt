@@ -1,0 +1,25 @@
+These fixtures belong only to the instrumentation-test APK. They are NOT included
+in the application APK. The app does not contain or automatically import sample audio.
+
+silence_8000.m4a
+Generated digital silence: FFmpeg anullsrc, mono 44100 Hz, 8 seconds, AAC.
+
+1-73123-A-26.m4a
+Derived from ESC-50 audio/1-73123-A-26.wav, converted to mono 44100 Hz AAC (96 kb/s).
+Original: 0524laugh.wav by sagetyrtle, CC0.
+https://freesound.org/people/sagetyrtle/sounds/73123/
+https://creativecommons.org/publicdomain/zero/1.0/
+
+laughing.m4a
+Derived from ESC-50 audio/1-30043-A-26.wav, converted to mono 44100 Hz AAC (96 kb/s).
+Original: small group laugh 6.flac by Corsica_S, CC-BY (per ESC-50 attribution).
+https://freesound.org/people/Corsica_S/sounds/30043/
+
+Dataset: ESC-50, Karol J. Piczak.
+https://github.com/karoldvl/ESC-50
+https://github.com/karoldvl/ESC-50/blob/master/LICENSE
+Dataset distribution terms: Creative Commons Attribution Non-Commercial 3.0.
+https://creativecommons.org/licenses/by-nc/3.0/
+These excerpts are included for noncommercial regression testing only.
+The weak group-laugh sample is also evaluated to expose missed detections; it is
+not an accuracy benchmark, and tests do not assert perfect recall.

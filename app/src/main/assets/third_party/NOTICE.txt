@@ -1,0 +1,13 @@
+YAMNet audio-event model and label vocabulary
+Copyright 2019 The TensorFlow Authors.
+Licensed under the Apache License, Version 2.0 (APACHE-2.0.txt in this directory).
+
+Model: https://storage.googleapis.com/mediapipe-models/audio_classifier/yamnet/float32/1/yamnet.tflite
+SHA-256: 4d8b4a53282dc83ef04e3e7dbc4fbc98082e34e44ed798e16c3a0cdd4c584faf
+Labels: https://storage.googleapis.com/mediapipe-tasks/audio_classifier/yamnet_label_list.txt
+Original project: https://github.com/tensorflow/models/tree/master/research/audioset/yamnet
+The model and vocabulary are distributed without modification.
+
+LiteRT Interpreter runtime, Google / TensorFlow authors, Apache License 2.0.
+https://github.com/google-ai-edge/LiteRT
+The application uses the CPU interpreter through com.google.ai.edge.litert:litert:1.4.2.

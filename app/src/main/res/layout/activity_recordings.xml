@@ -38,6 +38,9 @@
             android:text="@string/recordings" android:layout_marginStart="12dp" app:icon="@drawable/ic_history"
             android:clickable="false" android:focusable="false" />
         <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/highlights_button"
+            style="@style/Widget.Journal.Navigation" android:text="@string/highlights"
+            app:icon="@drawable/ic_audio" />
         <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/local_storage"
             android:visibility="@integer/wide_footer_visibility" />
     </LinearLayout>

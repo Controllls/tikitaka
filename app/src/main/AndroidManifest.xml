@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-feature android:name="android.hardware.type.automotive" android:required="true" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
@@ -19,6 +20,16 @@
         <service android:name=".RecordingService" android:exported="false"
             android:foregroundServiceType="microphone" />
         <activity android:name=".RecordingsActivity" android:exported="false" />
+        <service android:name=".HighlightService" android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <activity android:name=".HighlightsActivity" android:exported="true" android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="FIND_RECORDING_HIGHLIGHTS" />
+                <action android:name="SHOW_RECORDING_HIGHLIGHTS" />
+                <action android:name="PLAY_RECORDING_HIGHLIGHT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
