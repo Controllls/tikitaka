@@ -11,7 +11,7 @@ import ai.pleos.playground.vehicle.api.model.capability.AccessType
 import ai.pleos.playground.vehicle.constant.area.SeatValue
 import ai.pleos.playground.vehicle.listener.SeatOccupancyListener
 
-/** Foreground screen only: no assumption that a killed app can wake on seat occupancy. */
+/** Owned by BoardingCoordinator for visible UI or opted-in standby. No cold-wake API. */
 class VehicleSeatMonitor(
     private val context: Context,
     private val onOccupancy: (Boolean?) -> Unit,

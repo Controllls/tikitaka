@@ -2,7 +2,8 @@
     <dimen name="page_padding">20dp</dimen>
     <dimen name="headline_size">28sp</dimen>
     <dimen name="recorder_size">300dp</dimen>
-    <integer name="wide_footer_visibility">8</integer>
+    <!-- XML visibility uses enum indices (gone = 2), not View.GONE (8). -->
+    <integer name="wide_footer_visibility">2</integer>
     <style name="Shape.Journal" parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">20dp</item>

@@ -12,8 +12,19 @@
                 android:text="@string/boarding_connecting" android:textSize="21sp"
                 android:layout_marginTop="24dp" android:textColor="@color/sample_primary"
                 android:accessibilityLiveRegion="polite" />
-            <TextView style="@style/Text.Journal.Body" android:text="@string/trip_explanation"
-                android:layout_marginTop="10dp" />
+            <com.google.android.material.switchmaterial.SwitchMaterial android:id="@+id/standby_switch"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:minHeight="56dp" android:layout_marginTop="12dp"
+                android:saveEnabled="false"
+                android:text="@string/standby_title" android:textColor="@color/text_primary"
+                android:textSize="17sp" app:useMaterialThemeColors="true" />
+            <TextView android:id="@+id/standby_description" style="@style/Text.Journal.Body"
+                android:layout_width="match_parent" android:text="@string/standby_off_description"
+                android:textSize="14sp" android:accessibilityLiveRegion="polite" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/standby_settings"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:minHeight="48dp" android:text="@string/standby_settings" android:visibility="gone" />
             <View android:layout_width="match_parent" android:layout_height="1dp"
                 android:layout_marginTop="22dp" android:layout_marginBottom="18dp" android:background="@color/outline" />
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:baselineAligned="false">

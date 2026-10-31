@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1898" role="img" aria-label="03 · 복원·건너뛰기·안내 끄기">
+<title>03 · 복원·건너뛰기·안내 끄기</title>
+<defs><marker id="03-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10" fill="none" stroke="#ffb86b" stroke-width="1.7"/></marker></defs>
+<style>text{font-family:"Malgun Gothic","Noto Sans KR",sans-serif}.seq-life{stroke:#42566e;stroke-dasharray:6 7;stroke-width:1.4}.seq-arrow{fill:none;stroke:#ffb86b;stroke-width:2}</style>
+<rect width="1200" height="1898" rx="16" fill="#101925"/>
+<text x="28" y="36" text-anchor="start" fill="#ffb86b" font-size="22">03 · 복원·건너뛰기·안내 끄기</text>
+<line x1="120" y1="134" x2="120" y2="1876" class="seq-life"/>
+<rect x="12" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="120" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">사용자</text>
+<line x1="360" y1="134" x2="360" y2="1876" class="seq-life"/>
+<rect x="252" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="360" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">Android OS</text>
+<line x1="600" y1="134" x2="600" y2="1876" class="seq-life"/>
+<rect x="492" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="600" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">이벤트 진입점</text>
+<text x="600" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Boot / Action Receiver</text>
+<line x1="840" y1="134" x2="840" y2="1876" class="seq-life"/>
+<rect x="732" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="840" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">탑승 대기</text>
+<text x="840" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Service / Coordinator</text>
+<line x1="1080" y1="134" x2="1080" y2="1876" class="seq-life"/>
+<rect x="972" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1080" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">좌석 구독</text>
+<text x="1080" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Vehicle SDK</text>
+<rect x="26" y="166" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="195" text-anchor="middle" fill="#c8d8e8" font-size="17">A · OS가 서비스 재생성을 허용하는 경우</text>
+<text x="600.0" y="270" text-anchor="middle" fill="#edf2f8" font-size="17">1. START_STICKY로 대기 재생성</text>
+<line x1="360" y1="284" x2="840" y2="284" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<path d="M840,336 h-48 v48 h48" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="776" y="350" text-anchor="end" fill="#edf2f8" font-size="17">2. 안내·알림 허용 확인, 같은 부팅의</text>
+<text x="776" y="374" text-anchor="end" fill="#edf2f8" font-size="17">응답 상태 복원</text>
+<text x="960.0" y="436" text-anchor="middle" fill="#edf2f8" font-size="17">3. 좌석 재연결·구독</text>
+<line x1="840" y1="450" x2="1080" y2="450" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<rect x="26" y="492" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="521" text-anchor="middle" fill="#c8d8e8" font-size="17">B · BOOT_COMPLETED 또는 MY_PACKAGE_REPLACED</text>
+<text x="480.0" y="596" text-anchor="middle" fill="#edf2f8" font-size="17">4. 부팅 완료 또는 앱</text>
+<text x="480.0" y="620" text-anchor="middle" fill="#edf2f8" font-size="17">업데이트 수신</text>
+<line x1="360" y1="634" x2="600" y2="634" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="720.0" y="696" text-anchor="middle" fill="#edf2f8" font-size="17">5. 기존 안내 켜짐·알림</text>
+<text x="720.0" y="720" text-anchor="middle" fill="#edf2f8" font-size="17">허용이면 대기 시작 시도</text>
+<line x1="600" y1="734" x2="840" y2="734" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<path d="M840,786 h-48 v48 h48" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="776" y="800" text-anchor="end" fill="#edf2f8" font-size="17">6. 새 부팅이면 탑승 응답 세션 초기화</text>
+<rect x="26" y="864" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="893" text-anchor="middle" fill="#c8d8e8" font-size="17">C · 이번 탑승 건너뛰기</text>
+<text x="360.0" y="968" text-anchor="middle" fill="#edf2f8" font-size="17">7. 알림의 이번에는 안 함 또는 알림 지우기</text>
+<line x1="120" y1="982" x2="600" y2="982" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="720.0" y="1044" text-anchor="middle" fill="#edf2f8" font-size="17">8. 현재 탑승 응답</text>
+<text x="720.0" y="1068" text-anchor="middle" fill="#edf2f8" font-size="17">완료·안내 알림 취소</text>
+<line x1="600" y1="1082" x2="840" y2="1082" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="960.0" y="1144" text-anchor="middle" fill="#edf2f8" font-size="17">9. 빈 좌석 → 점유가</text>
+<text x="960.0" y="1168" text-anchor="middle" fill="#edf2f8" font-size="17">다시 확인되면 다음 안내</text>
+<text x="960.0" y="1192" text-anchor="middle" fill="#edf2f8" font-size="17">가능</text>
+<line x1="1080" y1="1206" x2="840" y2="1206" class="seq-arrow" marker-end="url(#03-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="1248" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1277" text-anchor="middle" fill="#c8d8e8" font-size="17">D · 화면 밖 대기 끄기</text>
+<text x="360.0" y="1352" text-anchor="middle" fill="#edf2f8" font-size="17">10. 대기 알림의 안내 끄기</text>
+<line x1="120" y1="1366" x2="600" y2="1366" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="720.0" y="1428" text-anchor="middle" fill="#edf2f8" font-size="17">11. 설정 OFF·대기</text>
+<text x="720.0" y="1452" text-anchor="middle" fill="#edf2f8" font-size="17">서비스 종료</text>
+<line x1="600" y1="1466" x2="840" y2="1466" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="960.0" y="1528" text-anchor="middle" fill="#edf2f8" font-size="17">12. 화면도 보이지</text>
+<text x="960.0" y="1552" text-anchor="middle" fill="#edf2f8" font-size="17">않으면 구독·Vehicle</text>
+<text x="960.0" y="1576" text-anchor="middle" fill="#edf2f8" font-size="17">해제</text>
+<line x1="840" y1="1590" x2="1080" y2="1590" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<rect x="26" y="1632" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1661" text-anchor="middle" fill="#c8d8e8" font-size="17">화면의 스위치로도 대기를 끌 수 있습니다. 안내 끄기는 진행 중인 녹음을 종료하지 않습니다.</text>
+<rect x="26" y="1716" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1745" text-anchor="middle" fill="#c8d8e8" font-size="17">좌석 연결 실패는 5초·15초·60초 간격으로 최대 3회 재시도합니다. 미확인 좌석 값을 빈 좌석으로 간주하지 않습니다.</text>
+<rect x="26" y="1800" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1829" text-anchor="middle" fill="#c8d8e8" font-size="17">앱 강제 종료·최초 미실행·모든 시동과 절전 복귀에서 자동 실행은 보장하지 않습니다. 복원 경로는 녹음을 시작하지 않습니다.</text>
+</svg>

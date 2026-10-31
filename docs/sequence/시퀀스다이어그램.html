@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>이동 기록 · 최종 구현 시퀀스 다이어그램</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#0b1018;color:#edf2f8;font:16px/1.7 "Malgun Gothic",sans-serif}main{max-width:1580px;margin:auto;padding:40px 28px}h1{font-size:36px;line-height:1.35;margin:10px 0 16px}h2{font-size:25px;line-height:1.5;margin:0}p{color:#b4c4d7;max-width:1100px}a{color:#ffb86b;text-underline-offset:4px}button{cursor:pointer;background:#ffb86b;color:#14191f;border:0;border-radius:10px;padding:11px 18px;font-weight:700;font-size:15px}.eyebrow{letter-spacing:2px;color:#ffb86b;font-size:13px}.chips,.links,nav{display:flex;gap:12px;flex-wrap:wrap}.chips span{background:#1b332d;color:#b0ecd4;padding:7px 14px;border-radius:24px;font-size:14px}.notice{border-left:4px solid #ffb86b;background:#192636;padding:18px 22px;margin:24px 0}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0}.summary article{border:1px solid #33455b;border-radius:14px;padding:18px;background:#14202e}.summary strong{color:#ffb86b}.summary p{margin:6px 0 0;font-size:14px}nav{position:sticky;top:0;z-index:2;background:#0b1018f5;padding:16px 0;border-bottom:1px solid #35465b;align-items:center}nav a{padding:6px 9px;font-size:14px}section{margin-top:36px;scroll-margin-top:110px;border:1px solid #303e51;border-radius:18px;overflow:hidden}section header{padding:26px;background:#151f2b}.links{font-size:14px}.drawing{overflow:auto;padding:14px}.drawing svg{display:block;min-width:1100px;width:100%;height:auto}details{padding:18px 26px;background:#172130}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.7 Consolas,"Malgun Gothic",monospace;color:#c6d8eb}table{width:100%;border-collapse:collapse}td,th{text-align:left;vertical-align:top;padding:15px 20px;border-bottom:1px solid #354253}th{color:#ffb86b;width:200px}code{background:#203047;padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}figure{margin:22px 26px}figure img{display:block;max-width:100%;height:auto;border-radius:12px}figcaption{font-size:14px;color:#b4c4d7;padding-top:10px}.body-copy{padding:18px 26px}footer{padding:30px 0;color:#adbed2;font-size:14px}li{margin:6px 0}@media(max-width:750px){main{padding:24px 14px}h1{font-size:27px}.summary{grid-template-columns:1fr}nav{position:static}th{width:115px}td,th{padding:12px}.drawing{padding:8px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media print{body{background:white;color:#111}main{padding:0}nav,button,details,.links{display:none}section{break-before:page;border:0}section header{background:white;padding:12px 0}p,figcaption{color:#333}.drawing{overflow:visible;padding:0}.drawing svg{min-width:0;max-height:235mm}.summary{display:none}.notice{background:#eee}a,th{color:#222}table{font-size:11px}figure{margin:12px 0}footer{color:#333}}
+</style></head>
+<body><main><div class="eyebrow">DRIVE JOURNAL · IMPLEMENTATION SEQUENCE · 2026.10.31</div>
+<h1>탑승 안내부터 기록·Gleo·하이라이트까지.</h1>
+<p>이동 기록 1.1 · <code>com.example.hd_project</code> · 현재 코드와 확인된 시험 결과를 반영한 최종 정리입니다. 좌석 신호는 기록을 제안하는 단서이며, 실제 녹음은 사용자가 버튼을 선택한 뒤에 시작합니다.</p>
+<div class="chips"><span>대기 중 마이크 사용 없음</span><span>음성·분석은 기기 안에서</span><span>차량 + 앱 + 내비 3분할 확인</span></div>
+<div class="summary"><article><strong>탑승 안내</strong><p>화면 밖에서는 알림창, 화면 안에서는 녹음 카드로 안내합니다.</p></article><article><strong>Gleo 전환</strong><p>녹음을 저장하고 마이크를 해제한 뒤 듣기를 요청합니다.</p></article><article><strong>웃음 하이라이트</strong><p>저장한 녹음을 로컬 모델로 분석해 최대 3개의 클립을 만듭니다.</p></article></div>
+<div class="notice"><strong>구현된 흐름과 검증 범위를 함께 읽어 주세요.</strong><br>다른 앱으로 이동한 상황과 설정에서 앱을 강제 종료한 상황은 다릅니다. 실제 차량의 매 시동·절전 복귀, 자연어 명령의 전체 처리 성공과 배포 승인을 보장하는 문서는 아닙니다.</div>
+<nav aria-label="시퀀스 목차"><a href="#01_최초설정">01 최초 설정</a><a href="#02_탑승부터저장">02 탑승·녹음</a><a href="#03_복원과예외">03 복원·예외</a><a href="#04_Gleo전환">04 Gleo 전환</a><a href="#05_하이라이트">05 하이라이트</a><a href="#06_화면분할">06 3분할</a><a href="#verification">검증·저장 위치</a><button type="button" onclick="window.print()">인쇄 / PDF 저장</button></nav>
+<section id="01_최초설정"><header><h2>01 · 최초 설정과 탑승 대기</h2><p>앱을 처음 열고 안내를 켠 사용자를 위한 흐름입니다. 화면이 보이는 동안의 좌석 감지와 화면 밖 대기는 하나의 Coordinator가 관리합니다.</p><div class="links"><a href="01_최초설정.svg" target="_blank" rel="noopener">SVG 크게 열기</a><a href="01_최초설정.mmd" download>Mermaid 원본 다운로드</a></div></header><div class="drawing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1536" role="img" aria-label="01 · 최초 설정과 탑승 대기">
+<title>01 · 최초 설정과 탑승 대기</title>
+<defs><marker id="01-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10" fill="none" stroke="#ffb86b" stroke-width="1.7"/></marker></defs>
+<style>text{font-family:"Malgun Gothic","Noto Sans KR",sans-serif}.seq-life{stroke:#42566e;stroke-dasharray:6 7;stroke-width:1.4}.seq-arrow{fill:none;stroke:#ffb86b;stroke-width:2}</style>
+<rect width="1440" height="1536" rx="16" fill="#101925"/>
+<text x="28" y="36" text-anchor="start" fill="#ffb86b" font-size="22">01 · 최초 설정과 탑승 대기</text>
+<line x1="120" y1="134" x2="120" y2="1514" class="seq-life"/>
+<rect x="12" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="120" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">사용자</text>
+<line x1="360" y1="134" x2="360" y2="1514" class="seq-life"/>
+<rect x="252" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="360" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">앱 화면</text>
+<text x="360" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">MainActivity</text>
+<line x1="600" y1="134" x2="600" y2="1514" class="seq-life"/>
+<rect x="492" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="600" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">Android</text>
+<text x="600" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">권한·알림</text>
+<line x1="840" y1="134" x2="840" y2="1514" class="seq-life"/>
+<rect x="732" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="840" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">탑승 대기</text>
+<text x="840" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">BoardingService</text>
+<line x1="1080" y1="134" x2="1080" y2="1514" class="seq-life"/>
+<rect x="972" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1080" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">좌석 구독</text>
+<text x="1080" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Coordinator / Monitor</text>
+<line x1="1320" y1="134" x2="1320" y2="1514" class="seq-life"/>
+<rect x="1212" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1320" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">차량 좌석</text>
+<text x="1320" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Vehicle SDK</text>
+<text x="240.0" y="186" text-anchor="middle" fill="#edf2f8" font-size="17">1. 앱 실행</text>
+<line x1="120" y1="200" x2="360" y2="200" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="720.0" y="262" text-anchor="middle" fill="#edf2f8" font-size="17">2. 화면 표시 상태 전달</text>
+<line x1="360" y1="276" x2="1080" y2="276" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="1200.0" y="338" text-anchor="middle" fill="#edf2f8" font-size="17">3. 지원 좌석 확인 →</text>
+<text x="1200.0" y="362" text-anchor="middle" fill="#edf2f8" font-size="17">리스너 등록 → 현재 값</text>
+<text x="1200.0" y="386" text-anchor="middle" fill="#edf2f8" font-size="17">조회</text>
+<line x1="1080" y1="400" x2="1320" y2="400" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<rect x="26" y="442" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="471" text-anchor="middle" fill="#c8d8e8" font-size="17">화면이 보이면 안내 스위치가 꺼져 있어도 좌석을 확인합니다. 화면 밖 대기에는 사용자의 안내 켜기 설정이 필요합니다.</text>
+<text x="240.0" y="546" text-anchor="middle" fill="#edf2f8" font-size="17">4. 앱을 닫아도 탑승</text>
+<text x="240.0" y="570" text-anchor="middle" fill="#edf2f8" font-size="17">안내 켜기</text>
+<line x1="120" y1="584" x2="360" y2="584" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="480.0" y="646" text-anchor="middle" fill="#edf2f8" font-size="17">5. 알림 권한과 두</text>
+<text x="480.0" y="670" text-anchor="middle" fill="#edf2f8" font-size="17">채널의 차단 여부 확인</text>
+<line x1="360" y1="684" x2="600" y2="684" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="480.0" y="746" text-anchor="middle" fill="#edf2f8" font-size="17">6. 허용 결과</text>
+<line x1="600" y1="760" x2="360" y2="760" class="seq-arrow" marker-end="url(#01-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="802" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="831" text-anchor="middle" fill="#c8d8e8" font-size="17">허용된 경우에만 다음 단계로 진행합니다. 거절·채널 차단이면 대기를 시작하지 않고 설정 안내를 표시합니다.</text>
+<text x="720.0" y="906" text-anchor="middle" fill="#edf2f8" font-size="17">7. 안내 켜짐 저장</text>
+<line x1="360" y1="920" x2="1080" y2="920" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="600.0" y="982" text-anchor="middle" fill="#edf2f8" font-size="17">8. 대기 서비스 시작 요청</text>
+<line x1="360" y1="996" x2="840" y2="996" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="720.0" y="1058" text-anchor="middle" fill="#edf2f8" font-size="17">9. specialUse</text>
+<text x="720.0" y="1082" text-anchor="middle" fill="#edf2f8" font-size="17">포그라운드 서비스·대기</text>
+<text x="720.0" y="1106" text-anchor="middle" fill="#edf2f8" font-size="17">알림 등록</text>
+<line x1="840" y1="1120" x2="600" y2="1120" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="960.0" y="1182" text-anchor="middle" fill="#edf2f8" font-size="17">10. 대기 서비스 실행</text>
+<text x="960.0" y="1206" text-anchor="middle" fill="#edf2f8" font-size="17">상태 전달</text>
+<line x1="840" y1="1220" x2="1080" y2="1220" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="240.0" y="1282" text-anchor="middle" fill="#edf2f8" font-size="17">11. 내비 등 다른</text>
+<text x="240.0" y="1306" text-anchor="middle" fill="#edf2f8" font-size="17">화면으로 이동</text>
+<line x1="120" y1="1320" x2="360" y2="1320" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="720.0" y="1382" text-anchor="middle" fill="#edf2f8" font-size="17">12. 화면 비표시 상태 전달</text>
+<line x1="360" y1="1396" x2="1080" y2="1396" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<rect x="26" y="1438" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="1467" text-anchor="middle" fill="#c8d8e8" font-size="17">안내 켜짐 + 대기 서비스 실행 중이면 좌석 구독을 유지합니다. 대기에는 마이크를 사용하지 않습니다.</text>
+</svg></div><details><summary>편집 가능한 Mermaid 코드</summary><pre>sequenceDiagram
+    autonumber
+    participant U as 사용자
+    participant A as 앱 화면&lt;br/&gt;MainActivity
+    participant O as Android&lt;br/&gt;권한·알림
+    participant B as 탑승 대기&lt;br/&gt;BoardingService
+    participant C as 좌석 구독&lt;br/&gt;Coordinator / Monitor
+    participant V as 차량 좌석&lt;br/&gt;Vehicle SDK
+    U-&gt;&gt;A: 앱 실행
+    A-&gt;&gt;C: 화면 표시 상태 전달
+    C-&gt;&gt;V: 지원 좌석 확인 → 리스너 등록 → 현재 값 조회
+    Note over U,V: 화면이 보이면 안내 스위치가 꺼져 있어도 좌석을 확인합니다. 화면 밖 대기에는 사용자의 안내 켜기 설정이 필요합니다.
+    U-&gt;&gt;A: 앱을 닫아도 탑승 안내 켜기
+    A-&gt;&gt;O: 알림 권한과 두 채널의 차단 여부 확인
+    O--&gt;&gt;A: 허용 결과
+    Note over U,V: 허용된 경우에만 다음 단계로 진행합니다. 거절·채널 차단이면 대기를 시작하지 않고 설정 안내를 표시합니다.
+    A-&gt;&gt;C: 안내 켜짐 저장
+    A-&gt;&gt;B: 대기 서비스 시작 요청
+    B-&gt;&gt;O: specialUse 포그라운드 서비스·대기 알림 등록
+    B-&gt;&gt;C: 대기 서비스 실행 상태 전달
+    U-&gt;&gt;A: 내비 등 다른 화면으로 이동
+    A-&gt;&gt;C: 화면 비표시 상태 전달
+    Note over U,V: 안내 켜짐 + 대기 서비스 실행 중이면 좌석 구독을 유지합니다. 대기에는 마이크를 사용하지 않습니다.
+</pre></details></section><section id="02_탑승부터저장"><header><h2>02 · 탑승 안내 → 명시적 녹음 → 저장</h2><p>화면 밖에서는 알림창으로, 화면 안에서는 기존 녹음 카드로 안내합니다. 알림 선택과 좌석 신호만으로 녹음이 시작되지는 않습니다.</p><div class="links"><a href="02_탑승부터저장.svg" target="_blank" rel="noopener">SVG 크게 열기</a><a href="02_탑승부터저장.mmd" download>Mermaid 원본 다운로드</a></div></header><div class="drawing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 2202" role="img" aria-label="02 · 탑승 안내 → 명시적 녹음 → 저장">
+<title>02 · 탑승 안내 → 명시적 녹음 → 저장</title>
+<defs><marker id="02-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10" fill="none" stroke="#ffb86b" stroke-width="1.7"/></marker></defs>
+<style>text{font-family:"Malgun Gothic","Noto Sans KR",sans-serif}.seq-life{stroke:#42566e;stroke-dasharray:6 7;stroke-width:1.4}.seq-arrow{fill:none;stroke:#ffb86b;stroke-width:2}</style>
+<rect width="1680" height="2202" rx="16" fill="#101925"/>
+<text x="28" y="36" text-anchor="start" fill="#ffb86b" font-size="22">02 · 탑승 안내 → 명시적 녹음 → 저장</text>
+<line x1="120" y1="134" x2="120" y2="2180" class="seq-life"/>
+<rect x="12" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="120" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">사용자</text>
+<line x1="360" y1="134" x2="360" y2="2180" class="seq-life"/>
+<rect x="252" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="360" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">좌석 신호</text>
+<text x="360" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Vehicle SDK</text>
+<line x1="600" y1="134" x2="600" y2="2180" class="seq-life"/>
+<rect x="492" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="600" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">탑승 상태</text>
+<text x="600" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Monitor / Coordinator</text>
+<line x1="840" y1="134" x2="840" y2="2180" class="seq-life"/>
+<rect x="732" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="840" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">대기 서비스</text>
+<text x="840" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">시스템 알림</text>
+<line x1="1080" y1="134" x2="1080" y2="2180" class="seq-life"/>
+<rect x="972" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1080" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">앱 화면</text>
+<text x="1080" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">MainActivity</text>
+<line x1="1320" y1="134" x2="1320" y2="2180" class="seq-life"/>
+<rect x="1212" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1320" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">녹음 서비스</text>
+<text x="1320" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">RecordingService</text>
+<line x1="1560" y1="134" x2="1560" y2="2180" class="seq-life"/>
+<rect x="1452" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1560" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">기기 저장소</text>
+<text x="1560" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">RecordingFiles</text>
+<text x="480.0" y="186" text-anchor="middle" fill="#edf2f8" font-size="17">1. 운전석 점유 값 전달</text>
+<line x1="360" y1="200" x2="600" y2="200" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<path d="M600,252 h48 v48 h-48" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="664" y="266" text-anchor="start" fill="#edf2f8" font-size="17">2. 1.2초 안정화·중복 탑승 확인</text>
+<rect x="26" y="330" width="1628" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="840.0" y="359" text-anchor="middle" fill="#c8d8e8" font-size="17">화면 밖 + 안내 켜짐 + 대기 실행 + 좌석 연결 정상 + 점유 + 응답 대기 + 녹음 중 아님을 모두 만족할 때 알림을 등록합니다.</text>
+<text x="720.0" y="434" text-anchor="middle" fill="#edf2f8" font-size="17">3. 이번 이동을</text>
+<text x="720.0" y="458" text-anchor="middle" fill="#edf2f8" font-size="17">기록할까요? 알림 등록</text>
+<line x1="600" y1="472" x2="840" y2="472" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="480.0" y="534" text-anchor="middle" fill="#edf2f8" font-size="17">4. 알림창을 열고 탑승 알림 선택</text>
+<line x1="120" y1="548" x2="840" y2="548" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="960.0" y="610" text-anchor="middle" fill="#edf2f8" font-size="17">5. PendingIntent로 앱</text>
+<text x="960.0" y="634" text-anchor="middle" fill="#edf2f8" font-size="17">열기</text>
+<line x1="840" y1="648" x2="1080" y2="648" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="840.0" y="710" text-anchor="middle" fill="#edf2f8" font-size="17">6. 화면 표시 상태 전달</text>
+<line x1="1080" y1="724" x2="600" y2="724" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="720.0" y="786" text-anchor="middle" fill="#edf2f8" font-size="17">7. 탑승 알림 정리</text>
+<line x1="600" y1="800" x2="840" y2="800" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="600.0" y="862" text-anchor="middle" fill="#edf2f8" font-size="17">8. 녹음 카드 안내·두 번 강조</text>
+<line x1="1080" y1="876" x2="120" y2="876" class="seq-arrow" marker-end="url(#02-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="918" width="1628" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="840.0" y="947" text-anchor="middle" fill="#c8d8e8" font-size="17">이미 앱이 보이는 경우에는 알림창 진입 없이 같은 녹음 카드를 안내합니다. 별도 앱 동의 팝업 대신 카드에 녹음 안내를 표시합니다.</text>
+<text x="600.0" y="1022" text-anchor="middle" fill="#edf2f8" font-size="17">9. 동승자 동의 확인 후 녹음 버튼 선택</text>
+<line x1="120" y1="1036" x2="1080" y2="1036" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="840.0" y="1098" text-anchor="middle" fill="#edf2f8" font-size="17">10. 현재 탑승 응답 완료 저장</text>
+<line x1="1080" y1="1112" x2="600" y2="1112" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<path d="M1080,1164 h48 v48 h-48" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="1144" y="1178" text-anchor="start" fill="#edf2f8" font-size="17">11. 마이크 권한 확인·필요 시 요청</text>
+<rect x="26" y="1242" width="1628" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="840.0" y="1271" text-anchor="middle" fill="#c8d8e8" font-size="17">마이크 거절 시 시작하지 않습니다. 알림 권한 요청을 거친 뒤에도 화면이 다시 활성화된 상태에서만 녹음을 시작합니다.</text>
+<text x="1200.0" y="1346" text-anchor="middle" fill="#edf2f8" font-size="17">12. 명시적 시작 요청</text>
+<line x1="1080" y1="1360" x2="1320" y2="1360" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="1080.0" y="1422" text-anchor="middle" fill="#edf2f8" font-size="17">13. microphone 포그라운드 알림·종료 버튼</text>
+<line x1="1320" y1="1436" x2="840" y2="1436" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="1440.0" y="1498" text-anchor="middle" fill="#edf2f8" font-size="17">14. AAC 음성을 임시</text>
+<text x="1440.0" y="1522" text-anchor="middle" fill="#edf2f8" font-size="17">.pending 파일에 기록</text>
+<line x1="1320" y1="1536" x2="1560" y2="1536" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<rect x="26" y="1578" width="1628" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="840.0" y="1607" text-anchor="middle" fill="#c8d8e8" font-size="17">시작한 녹음은 내비 전환·화면 재생성 중에도 서비스에서 유지됩니다. 좌석을 비우는 것만으로 자동 종료하지 않습니다.</text>
+<text x="600.0" y="1682" text-anchor="middle" fill="#edf2f8" font-size="17">15. 녹음 종료 선택</text>
+<line x1="120" y1="1696" x2="1080" y2="1696" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="1200.0" y="1758" text-anchor="middle" fill="#edf2f8" font-size="17">16. 종료 요청</text>
+<line x1="1080" y1="1772" x2="1320" y2="1772" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="1440.0" y="1834" text-anchor="middle" fill="#edf2f8" font-size="17">17. stop → 길이·파일</text>
+<text x="1440.0" y="1858" text-anchor="middle" fill="#edf2f8" font-size="17">확인 → .m4a 확정</text>
+<line x1="1320" y1="1872" x2="1560" y2="1872" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<path d="M1320,1924 h-48 v48 h48" class="seq-arrow" marker-end="url(#02-arrow)"/>
+<text x="1256" y="1938" text-anchor="end" fill="#edf2f8" font-size="17">18. MediaRecorder.release로 마이크</text>
+<text x="1256" y="1962" text-anchor="end" fill="#edf2f8" font-size="17">해제</text>
+<text x="1200.0" y="2024" text-anchor="middle" fill="#edf2f8" font-size="17">19. 최종 상태 발행·기록</text>
+<text x="1200.0" y="2048" text-anchor="middle" fill="#edf2f8" font-size="17">목록 갱신</text>
+<line x1="1320" y1="2062" x2="1080" y2="2062" class="seq-arrow" marker-end="url(#02-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="2104" width="1628" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="840.0" y="2133" text-anchor="middle" fill="#c8d8e8" font-size="17">알림의 종료 버튼도 서비스에 직접 종료를 요청합니다. 너무 짧거나 저장에 실패한 미완성 파일은 정리하고 오류를 알립니다. 녹음은 자동 재시작하지 않습니다.</text>
+</svg></div><details><summary>편집 가능한 Mermaid 코드</summary><pre>sequenceDiagram
+    autonumber
+    participant U as 사용자
+    participant V as 좌석 신호&lt;br/&gt;Vehicle SDK
+    participant C as 탑승 상태&lt;br/&gt;Monitor / Coordinator
+    participant N as 대기 서비스&lt;br/&gt;시스템 알림
+    participant A as 앱 화면&lt;br/&gt;MainActivity
+    participant R as 녹음 서비스&lt;br/&gt;RecordingService
+    participant F as 기기 저장소&lt;br/&gt;RecordingFiles
+    V-&gt;&gt;C: 운전석 점유 값 전달
+    C-&gt;&gt;C: 1.2초 안정화·중복 탑승 확인
+    Note over U,F: 화면 밖 + 안내 켜짐 + 대기 실행 + 좌석 연결 정상 + 점유 + 응답 대기 + 녹음 중 아님을 모두 만족할 때 알림을 등록합니다.
+    C-&gt;&gt;N: 이번 이동을 기록할까요? 알림 등록
+    U-&gt;&gt;N: 알림창을 열고 탑승 알림 선택
+    N-&gt;&gt;A: PendingIntent로 앱 열기
+    A-&gt;&gt;C: 화면 표시 상태 전달
+    C-&gt;&gt;N: 탑승 알림 정리
+    A--&gt;&gt;U: 녹음 카드 안내·두 번 강조
+    Note over U,F: 이미 앱이 보이는 경우에는 알림창 진입 없이 같은 녹음 카드를 안내합니다. 별도 앱 동의 팝업 대신 카드에 녹음 안내를 표시합니다.
+    U-&gt;&gt;A: 동승자 동의 확인 후 녹음 버튼 선택
+    A-&gt;&gt;C: 현재 탑승 응답 완료 저장
+    A-&gt;&gt;A: 마이크 권한 확인·필요 시 요청
+    Note over U,F: 마이크 거절 시 시작하지 않습니다. 알림 권한 요청을 거친 뒤에도 화면이 다시 활성화된 상태에서만 녹음을 시작합니다.
+    A-&gt;&gt;R: 명시적 시작 요청
+    R-&gt;&gt;N: microphone 포그라운드 알림·종료 버튼
+    R-&gt;&gt;F: AAC 음성을 임시 .pending 파일에 기록
+    Note over U,F: 시작한 녹음은 내비 전환·화면 재생성 중에도 서비스에서 유지됩니다. 좌석을 비우는 것만으로 자동 종료하지 않습니다.
+    U-&gt;&gt;A: 녹음 종료 선택
+    A-&gt;&gt;R: 종료 요청
+    R-&gt;&gt;F: stop → 길이·파일 확인 → .m4a 확정
+    R-&gt;&gt;R: MediaRecorder.release로 마이크 해제
+    R--&gt;&gt;A: 최종 상태 발행·기록 목록 갱신
+    Note over U,F: 알림의 종료 버튼도 서비스에 직접 종료를 요청합니다. 너무 짧거나 저장에 실패한 미완성 파일은 정리하고 오류를 알립니다. 녹음은 자동 재시작하지 않습니다.
+</pre></details></section><section id="03_복원과예외"><header><h2>03 · 복원·건너뛰기·안내 끄기</h2><p>안내 설정과 같은 부팅 안의 응답 상태를 복원합니다. Android의 프로세스 복원 허용 여부와 차량의 실제 시동·절전 동작은 별도로 구분합니다.</p><div class="links"><a href="03_복원과예외.svg" target="_blank" rel="noopener">SVG 크게 열기</a><a href="03_복원과예외.mmd" download>Mermaid 원본 다운로드</a></div></header><div class="drawing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1898" role="img" aria-label="03 · 복원·건너뛰기·안내 끄기">
+<title>03 · 복원·건너뛰기·안내 끄기</title>
+<defs><marker id="03-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10" fill="none" stroke="#ffb86b" stroke-width="1.7"/></marker></defs>
+<style>text{font-family:"Malgun Gothic","Noto Sans KR",sans-serif}.seq-life{stroke:#42566e;stroke-dasharray:6 7;stroke-width:1.4}.seq-arrow{fill:none;stroke:#ffb86b;stroke-width:2}</style>
+<rect width="1200" height="1898" rx="16" fill="#101925"/>
+<text x="28" y="36" text-anchor="start" fill="#ffb86b" font-size="22">03 · 복원·건너뛰기·안내 끄기</text>
+<line x1="120" y1="134" x2="120" y2="1876" class="seq-life"/>
+<rect x="12" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="120" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">사용자</text>
+<line x1="360" y1="134" x2="360" y2="1876" class="seq-life"/>
+<rect x="252" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="360" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">Android OS</text>
+<line x1="600" y1="134" x2="600" y2="1876" class="seq-life"/>
+<rect x="492" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="600" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">이벤트 진입점</text>
+<text x="600" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Boot / Action Receiver</text>
+<line x1="840" y1="134" x2="840" y2="1876" class="seq-life"/>
+<rect x="732" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="840" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">탑승 대기</text>
+<text x="840" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Service / Coordinator</text>
+<line x1="1080" y1="134" x2="1080" y2="1876" class="seq-life"/>
+<rect x="972" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1080" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">좌석 구독</text>
+<text x="1080" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Vehicle SDK</text>
+<rect x="26" y="166" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="195" text-anchor="middle" fill="#c8d8e8" font-size="17">A · OS가 서비스 재생성을 허용하는 경우</text>
+<text x="600.0" y="270" text-anchor="middle" fill="#edf2f8" font-size="17">1. START_STICKY로 대기 재생성</text>
+<line x1="360" y1="284" x2="840" y2="284" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<path d="M840,336 h-48 v48 h48" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="776" y="350" text-anchor="end" fill="#edf2f8" font-size="17">2. 안내·알림 허용 확인, 같은 부팅의</text>
+<text x="776" y="374" text-anchor="end" fill="#edf2f8" font-size="17">응답 상태 복원</text>
+<text x="960.0" y="436" text-anchor="middle" fill="#edf2f8" font-size="17">3. 좌석 재연결·구독</text>
+<line x1="840" y1="450" x2="1080" y2="450" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<rect x="26" y="492" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="521" text-anchor="middle" fill="#c8d8e8" font-size="17">B · BOOT_COMPLETED 또는 MY_PACKAGE_REPLACED</text>
+<text x="480.0" y="596" text-anchor="middle" fill="#edf2f8" font-size="17">4. 부팅 완료 또는 앱</text>
+<text x="480.0" y="620" text-anchor="middle" fill="#edf2f8" font-size="17">업데이트 수신</text>
+<line x1="360" y1="634" x2="600" y2="634" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="720.0" y="696" text-anchor="middle" fill="#edf2f8" font-size="17">5. 기존 안내 켜짐·알림</text>
+<text x="720.0" y="720" text-anchor="middle" fill="#edf2f8" font-size="17">허용이면 대기 시작 시도</text>
+<line x1="600" y1="734" x2="840" y2="734" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<path d="M840,786 h-48 v48 h48" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="776" y="800" text-anchor="end" fill="#edf2f8" font-size="17">6. 새 부팅이면 탑승 응답 세션 초기화</text>
+<rect x="26" y="864" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="893" text-anchor="middle" fill="#c8d8e8" font-size="17">C · 이번 탑승 건너뛰기</text>
+<text x="360.0" y="968" text-anchor="middle" fill="#edf2f8" font-size="17">7. 알림의 이번에는 안 함 또는 알림 지우기</text>
+<line x1="120" y1="982" x2="600" y2="982" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="720.0" y="1044" text-anchor="middle" fill="#edf2f8" font-size="17">8. 현재 탑승 응답</text>
+<text x="720.0" y="1068" text-anchor="middle" fill="#edf2f8" font-size="17">완료·안내 알림 취소</text>
+<line x1="600" y1="1082" x2="840" y2="1082" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="960.0" y="1144" text-anchor="middle" fill="#edf2f8" font-size="17">9. 빈 좌석 → 점유가</text>
+<text x="960.0" y="1168" text-anchor="middle" fill="#edf2f8" font-size="17">다시 확인되면 다음 안내</text>
+<text x="960.0" y="1192" text-anchor="middle" fill="#edf2f8" font-size="17">가능</text>
+<line x1="1080" y1="1206" x2="840" y2="1206" class="seq-arrow" marker-end="url(#03-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="1248" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1277" text-anchor="middle" fill="#c8d8e8" font-size="17">D · 화면 밖 대기 끄기</text>
+<text x="360.0" y="1352" text-anchor="middle" fill="#edf2f8" font-size="17">10. 대기 알림의 안내 끄기</text>
+<line x1="120" y1="1366" x2="600" y2="1366" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="720.0" y="1428" text-anchor="middle" fill="#edf2f8" font-size="17">11. 설정 OFF·대기</text>
+<text x="720.0" y="1452" text-anchor="middle" fill="#edf2f8" font-size="17">서비스 종료</text>
+<line x1="600" y1="1466" x2="840" y2="1466" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<text x="960.0" y="1528" text-anchor="middle" fill="#edf2f8" font-size="17">12. 화면도 보이지</text>
+<text x="960.0" y="1552" text-anchor="middle" fill="#edf2f8" font-size="17">않으면 구독·Vehicle</text>
+<text x="960.0" y="1576" text-anchor="middle" fill="#edf2f8" font-size="17">해제</text>
+<line x1="840" y1="1590" x2="1080" y2="1590" class="seq-arrow" marker-end="url(#03-arrow)"/>
+<rect x="26" y="1632" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1661" text-anchor="middle" fill="#c8d8e8" font-size="17">화면의 스위치로도 대기를 끌 수 있습니다. 안내 끄기는 진행 중인 녹음을 종료하지 않습니다.</text>
+<rect x="26" y="1716" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1745" text-anchor="middle" fill="#c8d8e8" font-size="17">좌석 연결 실패는 5초·15초·60초 간격으로 최대 3회 재시도합니다. 미확인 좌석 값을 빈 좌석으로 간주하지 않습니다.</text>
+<rect x="26" y="1800" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1829" text-anchor="middle" fill="#c8d8e8" font-size="17">앱 강제 종료·최초 미실행·모든 시동과 절전 복귀에서 자동 실행은 보장하지 않습니다. 복원 경로는 녹음을 시작하지 않습니다.</text>
+</svg></div><details><summary>편집 가능한 Mermaid 코드</summary><pre>sequenceDiagram
+    autonumber
+    participant U as 사용자
+    participant O as Android OS
+    participant E as 이벤트 진입점&lt;br/&gt;Boot / Action Receiver
+    participant B as 탑승 대기&lt;br/&gt;Service / Coordinator
+    participant V as 좌석 구독&lt;br/&gt;Vehicle SDK
+    Note over U,V: A · OS가 서비스 재생성을 허용하는 경우
+    O-&gt;&gt;B: START_STICKY로 대기 재생성
+    B-&gt;&gt;B: 안내·알림 허용 확인, 같은 부팅의 응답 상태 복원
+    B-&gt;&gt;V: 좌석 재연결·구독
+    Note over U,V: B · BOOT_COMPLETED 또는 MY_PACKAGE_REPLACED
+    O-&gt;&gt;E: 부팅 완료 또는 앱 업데이트 수신
+    E-&gt;&gt;B: 기존 안내 켜짐·알림 허용이면 대기 시작 시도
+    B-&gt;&gt;B: 새 부팅이면 탑승 응답 세션 초기화
+    Note over U,V: C · 이번 탑승 건너뛰기
+    U-&gt;&gt;E: 알림의 이번에는 안 함 또는 알림 지우기
+    E-&gt;&gt;B: 현재 탑승 응답 완료·안내 알림 취소
+    V--&gt;&gt;B: 빈 좌석 → 점유가 다시 확인되면 다음 안내 가능
+    Note over U,V: D · 화면 밖 대기 끄기
+    U-&gt;&gt;E: 대기 알림의 안내 끄기
+    E-&gt;&gt;B: 설정 OFF·대기 서비스 종료
+    B-&gt;&gt;V: 화면도 보이지 않으면 구독·Vehicle 해제
+    Note over U,V: 화면의 스위치로도 대기를 끌 수 있습니다. 안내 끄기는 진행 중인 녹음을 종료하지 않습니다.
+    Note over U,V: 좌석 연결 실패는 5초·15초·60초 간격으로 최대 3회 재시도합니다. 미확인 좌석 값을 빈 좌석으로 간주하지 않습니다.
+    Note over U,V: 앱 강제 종료·최초 미실행·모든 시동과 절전 복귀에서 자동 실행은 보장하지 않습니다. 복원 경로는 녹음을 시작하지 않습니다.
+</pre></details></section><section id="04_Gleo전환"><header><h2>04 · 녹음 종료 후 Gleo 듣기 요청</h2><p>녹음 화면의 Gleo 사용하기 버튼에서 시작하는 흐름입니다. 녹음 중이면 저장과 마이크 해제를 마친 다음 Gleo를 요청합니다.</p><div class="links"><a href="04_Gleo전환.svg" target="_blank" rel="noopener">SVG 크게 열기</a><a href="04_Gleo전환.mmd" download>Mermaid 원본 다운로드</a></div></header><div class="drawing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1334" role="img" aria-label="04 · 녹음 종료 후 Gleo 듣기 요청">
+<title>04 · 녹음 종료 후 Gleo 듣기 요청</title>
+<defs><marker id="04-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10" fill="none" stroke="#ffb86b" stroke-width="1.7"/></marker></defs>
+<style>text{font-family:"Malgun Gothic","Noto Sans KR",sans-serif}.seq-life{stroke:#42566e;stroke-dasharray:6 7;stroke-width:1.4}.seq-arrow{fill:none;stroke:#ffb86b;stroke-width:2}</style>
+<rect width="1200" height="1334" rx="16" fill="#101925"/>
+<text x="28" y="36" text-anchor="start" fill="#ffb86b" font-size="22">04 · 녹음 종료 후 Gleo 듣기 요청</text>
+<line x1="120" y1="134" x2="120" y2="1312" class="seq-life"/>
+<rect x="12" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="120" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">사용자</text>
+<line x1="360" y1="134" x2="360" y2="1312" class="seq-life"/>
+<rect x="252" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="360" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">녹음 화면</text>
+<text x="360" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">MainActivity</text>
+<line x1="600" y1="134" x2="600" y2="1312" class="seq-life"/>
+<rect x="492" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="600" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">녹음 서비스</text>
+<text x="600" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">RecordingService</text>
+<line x1="840" y1="134" x2="840" y2="1312" class="seq-life"/>
+<rect x="732" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="840" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">기기 저장소</text>
+<line x1="1080" y1="134" x2="1080" y2="1312" class="seq-life"/>
+<rect x="972" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1080" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">Gleo</text>
+<text x="1080" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">ai.umos.ambientai</text>
+<text x="240.0" y="186" text-anchor="middle" fill="#edf2f8" font-size="17">1. Gleo 사용하기 선택</text>
+<line x1="120" y1="200" x2="360" y2="200" class="seq-arrow" marker-end="url(#04-arrow)"/>
+<path d="M360,252 h48 v48 h-48" class="seq-arrow" marker-end="url(#04-arrow)"/>
+<text x="424" y="266" text-anchor="start" fill="#edf2f8" font-size="17">2. 화면 활성·Gleo 설치 여부·중복 요청</text>
+<text x="424" y="290" text-anchor="start" fill="#edf2f8" font-size="17">확인</text>
+<rect x="26" y="332" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="361" text-anchor="middle" fill="#c8d8e8" font-size="17">녹음 중인 경우 아래 저장 단계를 수행합니다. 시작·저장 중에는 요청을 받지 않습니다.</text>
+<text x="480.0" y="436" text-anchor="middle" fill="#edf2f8" font-size="17">3. 녹음 종료 요청</text>
+<line x1="360" y1="450" x2="600" y2="450" class="seq-arrow" marker-end="url(#04-arrow)"/>
+<text x="720.0" y="512" text-anchor="middle" fill="#edf2f8" font-size="17">4. 녹음을 종료하고 M4A</text>
+<text x="720.0" y="536" text-anchor="middle" fill="#edf2f8" font-size="17">확정</text>
+<line x1="600" y1="550" x2="840" y2="550" class="seq-arrow" marker-end="url(#04-arrow)"/>
+<path d="M600,602 h48 v48 h-48" class="seq-arrow" marker-end="url(#04-arrow)"/>
+<text x="664" y="616" text-anchor="start" fill="#edf2f8" font-size="17">5. 마이크 release</text>
+<text x="480.0" y="700" text-anchor="middle" fill="#edf2f8" font-size="17">6. 마이크 해제 후 최종</text>
+<text x="480.0" y="724" text-anchor="middle" fill="#edf2f8" font-size="17">상태 발행</text>
+<line x1="600" y1="738" x2="360" y2="738" class="seq-arrow" marker-end="url(#04-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="780" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="809" text-anchor="middle" fill="#c8d8e8" font-size="17">저장 오류면 Gleo 호출을 취소합니다. 녹음 중이 아니었다면 저장 단계를 건너뜁니다.</text>
+<path d="M360,874 h48 v48 h-48" class="seq-arrow" marker-end="url(#04-arrow)"/>
+<text x="424" y="888" text-anchor="start" fill="#edf2f8" font-size="17">7. 300ms 대기·화면 활성 상태 재확인</text>
+<text x="720.0" y="972" text-anchor="middle" fill="#edf2f8" font-size="17">8. 패키지를 지정한 VOICE_ASSIST 브로드캐스트</text>
+<line x1="360" y1="986" x2="1080" y2="986" class="seq-arrow" marker-end="url(#04-arrow)"/>
+<text x="240.0" y="1048" text-anchor="middle" fill="#edf2f8" font-size="17">9. Gleo 호출 요청 상태</text>
+<text x="240.0" y="1072" text-anchor="middle" fill="#edf2f8" font-size="17">표시</text>
+<line x1="360" y1="1086" x2="120" y2="1086" class="seq-arrow" marker-end="url(#04-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="1128" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1157" text-anchor="middle" fill="#c8d8e8" font-size="17">화면을 떠나거나 재생성되면 아직 보내지 않은 요청을 취소합니다. Gleo 사용 후 녹음을 자동 재개하지 않습니다.</text>
+<rect x="26" y="1212" width="1148" height="78" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1241" text-anchor="middle" fill="#c8d8e8" font-size="17">Pleos Connect v2.1.0 / 설치된 Gleo 4.2.0.15에서 확인한 호환 경로입니다. 요청 전송을 음성 응답 성공이나 공개 API 지원</text>
+<text x="600.0" y="1265" text-anchor="middle" fill="#c8d8e8" font-size="17">보장으로 표현하지 않습니다.</text>
+</svg></div><details><summary>편집 가능한 Mermaid 코드</summary><pre>sequenceDiagram
+    autonumber
+    participant U as 사용자
+    participant A as 녹음 화면&lt;br/&gt;MainActivity
+    participant R as 녹음 서비스&lt;br/&gt;RecordingService
+    participant F as 기기 저장소
+    participant G as Gleo&lt;br/&gt;ai.umos.ambientai
+    U-&gt;&gt;A: Gleo 사용하기 선택
+    A-&gt;&gt;A: 화면 활성·Gleo 설치 여부·중복 요청 확인
+    Note over U,G: 녹음 중인 경우 아래 저장 단계를 수행합니다. 시작·저장 중에는 요청을 받지 않습니다.
+    A-&gt;&gt;R: 녹음 종료 요청
+    R-&gt;&gt;F: 녹음을 종료하고 M4A 확정
+    R-&gt;&gt;R: 마이크 release
+    R--&gt;&gt;A: 마이크 해제 후 최종 상태 발행
+    Note over U,G: 저장 오류면 Gleo 호출을 취소합니다. 녹음 중이 아니었다면 저장 단계를 건너뜁니다.
+    A-&gt;&gt;A: 300ms 대기·화면 활성 상태 재확인
+    A-&gt;&gt;G: 패키지를 지정한 VOICE_ASSIST 브로드캐스트
+    A--&gt;&gt;U: Gleo 호출 요청 상태 표시
+    Note over U,G: 화면을 떠나거나 재생성되면 아직 보내지 않은 요청을 취소합니다. Gleo 사용 후 녹음을 자동 재개하지 않습니다.
+    Note over U,G: Pleos Connect v2.1.0 / 설치된 Gleo 4.2.0.15에서 확인한 호환 경로입니다. 요청 전송을 음성 응답 성공이나 공개 API 지원 보장으로 표현하지 않습니다.
+</pre></details></section><section id="05_하이라이트"><header><h2>05 · 명령 수신 → 웃음 분석 → 클립 재생</h2><p>앱 버튼 또는 Gleo의 Activity Intent로 요청을 받습니다. 녹음 분석은 기기 안의 YAMNet이 수행하며, 대화 전사나 의미 기반 재미 평가는 포함하지 않습니다.</p><div class="links"><a href="05_하이라이트.svg" target="_blank" rel="noopener">SVG 크게 열기</a><a href="05_하이라이트.mmd" download>Mermaid 원본 다운로드</a></div></header><div class="drawing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1840" role="img" aria-label="05 · 명령 수신 → 웃음 분석 → 클립 재생">
+<title>05 · 명령 수신 → 웃음 분석 → 클립 재생</title>
+<defs><marker id="05-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10" fill="none" stroke="#ffb86b" stroke-width="1.7"/></marker></defs>
+<style>text{font-family:"Malgun Gothic","Noto Sans KR",sans-serif}.seq-life{stroke:#42566e;stroke-dasharray:6 7;stroke-width:1.4}.seq-arrow{fill:none;stroke:#ffb86b;stroke-width:2}</style>
+<rect width="1440" height="1840" rx="16" fill="#101925"/>
+<text x="28" y="36" text-anchor="start" fill="#ffb86b" font-size="22">05 · 명령 수신 → 웃음 분석 → 클립 재생</text>
+<line x1="120" y1="134" x2="120" y2="1818" class="seq-life"/>
+<rect x="12" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="120" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">사용자 / Gleo</text>
+<line x1="360" y1="134" x2="360" y2="1818" class="seq-life"/>
+<rect x="252" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="360" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">하이라이트 화면</text>
+<text x="360" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">HighlightsActivity</text>
+<line x1="600" y1="134" x2="600" y2="1818" class="seq-life"/>
+<rect x="492" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="600" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">호출 규약</text>
+<text x="600" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">GleoContract</text>
+<line x1="840" y1="134" x2="840" y2="1818" class="seq-life"/>
+<rect x="732" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="840" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">분석 서비스</text>
+<text x="840" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">HighlightService</text>
+<line x1="1080" y1="134" x2="1080" y2="1818" class="seq-life"/>
+<rect x="972" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1080" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">로컬 분석</text>
+<text x="1080" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">YAMNet / Clipper</text>
+<line x1="1320" y1="134" x2="1320" y2="1818" class="seq-life"/>
+<rect x="1212" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1320" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">기기 저장소</text>
+<text x="1320" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">HighlightStore</text>
+<text x="240.0" y="186" text-anchor="middle" fill="#edf2f8" font-size="17">1. 분석·목록·재생 버튼</text>
+<text x="240.0" y="210" text-anchor="middle" fill="#edf2f8" font-size="17">또는 Activity Intent</text>
+<line x1="120" y1="224" x2="360" y2="224" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="480.0" y="286" text-anchor="middle" fill="#edf2f8" font-size="17">2. action·개별</text>
+<text x="480.0" y="310" text-anchor="middle" fill="#edf2f8" font-size="17">extra·ACTION_PARAM</text>
+<text x="480.0" y="334" text-anchor="middle" fill="#edf2f8" font-size="17">검증</text>
+<line x1="360" y1="348" x2="600" y2="348" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="480.0" y="410" text-anchor="middle" fill="#edf2f8" font-size="17">3. 검증한 기능과</text>
+<text x="480.0" y="434" text-anchor="middle" fill="#edf2f8" font-size="17">파라미터</text>
+<line x1="600" y1="448" x2="360" y2="448" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="490" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="519" text-anchor="middle" fill="#c8d8e8" font-size="17">FIND_RECORDING_HIGHLIGHTS / SHOW_RECORDING_HIGHLIGHTS / PLAY_RECORDING_HIGHLIGHT와 com.example.hd_project. 접두사 형식을 모두 받습니다.</text>
+<rect x="26" y="574" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="603" text-anchor="middle" fill="#c8d8e8" font-size="17">분석 요청 경로: 녹음 중이면 거절합니다. 파일이 없으면 실패, 기존 결과가 있으면 재사용합니다. 다른 분석이 진행 중이면 새 분석을 시작하지 않습니다.</text>
+<text x="600.0" y="678" text-anchor="middle" fill="#edf2f8" font-size="17">4. 선택한 저장 녹음 분석 접수</text>
+<line x1="360" y1="692" x2="840" y2="692" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="240.0" y="754" text-anchor="middle" fill="#edf2f8" font-size="17">5. Gleo 요청이면</text>
+<text x="240.0" y="778" text-anchor="middle" fill="#edf2f8" font-size="17">success: 분석 접수됨</text>
+<line x1="360" y1="792" x2="120" y2="792" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="834" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="863" text-anchor="middle" fill="#c8d8e8" font-size="17">접수 응답은 분석 완료를 뜻하지 않습니다. 수동 버튼에서는 Gleo callback을 보내지 않습니다.</text>
+<text x="960.0" y="938" text-anchor="middle" fill="#edf2f8" font-size="17">6. AAC 디코딩 → 16kHz</text>
+<text x="960.0" y="962" text-anchor="middle" fill="#edf2f8" font-size="17">모노 → 웃음 후보 선택</text>
+<line x1="840" y1="976" x2="1080" y2="976" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="1200.0" y="1038" text-anchor="middle" fill="#edf2f8" font-size="17">7. 원본을 유지하며 최대</text>
+<text x="1200.0" y="1062" text-anchor="middle" fill="#edf2f8" font-size="17">3개 M4A 클립 저장</text>
+<line x1="1080" y1="1076" x2="1320" y2="1076" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="600.0" y="1138" text-anchor="middle" fill="#edf2f8" font-size="17">8. 저장된 진행률·완료 상태를 화면이 조회</text>
+<line x1="840" y1="1152" x2="360" y2="1152" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="1194" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="1223" text-anchor="middle" fill="#c8d8e8" font-size="17">목록·재생 요청은 저장된 결과를 사용합니다. 잘못된 인자는 asking, 없는 클립의 재생은 fail로 응답합니다. 빈 목록 조회는 success와 빈 배열을 반환합니다.</text>
+<text x="240.0" y="1298" text-anchor="middle" fill="#edf2f8" font-size="17">9. 목록 보기 또는 1~3번</text>
+<text x="240.0" y="1322" text-anchor="middle" fill="#edf2f8" font-size="17">클립 재생</text>
+<line x1="120" y1="1336" x2="360" y2="1336" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="840.0" y="1398" text-anchor="middle" fill="#edf2f8" font-size="17">10. 저장된 클립 조회</text>
+<line x1="360" y1="1412" x2="1320" y2="1412" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="840.0" y="1474" text-anchor="middle" fill="#edf2f8" font-size="17">11. 클립 정보·파일 반환</text>
+<line x1="1320" y1="1488" x2="360" y2="1488" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<path d="M360,1540 h48 v48 h-48" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="424" y="1554" text-anchor="start" fill="#edf2f8" font-size="17">12. 선택한 클립 재생</text>
+<text x="240.0" y="1638" text-anchor="middle" fill="#edf2f8" font-size="17">13. Gleo 요청이면</text>
+<text x="240.0" y="1662" text-anchor="middle" fill="#edf2f8" font-size="17">callback 전송</text>
+<line x1="360" y1="1676" x2="120" y2="1676" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="1718" width="1388" height="78" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="1747" text-anchor="middle" fill="#c8d8e8" font-size="17">callback에는 packageName과 JSON response를 넣습니다. data는 JSON 배열 문자열이며 재생 응답은 silent 모드입니다. 실제 음성 호출의 전체 성공·정식 연동</text>
+<text x="720.0" y="1771" text-anchor="middle" fill="#c8d8e8" font-size="17">승인은 별도 확인 대상입니다.</text>
+</svg></div><details><summary>편집 가능한 Mermaid 코드</summary><pre>sequenceDiagram
+    autonumber
+    participant G as 사용자 / Gleo
+    participant A as 하이라이트 화면&lt;br/&gt;HighlightsActivity
+    participant C as 호출 규약&lt;br/&gt;GleoContract
+    participant S as 분석 서비스&lt;br/&gt;HighlightService
+    participant M as 로컬 분석&lt;br/&gt;YAMNet / Clipper
+    participant F as 기기 저장소&lt;br/&gt;HighlightStore
+    G-&gt;&gt;A: 분석·목록·재생 버튼 또는 Activity Intent
+    A-&gt;&gt;C: action·개별 extra·ACTION_PARAM 검증
+    C--&gt;&gt;A: 검증한 기능과 파라미터
+    Note over G,F: FIND_RECORDING_HIGHLIGHTS / SHOW_RECORDING_HIGHLIGHTS / PLAY_RECORDING_HIGHLIGHT와 com.example.hd_project. 접두사 형식을 모두 받습니다.
+    Note over G,F: 분석 요청 경로: 녹음 중이면 거절합니다. 파일이 없으면 실패, 기존 결과가 있으면 재사용합니다. 다른 분석이 진행 중이면 새 분석을 시작하지 않습니다.
+    A-&gt;&gt;S: 선택한 저장 녹음 분석 접수
+    A--&gt;&gt;G: Gleo 요청이면 success: 분석 접수됨
+    Note over G,F: 접수 응답은 분석 완료를 뜻하지 않습니다. 수동 버튼에서는 Gleo callback을 보내지 않습니다.
+    S-&gt;&gt;M: AAC 디코딩 → 16kHz 모노 → 웃음 후보 선택
+    M-&gt;&gt;F: 원본을 유지하며 최대 3개 M4A 클립 저장
+    S--&gt;&gt;A: 저장된 진행률·완료 상태를 화면이 조회
+    Note over G,F: 목록·재생 요청은 저장된 결과를 사용합니다. 잘못된 인자는 asking, 없는 클립의 재생은 fail로 응답합니다. 빈 목록 조회는 success와 빈 배열을 반환합니다.
+    G-&gt;&gt;A: 목록 보기 또는 1~3번 클립 재생
+    A-&gt;&gt;F: 저장된 클립 조회
+    F--&gt;&gt;A: 클립 정보·파일 반환
+    A-&gt;&gt;A: 선택한 클립 재생
+    A--&gt;&gt;G: Gleo 요청이면 callback 전송
+    Note over G,F: callback에는 packageName과 JSON response를 넣습니다. data는 JSON 배열 문자열이며 재생 응답은 silent 모드입니다. 실제 음성 호출의 전체 성공·정식 연동 승인은 별도 확인 대상입니다.
+</pre></details></section><section id="06_화면분할"><header><h2>06 · 차량 + 이동 기록 + 내비게이션</h2><p>화면 크기 전환에 따라 앱 화면을 다시 만듭니다. 좁은 화면에서 잘못된 visibility 값으로 종료되던 오류를 수정했고 실제 3분할 표시를 확인했습니다.</p><div class="links"><a href="06_화면분할.svg" target="_blank" rel="noopener">SVG 크게 열기</a><a href="06_화면분할.mmd" download>Mermaid 원본 다운로드</a></div></header><div class="drawing"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1168" role="img" aria-label="06 · 차량 + 이동 기록 + 내비게이션">
+<title>06 · 차량 + 이동 기록 + 내비게이션</title>
+<defs><marker id="06-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10" fill="none" stroke="#ffb86b" stroke-width="1.7"/></marker></defs>
+<style>text{font-family:"Malgun Gothic","Noto Sans KR",sans-serif}.seq-life{stroke:#42566e;stroke-dasharray:6 7;stroke-width:1.4}.seq-arrow{fill:none;stroke:#ffb86b;stroke-width:2}</style>
+<rect width="1200" height="1168" rx="16" fill="#101925"/>
+<text x="28" y="36" text-anchor="start" fill="#ffb86b" font-size="22">06 · 차량 + 이동 기록 + 내비게이션</text>
+<line x1="120" y1="134" x2="120" y2="1146" class="seq-life"/>
+<rect x="12" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="120" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">사용자</text>
+<line x1="360" y1="134" x2="360" y2="1146" class="seq-life"/>
+<rect x="252" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="360" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">Pleos</text>
+<text x="360" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">창 관리자</text>
+<line x1="600" y1="134" x2="600" y2="1146" class="seq-life"/>
+<rect x="492" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="600" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">이동 기록</text>
+<text x="600" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Activity / Layout</text>
+<line x1="840" y1="134" x2="840" y2="1146" class="seq-life"/>
+<rect x="732" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="840" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">앱 상태</text>
+<text x="840" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Coordinator / Store</text>
+<line x1="1080" y1="134" x2="1080" y2="1146" class="seq-life"/>
+<rect x="972" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1080" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">진행 중 녹음</text>
+<text x="1080" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">RecordingService</text>
+<text x="240.0" y="186" text-anchor="middle" fill="#edf2f8" font-size="17">1. 앱 창을 좁은 모드로</text>
+<text x="240.0" y="210" text-anchor="middle" fill="#edf2f8" font-size="17">전환</text>
+<line x1="120" y1="224" x2="360" y2="224" class="seq-arrow" marker-end="url(#06-arrow)"/>
+<text x="480.0" y="286" text-anchor="middle" fill="#edf2f8" font-size="17">2. 창 크기</text>
+<text x="480.0" y="310" text-anchor="middle" fill="#edf2f8" font-size="17">변경·Activity 재생성</text>
+<line x1="360" y1="324" x2="600" y2="324" class="seq-arrow" marker-end="url(#06-arrow)"/>
+<path d="M600,376 h48 v48 h-48" class="seq-arrow" marker-end="url(#06-arrow)"/>
+<text x="664" y="390" text-anchor="start" fill="#edf2f8" font-size="17">3. 현재 창 폭에 맞는 리소스 선택</text>
+<rect x="26" y="454" width="1148" height="78" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="483" text-anchor="middle" fill="#c8d8e8" font-size="17">900dp 미만: 세로 배치·하단 보조 문구 숨김. 900dp 이상: 가로 배치·보조 문구 표시. XML visibility의 gone 값은 2이며 코드</text>
+<text x="600.0" y="507" text-anchor="middle" fill="#c8d8e8" font-size="17">상수 View.GONE=8과 다릅니다.</text>
+<text x="720.0" y="582" text-anchor="middle" fill="#edf2f8" font-size="17">4. 상태 관찰</text>
+<text x="720.0" y="606" text-anchor="middle" fill="#edf2f8" font-size="17">재등록·탑승 안내 복원</text>
+<line x1="600" y1="620" x2="840" y2="620" class="seq-arrow" marker-end="url(#06-arrow)"/>
+<text x="720.0" y="682" text-anchor="middle" fill="#edf2f8" font-size="17">5. 현재 탑승·녹음 상태</text>
+<text x="720.0" y="706" text-anchor="middle" fill="#edf2f8" font-size="17">반영</text>
+<line x1="840" y1="720" x2="600" y2="720" class="seq-arrow" marker-end="url(#06-arrow)" stroke-dasharray="6 5"/>
+<text x="960.0" y="782" text-anchor="middle" fill="#edf2f8" font-size="17">6. 이미 시작한 녹음의</text>
+<text x="960.0" y="806" text-anchor="middle" fill="#edf2f8" font-size="17">시간·입력 크기 전달</text>
+<line x1="1080" y1="820" x2="840" y2="820" class="seq-arrow" marker-end="url(#06-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="862" width="1148" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="891" text-anchor="middle" fill="#c8d8e8" font-size="17">서비스가 이미 녹음 중인 경우의 상태 전달입니다. 화면 분할이나 Activity 재생성이 새 녹음을 시작하지 않습니다.</text>
+<text x="240.0" y="966" text-anchor="middle" fill="#edf2f8" font-size="17">7. 차량 화면 + 이동</text>
+<text x="240.0" y="990" text-anchor="middle" fill="#edf2f8" font-size="17">기록 + 내비 동시 표시</text>
+<line x1="360" y1="1004" x2="120" y2="1004" class="seq-arrow" marker-end="url(#06-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="1046" width="1148" height="78" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="600.0" y="1075" text-anchor="middle" fill="#c8d8e8" font-size="17">기기 테스트: 841·899·900·1682dp에서 홈·녹음 목록 레이아웃 생성 확인. 에뮬레이터에서 1682→841dp 전환 후 앱 프로세스 유지와</text>
+<text x="600.0" y="1099" text-anchor="middle" fill="#c8d8e8" font-size="17">3분할 표시 확인.</text>
+</svg></div><details><summary>편집 가능한 Mermaid 코드</summary><pre>sequenceDiagram
+    autonumber
+    participant U as 사용자
+    participant P as Pleos&lt;br/&gt;창 관리자
+    participant A as 이동 기록&lt;br/&gt;Activity / Layout
+    participant C as 앱 상태&lt;br/&gt;Coordinator / Store
+    participant R as 진행 중 녹음&lt;br/&gt;RecordingService
+    U-&gt;&gt;P: 앱 창을 좁은 모드로 전환
+    P-&gt;&gt;A: 창 크기 변경·Activity 재생성
+    A-&gt;&gt;A: 현재 창 폭에 맞는 리소스 선택
+    Note over U,R: 900dp 미만: 세로 배치·하단 보조 문구 숨김. 900dp 이상: 가로 배치·보조 문구 표시. XML visibility의 gone 값은 2이며 코드 상수 View.GONE=8과 다릅니다.
+    A-&gt;&gt;C: 상태 관찰 재등록·탑승 안내 복원
+    C--&gt;&gt;A: 현재 탑승·녹음 상태 반영
+    R--&gt;&gt;C: 이미 시작한 녹음의 시간·입력 크기 전달
+    Note over U,R: 서비스가 이미 녹음 중인 경우의 상태 전달입니다. 화면 분할이나 Activity 재생성이 새 녹음을 시작하지 않습니다.
+    P--&gt;&gt;U: 차량 화면 + 이동 기록 + 내비 동시 표시
+    Note over U,R: 기기 테스트: 841·899·900·1682dp에서 홈·녹음 목록 레이아웃 생성 확인. 에뮬레이터에서 1682→841dp 전환 후 앱 프로세스 유지와 3분할 표시 확인.
+</pre></details></section>
+<section id="verification"><header><h2>검증 결과와 적용 범위</h2><p>2026-10-31 · Pleos Connect v2.1.0 / Android 14 API 34 / x86_64 · Vehicle SDK 2.3.2. 이번 검사와 기존 시연 기록을 구분했습니다.</p></header>
+<table aria-label="구현 검증 결과"><tbody><tr><th scope="row">이번 코드 검증</th><td>Debug 앱·기기 테스트 APK 빌드 성공. 단위 테스트 25개 통과. Lint 오류 0개·경고 17개.</td></tr><tr><th scope="row">이번 기기 테스트</th><td>직접 ADB instrumentation으로 선택한 8개 통과: 패키지 1개, Gleo 호출 규약 5개, 화면 레이아웃 2개. 기존 사용자 녹음을 분석하는 시험은 수행하지 않음.</td></tr><tr><th scope="row">이번 화면 검증</th><td>차량·이동 기록·내비 동시 표시. 앱 폭 1682→841dp 전환 후 동일 앱 프로세스 유지·새 강제 종료 없음.</td></tr><tr><th scope="row">녹음 파일 확인</th><td>사용자가 만든 약 10.26초 AAC/M4A 파일의 정상 디코딩·오디오 신호 확인. Windows로 원본을 복사함. 음성 내용·재생 출력·실차 음질 전체를 검증한 것은 아님.</td></tr><tr><th scope="row">기존 탑승 안내 기록</th><td>내비 표시 중 알림창 등록, 알림 선택 후 자동 녹음 없음, 건너뛰기·다음 탑승·안내 끄기, 프로세스·APK 교체 후 대기 복원을 기존 시연 기록에서 확인.</td></tr><tr><th scope="row">기존 Gleo 전환 기록</th><td>일반 앱 버튼으로 Gleo 듣기 진입 및 녹음 중 종료·저장 후 마이크 해제를 확인한 기록이 있음.</td></tr><tr><th scope="row">Gleo 명령 호환</th><td>실제 관찰한 패키지 접두사 action과 짧은 action을 모두 처리. 수정본의 자연어 명령 → 앱 화면 → callback 전체 성공과 정식 승인은 별도 확인 필요.</td></tr><tr><th scope="row">기존 웃음 분석 기록</th><td>공개 테스트 음원에서 후보 추출·실제 M4A 생성·재생을 확인한 기록. 실제 차량의 재미 판단 정확도나 발화자 식별 성능을 뜻하지 않음.</td></tr><tr><th scope="row">미검증 범위</th><td>실제 재부팅·차량 시동·절전 복귀·장시간 녹음·통화와 Gleo 경합·차량별 권한 및 배포 심사 허용.</td></tr></tbody></table>
+<figure><a href="3분할_확인.png" target="_blank" rel="noopener"><img src="3분할_확인.png" alt="왼쪽 차량 화면, 가운데 이동 기록 앱, 오른쪽 내비게이션이 동시에 표시된 에뮬레이터" loading="lazy"></a><figcaption>실제 에뮬레이터 캡처: 좁은 화면 오류 수정 후 차량·앱·내비가 함께 표시됩니다. 지도 콘텐츠 로딩·경로 안내 기능 전체를 검증한 화면은 아닙니다.</figcaption></figure>
+<div class="body-copy"><h2>저장과 상태 관리</h2><ul><li>녹음: <code>noBackupFilesDir/recordings</code>에 AAC/M4A, 모노 44.1kHz·96kbps로 저장합니다.</li><li>현재 에뮬레이터 사용자 10의 경로: <code>/data/user/10/com.example.hd_project/no_backup/recordings/</code>. 사용자 번호는 기기마다 다릅니다.</li><li>Windows에 복사한 테스트 파일은 프로젝트의 <code>captures/recordings/</code>에 있습니다. ADB로 수동 복사한 것이며 앱 자체 내보내기 기능은 아닙니다.</li><li>사용자 녹음·APK·로컬 캡처는 Git에 포함하지 않습니다. 위 검증 화면에는 녹음 내용이 포함되지 않습니다.</li><li>앱 삭제 시 앱 전용 파일도 삭제됩니다. 녹음 업로드·대화 전사·자동 녹음 재개는 구현하지 않았습니다.</li><li>진행 중 강제 종료로 남은 <code>.pending</code> 녹음 파일의 자동 복구는 구현하지 않았습니다.</li></ul>
+<p>단일 좌석 구독은 화면과 대기 서비스가 공유합니다. 같은 부팅 안에서 응답 상태를 복원하지만, 앱이 중단된 동안 빈 좌석과 재탑승을 모두 놓치면 새로운 이동을 구분할 수 없습니다.</p>
+<a href="검토_구현_검증결과.txt">최종 검토·구현·검증 결과 TXT</a></div></section>
+<footer><strong>참고 문서와 편집 원본</strong><ul><li><a href="https://developer.android.com/develop/background-work/services/fgs/service-types">Android · 포그라운드 서비스 유형</a></li><li><a href="https://developer.android.com/training/cars/platforms/automotive-os/notifications">Android Automotive · 알림 동작</a></li><li><a href="https://document.pleos.ai/en/docs/connect/guide/docs-design/getting-started/window">Pleos · 창 정책과 화면 분할</a></li><li><a href="https://document.pleos.ai/en/docs/pleos-only/app-integration-guide/guide/app-capability">Gleo · App Schema</a></li><li><a href="https://document.pleos.ai/en/docs/pleos-only/app-integration-guide/guide/action_callback">Gleo · Callback Schema</a></li></ul><p>인터넷 없이 볼 수 있는 HTML·SVG 문서입니다. 각 다이어그램의 Mermaid 원본을 함께 제공합니다. 저장소의 <code>docs/sequence/</code>와 지정한 문서 폴더에 같은 최종본을 저장했습니다. 세부 Gleo 검증 기록은 저장소의 <code>docs/GLEO_HIGHLIGHTS.md</code>를 참고하세요.</p></footer>
+</main></body></html>

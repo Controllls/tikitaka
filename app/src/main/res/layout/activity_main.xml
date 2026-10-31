@@ -41,6 +41,10 @@
         <com.google.android.material.button.MaterialButton android:id="@+id/history_button"
             style="@style/Widget.Journal.Navigation" android:text="@string/recordings"
             android:layout_marginStart="12dp" app:icon="@drawable/ic_history" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/use_gleo_button"
+            style="@style/Widget.Journal.Navigation" android:text="@string/use_gleo"
+            android:layout_marginStart="12dp" app:icon="@drawable/ic_audio"
+            android:textColor="@color/sample_primary" app:iconTint="@color/sample_primary" />
         <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
         <com.google.android.material.button.MaterialButton android:id="@+id/highlights_button"
             style="@style/Widget.Journal.Navigation" android:text="@string/highlights"

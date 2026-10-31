@@ -5,9 +5,14 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-feature android:name="android.hardware.type.automotive" android:required="true" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />
+    <queries>
+        <package android:name="ai.umos.ambientai" />
+    </queries>
     <application
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -19,6 +24,18 @@
         android:theme="@style/Theme.HD_project">
         <service android:name=".RecordingService" android:exported="false"
             android:foregroundServiceType="microphone" />
+        <service android:name=".BoardingService" android:exported="false"
+            android:foregroundServiceType="specialUse" android:stopWithTask="false">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-enabled in-vehicle driver seat occupancy subscription for boarding reminders while the recorder UI is closed. No microphone access. Persistent status notification with an off action; event-based Vehicle SDK subscription." />
+        </service>
+        <receiver android:name=".BoardingActionReceiver" android:exported="false" />
+        <receiver android:name=".BoardingBootReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
         <activity android:name=".RecordingsActivity" android:exported="false" />
         <service android:name=".HighlightService" android:exported="false"
             android:foregroundServiceType="dataSync" />
@@ -27,6 +44,9 @@
                 <action android:name="FIND_RECORDING_HIGHLIGHTS" />
                 <action android:name="SHOW_RECORDING_HIGHLIGHTS" />
                 <action android:name="PLAY_RECORDING_HIGHLIGHT" />
+                <action android:name="${applicationId}.FIND_RECORDING_HIGHLIGHTS" />
+                <action android:name="${applicationId}.SHOW_RECORDING_HIGHLIGHTS" />
+                <action android:name="${applicationId}.PLAY_RECORDING_HIGHLIGHT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

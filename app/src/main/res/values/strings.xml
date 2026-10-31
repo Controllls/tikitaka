@@ -13,7 +13,7 @@
     <string name="saving_status">저장 중</string>
     <string name="error_status">녹음 중단</string>
     <string name="idle_hint">버튼을 눌러 녹음을 시작하세요</string>
-    <string name="recording_hint">한 번 더 누르면 종료하고 저장합니다</string>
+    <string name="recording_hint">녹음 버튼이나 Gleo 사용하기를 누르면 종료하고 저장해요.</string>
     <string name="local_storage">음성은 이 기기에만 저장됩니다</string>
     <string name="start_recording">녹음 시작</string>
     <string name="stop_recording">녹음 종료</string>
@@ -21,10 +21,13 @@
     <string name="boarding_detected">탑승을 확인했어요</string>
     <string name="boarding_connecting">차량 연결 중</string>
     <string name="boarding_unavailable">탑승 감지 연결을 확인해 주세요 · 직접 녹음 가능</string>
-    <string name="consent_title">이번 이동을 기록할까요?</string>
-    <string name="consent_message">함께 탄 사람에게 녹음 사실을 알리고 동의를 확인해 주세요.\n\n시작하면 차량 마이크의 음성을 이 기기에 저장합니다. 언제든 가운데 버튼으로 종료할 수 있습니다.</string>
-    <string name="consent_start">녹음 시작</string>
     <string name="consent_skip">이번에는 안 함</string>
+    <string name="inline_boarding_title">탑승을 확인했어요.\n이번 이동을 기록할까요?</string>
+    <string name="inline_waiting_status">시작 대기</string>
+    <string name="inline_start">눌러서 녹음 시작</string>
+    <string name="inline_boarding_hint">준비되면 위의 마이크 버튼을 눌러 주세요.</string>
+    <string name="inline_notice">함께 탄 분의 동의를 확인한 뒤 시작해 주세요.\n음성은 이 기기에만 저장됩니다.</string>
+    <string name="inline_skipped">이번 이동은 녹음하지 않아요. 필요하면 버튼을 눌러 시작하세요.</string>
     <string name="permission_denied">마이크 권한이 필요합니다. 버튼을 눌러 다시 허용해 주세요.</string>
     <string name="permission_settings">마이크 권한이 꺼져 있습니다. 앱 설정에서 마이크를 허용해 주세요.</string>
     <string name="open_settings">앱 설정 열기</string>
@@ -60,7 +63,6 @@
     <string name="home">홈</string>
     <string name="footer_caption">작은 대화가, 소중한 기억으로.</string>
     <string name="current_trip">이번 이동</string>
-    <string name="trip_explanation">탑승을 확인하면 녹음 여부를 먼저 물어볼게요.</string>
     <string name="saved_conversations">저장된 대화</string>
     <string name="total_duration">총 기록 시간</string>
     <string name="zero_recordings">0개</string>
@@ -80,4 +82,22 @@
     <string name="archive_load_failed">기록을 불러오지 못했습니다. 잠시 후 다시 열어 주세요.</string>
     <string name="playback_progress">%1$s / %2$s</string>
     <string name="return_to_recorder">녹음 화면으로</string>
+    <string name="standby_title">앱을 닫아도 탑승 안내</string>
+    <string name="standby_off_description">켜 두면 앱 화면 밖에서도 탑승을 알려드려요.\n녹음은 시작 버튼을 눌러야 시작돼요.</string>
+    <string name="standby_on_description">앱 화면 밖에서도 안내를 기다리고 있어요.\n대기 중에는 마이크를 사용하지 않아요.</string>
+    <string name="standby_starting">탑승 안내 대기를 시작하고 있어요.</string>
+    <string name="standby_connecting">차량 연결 중 · 대기 중 마이크 사용 안 함</string>
+    <string name="standby_connection_failed">차량 연결을 확인해 주세요. 연결이 돌아오지 않으면 안내를 껐다 켜 주세요.</string>
+    <string name="standby_start_failed">탑승 안내를 시작하지 못했어요. 스위치를 껐다 켜서 다시 시도해 주세요.</string>
+    <string name="standby_permission_needed">화면 밖에서 안내하려면 알림을 허용해 주세요.</string>
+    <string name="standby_settings">알림 설정</string>
+    <string name="standby_channel">탑승 안내 대기 상태</string>
+    <string name="boarding_channel">탑승 시 기록 안내</string>
+    <string name="standby_notification_title">탑승 안내 대기 중</string>
+    <string name="standby_notification_text">차량 좌석 신호를 기다려요 · 마이크 사용 안 함</string>
+    <string name="standby_recording_title">탑승 안내 켜짐 · 녹음 중</string>
+    <string name="standby_recording">녹음 중에는 추가 안내하지 않아요. 녹음 알림에서 종료할 수 있어요.</string>
+    <string name="standby_disable">안내 끄기</string>
+    <string name="boarding_notification_title">이번 이동을 기록할까요?</string>
+    <string name="boarding_notification_text">탑승을 확인했어요. 눌러서 녹음 화면을 열어 주세요.</string>
 </resources>

@@ -54,7 +54,7 @@ class HighlightsActivity : AppCompatActivity() {
         selectedId = savedInstanceState?.getString("selected")
             ?: HighlightService.runningSource ?: HighlightStore.batches(this).firstOrNull()?.sourceId
             ?: RecordingFiles.list(this).firstOrNull()?.file?.name
-        if (savedInstanceState == null && intent.action in GleoContract.actions) pendingIntent = intent
+        if (savedInstanceState == null && GleoContract.actionName(intent.action, packageName) != null) pendingIntent = intent
         findViewById<View>(R.id.highlights_back).setOnClickListener { finish() }
         findViewById<View>(R.id.choose_recording).setOnClickListener { chooseRecording() }
         findViewById<View>(R.id.analyze_highlights).setOnClickListener { analyze(selectedId, false) }
@@ -64,7 +64,7 @@ class HighlightsActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        if (intent.action in GleoContract.actions) pendingIntent = intent
+        if (GleoContract.actionName(intent.action, packageName) != null) pendingIntent = intent
     }
 
     override fun onResume() {
@@ -122,8 +122,9 @@ class HighlightsActivity : AppCompatActivity() {
 
     private fun handleGleo(intent: Intent) {
         dialog?.dismiss()
-        val request = runCatching { GleoContract.parse(intent) }.getOrElse {
-            GleoContract.respond(this, intent.action.orEmpty(), "asking", "Please provide valid recording or highlight parameters.")
+        val request = runCatching { GleoContract.parse(intent, packageName) }.getOrElse {
+            val function = GleoContract.actionName(intent.action, packageName) ?: return
+            GleoContract.respond(this, function, "asking", "Please provide valid recording or highlight parameters.")
             return
         }
         when (request.action) {

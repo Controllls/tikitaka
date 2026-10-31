@@ -30,19 +30,36 @@ class GleoIntegrationTest {
             val action = function.getString("name")
             assertTrue(action in GleoContract.actions)
             assertEquals("activity", function.getString("component"))
-            val resolved = context.packageManager.resolveActivity(Intent(action).setPackage(context.packageName),
-                PackageManager.MATCH_DEFAULT_ONLY)
-            assertNotNull(action, resolved)
-            assertTrue(resolved!!.activityInfo.exported)
+            for (intentAction in listOf(action, "${context.packageName}.$action")) {
+                val resolved = context.packageManager.resolveActivity(Intent(intentAction).setPackage(context.packageName),
+                    PackageManager.MATCH_DEFAULT_ONLY)
+                assertNotNull(intentAction, resolved)
+                assertTrue(resolved!!.activityInfo.exported)
+                assertEquals(action, GleoContract.parse(Intent(intentAction), context.packageName).action)
+            }
         }
     }
     @Test fun acceptsBothDocumentedParameterFormatsAndMissingOptionalSource() {
-        assertNull(GleoContract.parse(Intent(GleoContract.ANALYZE)).sourceId)
-        assertEquals(2, GleoContract.parse(Intent(GleoContract.PLAY).putExtra("highlightNumber", 2)).number)
+        assertNull(GleoContract.parse(Intent(GleoContract.ANALYZE), context.packageName).sourceId)
+        assertEquals(2, GleoContract.parse(Intent(GleoContract.PLAY).putExtra("highlightNumber", 2), context.packageName).number)
         assertEquals(3, GleoContract.parse(Intent(GleoContract.PLAY)
-            .putExtra("ACTION_PARAM", "{\"highlightNumber\":3}")).number)
+            .putExtra("ACTION_PARAM", "{\"highlightNumber\":3}"), context.packageName).number)
         assertEquals(1, GleoContract.parse(Intent(GleoContract.PLAY)
-            .putExtra("ACTION_PARAM", JSONObject.quote("{\"highlightNumber\":1}"))).number)
+            .putExtra("ACTION_PARAM", JSONObject.quote("{\"highlightNumber\":1}")), context.packageName).number)
+    }
+    @Test fun acceptsObservedGleoActionsAndRejectsForeignPackagePrefixes() {
+        val request = GleoContract.parse(Intent("${context.packageName}.${GleoContract.ANALYZE}")
+            .putExtra("ACTION_PARAM", "{}"), context.packageName)
+        assertEquals(GleoContract.ANALYZE, request.action)
+        assertNull(request.sourceId)
+        assertEquals(2, GleoContract.parse(Intent("${context.packageName}.${GleoContract.PLAY}")
+            .putExtra("ACTION_PARAM", "{\"highlightNumber\":2}"), context.packageName).number)
+        assertNull(GleoContract.actionName(null, context.packageName))
+        for (action in listOf("other.package.${GleoContract.ANALYZE}",
+            "${context.packageName}.${context.packageName}.${GleoContract.ANALYZE}",
+            "${context.packageName}.UNKNOWN_ACTION")) {
+            assertTrue(action, runCatching { GleoContract.parse(Intent(action), context.packageName) }.isFailure)
+        }
     }
     @Test fun rejectsMalformedFractionalConflictingOrOversizedParameters() {
         val inputs = listOf(Intent(GleoContract.PLAY).putExtra("highlightNumber", 1.5),
@@ -52,7 +69,7 @@ class GleoIntegrationTest {
             Intent(GleoContract.PLAY).putExtra("ACTION_PARAM", "{").putExtra("highlightNumber", 1),
             Intent(GleoContract.ANALYZE).putExtra("recordingId", "x".repeat(161)),
             Intent(GleoContract.PLAY).putExtra("highlightNumber", 2).putExtra("ACTION_PARAM", "{\"highlightNumber\":1}"))
-        inputs.forEach { intent -> assertTrue(runCatching { GleoContract.parse(intent) }.isFailure) }
+        inputs.forEach { intent -> assertTrue(runCatching { GleoContract.parse(intent, context.packageName) }.isFailure) }
     }
     @Test fun callbackUsesRequiredBroadcastEnvelopeAndJsonArrayString() {
         val latch = CountDownLatch(1)

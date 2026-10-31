@@ -1,0 +1,17 @@
+sequenceDiagram
+    autonumber
+    participant U as 사용자
+    participant P as Pleos<br/>창 관리자
+    participant A as 이동 기록<br/>Activity / Layout
+    participant C as 앱 상태<br/>Coordinator / Store
+    participant R as 진행 중 녹음<br/>RecordingService
+    U->>P: 앱 창을 좁은 모드로 전환
+    P->>A: 창 크기 변경·Activity 재생성
+    A->>A: 현재 창 폭에 맞는 리소스 선택
+    Note over U,R: 900dp 미만: 세로 배치·하단 보조 문구 숨김. 900dp 이상: 가로 배치·보조 문구 표시. XML visibility의 gone 값은 2이며 코드 상수 View.GONE=8과 다릅니다.
+    A->>C: 상태 관찰 재등록·탑승 안내 복원
+    C-->>A: 현재 탑승·녹음 상태 반영
+    R-->>C: 이미 시작한 녹음의 시간·입력 크기 전달
+    Note over U,R: 서비스가 이미 녹음 중인 경우의 상태 전달입니다. 화면 분할이나 Activity 재생성이 새 녹음을 시작하지 않습니다.
+    P-->>U: 차량 화면 + 이동 기록 + 내비 동시 표시
+    Note over U,R: 기기 테스트: 841·899·900·1682dp에서 홈·녹음 목록 레이아웃 생성 확인. 에뮬레이터에서 1682→841dp 전환 후 앱 프로세스 유지와 3분할 표시 확인.

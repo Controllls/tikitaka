@@ -2,15 +2,15 @@
 
 **차량 탑승을 계기로 녹음 여부를 묻고, 함께 나눈 대화를 기기에 저장해 다시 듣는 Pleos Connect 앱입니다.**
 
-현대자동차그룹 차량용 앱 개발 공모전을 준비하는 Android 프로토타입입니다. 사용자 동의 후 녹음·저장·재생하며, 이 브랜치에는 **웃음 기반 하이라이트 추출과 Gleo 앱 기능 호출 인터페이스**를 추가했습니다. 대화 전사·의미 기반 재미 평가와 실제 Gleo 음성 호출 승인은 아직 포함하지 않습니다.
+현대자동차그룹 차량용 앱 개발 공모전을 준비하는 Android 프로토타입입니다. 사용자 동의 후 녹음·저장·재생하며, **웃음 기반 하이라이트 추출과 Gleo 앱 기능 호출 인터페이스**를 구현했습니다. 대화 전사·의미 기반 재미 평가와 실제 Gleo 음성 호출 승인은 아직 포함하지 않습니다.
 
-`feature/gleo-highlights`는 커밋 `240df7b`에서 분리했습니다. 기존 작업 폴더의 커밋되지 않은 탑승 알림 수정은 포함하지 않습니다. Debug 앱은 `이동 기록 · Gleo` / `com.example.hd_project.gleo`로 별도 설치되어 기존 앱의 녹음을 보존합니다. [Gleo 구현·시연 방법](docs/GLEO_HIGHLIGHTS.md)을 먼저 확인하세요.
+Gleo 하이라이트 기능은 `main`에 병합했습니다. 현재 작업 폴더에는 탑승 안내와 **Gleo 사용하기 버튼**도 반영되어 있습니다. Debug와 release 모두 **이동 기록** / `com.example.hd_project`로 통합했으며, 같은 서명으로 설치하면 기존 앱과 녹음을 유지하면서 업데이트합니다. [Gleo 구현·시연 방법](docs/GLEO_HIGHLIGHTS.md)을 먼저 확인하세요.
 
 ![웃음 테스트 음원에서 실제로 추출한 하이라이트](docs/images/gleo-highlights.png)
 
-위 화면은 공개 웃음 테스트 음원의 앞뒤에 무음을 붙인 35초 파일에서 약 20초의 클립을 실제 저장한 결과입니다. 사용자 녹음이나 실제 Gleo 음성 호출 시연 화면은 아닙니다. 이 브랜치 검증 결과는 **단위 테스트 14개·기기 테스트 8개 통과, Lint 오류 0개·경고 15개**입니다.
+위 화면은 공개 웃음 테스트 음원의 앞뒤에 무음을 붙인 35초 파일에서 약 20초의 클립을 실제 저장한 결과입니다. 사용자 녹음이나 실제 Gleo 음성 호출 시연 화면은 아닙니다. 초기 하이라이트 검증은 단위 테스트 14개·기기 테스트 8개 통과입니다. Gleo 버튼 추가 후 **빌드·단위 테스트 25개 통과, Lint 오류 0개·경고 17개**, 에뮬레이터에서 녹음 저장 후 Gleo 듣기 전환을 확인했습니다.
 
-동작 설명·화면·검증 결과는 **2026-10-31의 앱 코드 `1c37144`**를 기준으로 합니다.
+동작 설명·검증 결과는 **2026-10-31의 백그라운드 탑승 안내 구현**을 반영합니다. 아래의 기존 화면 이미지는 탑승 안내 스위치 추가 전 모습입니다.
 
 [실행 방법](#실행-방법) · [APK 안내](#apk-안내) · [검증 결과](#검증-결과) · [현재 한계와 개발 계획](#현재-한계와-개발-계획)
 
@@ -32,14 +32,16 @@
 
 | 기능 | 현재 동작 |
 |---|---|
-| 탑승 안내 | 앱 화면이 열려 있을 때 좌석 점유 상태가 1.2초 유지되면 녹음 여부를 질문합니다. 같은 탑승 상태에서는 질문을 반복하지 않습니다. |
+| 탑승 안내 | 운전석 점유가 1.2초 유지되면 녹음 카드에 안내합니다. '앱을 닫아도 탑승 안내'를 켜고 알림을 허용하면 화면 밖에서도 좌석을 구독하고 탑승 알림을 보냅니다. 알림을 열어도 녹음은 시작되지 않습니다. |
+| 안내 대기 복원 | 별도 `specialUse` 서비스가 마이크 없이 대기합니다. 프로세스 재생성과 앱 업데이트 후 복원을 확인했습니다. 재부팅 수신 처리는 구현했지만 실제 재부팅·시동·절전 복귀는 미검증입니다. |
 | 동의·권한 확인 | 시작 선택과 마이크 권한 허용 후 녹음합니다. 건너뛰기·취소·권한 거절 시 녹음하지 않습니다. |
 | 녹음 유지·종료 | 마이크 포그라운드 서비스로 시작한 녹음을 앱 밖에서도 유지하며, 앱 버튼이나 시스템 알림에서 종료합니다. |
 | 녹음 상태 표시 | 경과 시간과 시작·녹음·저장·오류 상태를 표시합니다. 마이크 버튼의 파형은 실제 입력 크기에 반응합니다. |
 | 기록 보관·재생 | 앱 전용 공간에 M4A 파일을 저장하고 목록에서 재생·일시정지·삭제합니다. |
 | 기록 대시보드 | 실제 저장 파일을 바탕으로 기록 수, 총 시간, 가장 최근 기록을 표시합니다. |
 | 웃음 기반 하이라이트 | YAMNet을 기기에서 실행해 웃음 주변 구간을 최대 3개 추출합니다. AAC 패킷을 새 M4A로 저장하며 원본은 유지합니다. |
-| Gleo 인터페이스 | 분석 요청·목록 표시·번호로 재생하는 3개 action과 callback을 구현했습니다. 실제 음성 대화 연동은 스키마 승인 후 검증해야 합니다. |
+| Gleo 인터페이스 | 분석 요청·목록 표시·번호로 재생하는 3개 action과 callback을 구현했습니다. 에뮬레이터에서 실제 음성 인식·기능 선택을 확인했고, 호출 이름 불일치를 수정했습니다. 수정 후 음성부터 앱 응답까지의 전체 동작은 재시험이 필요합니다. |
+| Gleo 사용하기 | 하단 버튼으로 Gleo 듣기를 요청합니다. 녹음 중에는 먼저 저장·종료하고 마이크를 해제합니다. Pleos Connect v2.1.0 / Gleo 4.2.0.15에서 확인한 호환 동작입니다. |
 | 예외 처리 | 저장 공간 부족, 짧은 녹음, 저장 실패를 처리합니다. Android API 29 이상에서는 입력 무음 처리 통지를 확인해 녹음을 종료하는 경로가 있습니다. |
 
 <details>
@@ -64,7 +66,7 @@
 | Android SDK | `compileSdk 37`, `targetSdk 37`, `minSdk 28` |
 | Pleos Vehicle SDK | `ai.pleos.playground:Vehicle:2.3.2` |
 | 확인한 에뮬레이터 | `Pleos_Connect_v2.1.0`, Android 14 / API 34, x86_64 |
-| 앱 패키지 | release `com.example.hd_project`, debug `com.example.hd_project.gleo` |
+| 앱 패키지·버전 | debug/release `com.example.hd_project`, 1.1 (`versionCode 2`) |
 | 오디오 분류 | YAMNet + LiteRT Interpreter 1.4.2, 기기 내 처리 |
 
 `minSdk`는 설치 하한 설정입니다. 모든 Android 기기나 차량에서 검증했다는 뜻은 아닙니다. 차량 기능 시험에는 Pleos Connect 환경이 필요합니다.
@@ -94,7 +96,7 @@ Android Studio에서 실행 구성 `app`, 실행 대상 `Pleos_Connect_v2.1.0`�
 $adb = Join-Path $env:LOCALAPPDATA 'Android\Sdk\platform-tools\adb.exe'
 & $adb devices
 & $adb -s emulator-5554 install -r app\build\outputs\apk\debug\app-debug.apk
-& $adb -s emulator-5554 shell am start -n com.example.hd_project.gleo/com.example.hd_project.MainActivity
+& $adb -s emulator-5554 shell am start -n com.example.hd_project/.MainActivity
 ```
 
 SDK 설치 위치와 기기 ID는 본인 환경에 맞게 바꿉니다.
@@ -104,6 +106,8 @@ SDK 설치 위치와 기기 ID는 본인 환경에 맞게 바꿉니다.
 - **음성 입력:** 에뮬레이터 확장 설정의 Microphone에서 `Virtual microphone uses host audio input`을 켭니다. Windows에서도 Android Emulator의 마이크 접근을 허용해야 합니다. 앱에서는 마이크 권한을 허용합니다.
 - **알림:** 알림 권한을 허용하면 녹음 상태와 종료 버튼을 알림에서 확인할 수 있습니다.
 - **탑승 안내:** 앱을 연 상태에서 Virtual Console의 Seat / Occupancy → Driver를 OFF로 바꾸고 2초 기다린 뒤 ON으로 바꿉니다. 실제 차량 센서가 아닌 에뮬레이터의 시험 입력입니다.
+- **화면 밖 탑승 안내:** 오른쪽 '앱을 닫아도 탑승 안내'를 켜고 알림을 허용한 뒤 내비게이션을 엽니다. Driver를 Empty로 2초, Occupied로 변경하면 시스템 알림에서 '이번 이동을 기록할까요?'를 확인할 수 있습니다. 이 Pleos 이미지에서는 HOME 키만으로 앱이 숨겨지지 않을 수 있습니다.
+- **알림 위치:** 현재 탑승 안내는 알림창 안에 등록되며 내비 화면 위의 배너로 뜨지 않습니다. Android Automotive는 일반 앱의 헤드업 알림 종류를 제한하며, 현재 `CATEGORY_REMINDER`는 대상이 아닙니다. ADB로 알림창을 여는 시험은 `adb -s emulator-5554 shell cmd statusbar expand-notifications`로 할 수 있습니다. [공식 알림 동작](https://developer.android.com/training/cars/platforms/automotive-os/notifications)
 
 Virtual Console 연결이 필요한 경우:
 
@@ -136,22 +140,25 @@ Virtual Console 연결이 필요한 경우:
 
 현재 `.gitignore`는 APK를 제외하므로 제출 파일을 등록할 때 해당 파일의 추적 여부도 확인해야 합니다. 개발용 debug APK를 제출용 release APK로 표시하지 않습니다.
 
-## 녹음 기능의 기존 검증 결과
+## 구현 및 검증 결과
 
-최근 코드 검증 기준: **2026-10-31**, 앱 코드 커밋 `1c37144`.
+최근 코드 검증 기준: **2026-10-31**. 탑승 안내, Gleo 전환·호출 규약, 좁은 화면 레이아웃 수정까지 반영했습니다. 전체 흐름은 [최종 시퀀스 다이어그램](docs/sequence/시퀀스다이어그램.html)에 정리했습니다. HTML을 내려받아 브라우저에서 열면 오프라인으로 볼 수 있으며, 같은 폴더에 SVG·Mermaid 원본도 있습니다.
 
 ```powershell
-.\gradlew.bat assembleDebug testDebugUnitTest lintDebug
+.\gradlew.bat :app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebugAndroidTest
 ```
 
 | 검사 | 결과 |
 |---|---|
-| Debug APK 빌드 | 통과 |
-| 단위 테스트 | 7개 통과 — 탑승 질문 상태 5개, 좌석 값 호환 처리 1개, 기본 샘플 1개 |
-| Android Lint | 오류 0개, 경고 13개 |
+| Debug 앱·기기 테스트 APK 빌드 | 통과 |
+| 단위 테스트 | 25개 통과 |
+| Android Lint | 오류 0개, 경고 17개 |
+| 선택한 기기 테스트 | 8개 통과 — 패키지 1개, Gleo 호출 규약 5개, 화면 레이아웃 2개. 기존 설치를 유지하고 직접 ADB instrumentation으로 실행 |
+| 3분할 화면 | 차량·앱·내비 동시 표시 확인. 앱 폭 1682→841dp 전환 후 프로세스 유지·새 강제 종료 없음 |
+| 기존 백그라운드 탑승 안내 기록 | 내비게이션 표시 중 알림, 알림에서 카드 열기, 자동 녹음 없음, 건너뛰기, 다음 탑승, 안내 끄기, 실제 프로세스 종료·APK 업데이트 후 대기 복원 확인 |
 | 기존 에뮬레이터 시연 기록 | 동의·건너뛰기·권한 거절, 다음 탑승 안내, 홈 이동 후 녹음 유지, 버튼·알림 종료, 저장·재생·삭제 확인 |
 
-마지막 행은 [실행·검증 기록](예제_실행방법.txt)에 남긴 에뮬레이터 시험 결과입니다. 호스트 마이크를 끈 시험이므로 실제 음성 품질·장시간 무중단 녹음·실차의 통화/Gleo 충돌 검증을 포함하지 않습니다. `androidTest`의 기본 샘플은 위 단위 테스트 실행 결과에 포함하지 않았습니다.
+마지막 두 행은 [실행·검증 기록](예제_실행방법.txt)에 남긴 기존 에뮬레이터 시험 결과입니다. 기존 녹음 시연은 호스트 마이크를 끈 시험이었습니다. 이후 사용자가 녹음한 약 10.26초 M4A의 정상 디코딩과 오디오 신호를 확인하고 Windows로 복사했지만, 장시간 녹음·실차 음질·통화/Gleo 경합까지 검증한 것은 아닙니다. Gleo 자연어 명령의 전체 처리 성공과 정식 연동 승인은 별도 확인 대상입니다.
 
 ### 좌석 점유 값 호환 처리
 
@@ -170,13 +177,16 @@ SDK Boolean만으로 복구할 수 없는 미확인 원시 값도 있습니다. 
 | `pleos.car.permission.CAR_SEATS` | 지원 좌석 확인 및 점유 상태 조회·구독 |
 | `RECORD_AUDIO` | 사용자 동의 후 마이크 입력 녹음 |
 | `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MICROPHONE` | 시작한 녹음을 앱 밖에서도 유지 |
-| `POST_NOTIFICATIONS` | 녹음 알림과 종료 동작 표시 |
+| `FOREGROUND_SERVICE_SPECIAL_USE` | 사용자가 켠 좌석 구독 대기 서비스, 마이크 사용 없음 |
+| `RECEIVE_BOOT_COMPLETED` | 기존 안내 설정에 따라 재부팅 후 대기 시작 시도 |
+| `POST_NOTIFICATIONS` | 탑승 안내, 대기 상태, 녹음 알림과 종료 동작 표시 |
 
 ## 현재 한계와 개발 계획
 
 ### 현재 한계
 
-- 앱이 닫혀 있을 때의 탑승 감지, 시동 연동 실행, 강제 종료 후 자동 실행은 구현하지 않았습니다.
+- 안내를 켠 이후 앱 화면 밖 탑승 감지는 구현했습니다. 최초 한 번은 앱을 열어야 하며, 강제 종료 후 자동 실행은 하지 않습니다. `BOOT_COMPLETED` 처리는 실제 재부팅에서 검증하지 않았고, 차량 시동·절전 복귀마다 실행되는지도 미확인입니다.
+- `specialUse` 서비스와 차량 좌석 권한은 에뮬레이터 실행과 별개로 Pleos 배포 허용 확인이 필요합니다. OS가 대기를 종료하거나 좌석 연결이 끊긴 동안에는 안내를 놓칠 수 있습니다. 앱이 중단된 사이에 빈 좌석과 재탑승을 모두 놓치면 새로운 이동을 구분할 수 없습니다.
 - 좌석에서 내리는 것만으로 녹음을 종료하지 않습니다. 사용자 버튼·알림 동작 또는 오류 처리로 종료합니다.
 - 통화·Gleo 사용으로 입력이 제한된 후 자동으로 녹음을 재개하는 기능은 없습니다. 실제 Pleos 차량의 마이크 접근·입력 경로·충돌 동작은 검증이 필요합니다.
 - 전원 차단·강제 종료로 남은 `.pending` 녹음 파일의 복구는 구현하지 않았습니다.
@@ -200,6 +210,9 @@ Gleo가 들은 전체 대화나 음성 원본을 앱이 전달받는 기능을 �
 | 파일 | 역할 |
 |---|---|
 | `MainActivity.kt` | 녹음 동의·권한, 홈 화면 상태와 기록 통계 |
+| `BoardingCoordinator.kt` | 화면과 대기 서비스의 단일 좌석 구독, 탑승 상태 저장·복원, 제한된 재연결 |
+| `BoardingService.kt` / `BoardingNotifications.kt` | 마이크 없는 탑승 대기, 상태·탑승 알림 |
+| `BoardingBootReceiver.kt` / `BoardingActionReceiver.kt` | 기존 설정 복원 진입점, 알림 건너뛰기·안내 끄기 |
 | `VehicleSeatMonitor.kt` | 좌석 지원 확인, 현재 값·이벤트 구독, 상태 안정화 |
 | `PleosSeatOccupancyCompat.kt` / `BoardingPromptGate.kt` | 현재 SDK 값 보정, 탑승 질문 중복 방지 |
 | `RecordingService.kt` / `RecordingState.kt` | 마이크 서비스·알림·종료 처리, 녹음 상태 공유 |

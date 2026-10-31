@@ -31,6 +31,8 @@ class RecordingButtonView @JvmOverloads constructor(
     private var active = false
     private var targetLevel = 0f
     private var shownLevel = 0f
+    private var invitationHighlighted = false
+    private var attention = 0f
     private var face: Shader? = null
     private var halo: Shader? = null
     private var unit = 1f
@@ -59,6 +61,13 @@ class RecordingButtonView @JvmOverloads constructor(
         invalidate()
     }
 
+    /** A stationary invitation highlight; audio-reactive motion is recording-only. */
+    fun showInvitation(highlighted: Boolean, emphasis: Float = 0f) {
+        invitationHighlighted = highlighted
+        attention = emphasis.coerceIn(0f, 1f)
+        invalidate()
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val cx = width / 2f
@@ -68,7 +77,11 @@ class RecordingButtonView @JvmOverloads constructor(
         val pulse = if (active) (sin(time * 2.2).toFloat() + 1f) / 2f else 0f
         paint.style = Paint.Style.FILL
         paint.shader = halo
-        paint.alpha = if (active) 230 else 130
+        paint.alpha = when {
+            active -> 230
+            invitationHighlighted -> (165 + attention * 85).toInt()
+            else -> 130
+        }
         canvas.drawCircle(cx, cy, 196 * unit, paint)
         paint.shader = null
 
@@ -76,7 +89,11 @@ class RecordingButtonView @JvmOverloads constructor(
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = (if (index == 1) 1.6f else 1f) * unit
             paint.color = primary
-            paint.alpha = (if (active) 48 + shownLevel * 70 else 28f).toInt()
+            paint.alpha = when {
+                active -> (48 + shownLevel * 70).toInt()
+                invitationHighlighted -> (58 + attention * 80).toInt()
+                else -> 28
+            }
             val radius = (101 + index * 24 + if (active) pulse * 3 + shownLevel * index * 3 else 0f) * unit
             canvas.drawCircle(cx, cy, radius, paint)
         }

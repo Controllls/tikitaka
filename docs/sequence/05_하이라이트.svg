@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1840" role="img" aria-label="05 · 명령 수신 → 웃음 분석 → 클립 재생">
+<title>05 · 명령 수신 → 웃음 분석 → 클립 재생</title>
+<defs><marker id="05-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10" fill="none" stroke="#ffb86b" stroke-width="1.7"/></marker></defs>
+<style>text{font-family:"Malgun Gothic","Noto Sans KR",sans-serif}.seq-life{stroke:#42566e;stroke-dasharray:6 7;stroke-width:1.4}.seq-arrow{fill:none;stroke:#ffb86b;stroke-width:2}</style>
+<rect width="1440" height="1840" rx="16" fill="#101925"/>
+<text x="28" y="36" text-anchor="start" fill="#ffb86b" font-size="22">05 · 명령 수신 → 웃음 분석 → 클립 재생</text>
+<line x1="120" y1="134" x2="120" y2="1818" class="seq-life"/>
+<rect x="12" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="120" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">사용자 / Gleo</text>
+<line x1="360" y1="134" x2="360" y2="1818" class="seq-life"/>
+<rect x="252" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="360" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">하이라이트 화면</text>
+<text x="360" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">HighlightsActivity</text>
+<line x1="600" y1="134" x2="600" y2="1818" class="seq-life"/>
+<rect x="492" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="600" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">호출 규약</text>
+<text x="600" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">GleoContract</text>
+<line x1="840" y1="134" x2="840" y2="1818" class="seq-life"/>
+<rect x="732" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="840" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">분석 서비스</text>
+<text x="840" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">HighlightService</text>
+<line x1="1080" y1="134" x2="1080" y2="1818" class="seq-life"/>
+<rect x="972" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1080" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">로컬 분석</text>
+<text x="1080" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">YAMNet / Clipper</text>
+<line x1="1320" y1="134" x2="1320" y2="1818" class="seq-life"/>
+<rect x="1212" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1320" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">기기 저장소</text>
+<text x="1320" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">HighlightStore</text>
+<text x="240.0" y="186" text-anchor="middle" fill="#edf2f8" font-size="17">1. 분석·목록·재생 버튼</text>
+<text x="240.0" y="210" text-anchor="middle" fill="#edf2f8" font-size="17">또는 Activity Intent</text>
+<line x1="120" y1="224" x2="360" y2="224" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="480.0" y="286" text-anchor="middle" fill="#edf2f8" font-size="17">2. action·개별</text>
+<text x="480.0" y="310" text-anchor="middle" fill="#edf2f8" font-size="17">extra·ACTION_PARAM</text>
+<text x="480.0" y="334" text-anchor="middle" fill="#edf2f8" font-size="17">검증</text>
+<line x1="360" y1="348" x2="600" y2="348" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="480.0" y="410" text-anchor="middle" fill="#edf2f8" font-size="17">3. 검증한 기능과</text>
+<text x="480.0" y="434" text-anchor="middle" fill="#edf2f8" font-size="17">파라미터</text>
+<line x1="600" y1="448" x2="360" y2="448" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="490" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="519" text-anchor="middle" fill="#c8d8e8" font-size="17">FIND_RECORDING_HIGHLIGHTS / SHOW_RECORDING_HIGHLIGHTS / PLAY_RECORDING_HIGHLIGHT와 com.example.hd_project. 접두사 형식을 모두 받습니다.</text>
+<rect x="26" y="574" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="603" text-anchor="middle" fill="#c8d8e8" font-size="17">분석 요청 경로: 녹음 중이면 거절합니다. 파일이 없으면 실패, 기존 결과가 있으면 재사용합니다. 다른 분석이 진행 중이면 새 분석을 시작하지 않습니다.</text>
+<text x="600.0" y="678" text-anchor="middle" fill="#edf2f8" font-size="17">4. 선택한 저장 녹음 분석 접수</text>
+<line x1="360" y1="692" x2="840" y2="692" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="240.0" y="754" text-anchor="middle" fill="#edf2f8" font-size="17">5. Gleo 요청이면</text>
+<text x="240.0" y="778" text-anchor="middle" fill="#edf2f8" font-size="17">success: 분석 접수됨</text>
+<line x1="360" y1="792" x2="120" y2="792" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="834" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="863" text-anchor="middle" fill="#c8d8e8" font-size="17">접수 응답은 분석 완료를 뜻하지 않습니다. 수동 버튼에서는 Gleo callback을 보내지 않습니다.</text>
+<text x="960.0" y="938" text-anchor="middle" fill="#edf2f8" font-size="17">6. AAC 디코딩 → 16kHz</text>
+<text x="960.0" y="962" text-anchor="middle" fill="#edf2f8" font-size="17">모노 → 웃음 후보 선택</text>
+<line x1="840" y1="976" x2="1080" y2="976" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="1200.0" y="1038" text-anchor="middle" fill="#edf2f8" font-size="17">7. 원본을 유지하며 최대</text>
+<text x="1200.0" y="1062" text-anchor="middle" fill="#edf2f8" font-size="17">3개 M4A 클립 저장</text>
+<line x1="1080" y1="1076" x2="1320" y2="1076" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="600.0" y="1138" text-anchor="middle" fill="#edf2f8" font-size="17">8. 저장된 진행률·완료 상태를 화면이 조회</text>
+<line x1="840" y1="1152" x2="360" y2="1152" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="1194" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="1223" text-anchor="middle" fill="#c8d8e8" font-size="17">목록·재생 요청은 저장된 결과를 사용합니다. 잘못된 인자는 asking, 없는 클립의 재생은 fail로 응답합니다. 빈 목록 조회는 success와 빈 배열을 반환합니다.</text>
+<text x="240.0" y="1298" text-anchor="middle" fill="#edf2f8" font-size="17">9. 목록 보기 또는 1~3번</text>
+<text x="240.0" y="1322" text-anchor="middle" fill="#edf2f8" font-size="17">클립 재생</text>
+<line x1="120" y1="1336" x2="360" y2="1336" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="840.0" y="1398" text-anchor="middle" fill="#edf2f8" font-size="17">10. 저장된 클립 조회</text>
+<line x1="360" y1="1412" x2="1320" y2="1412" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="840.0" y="1474" text-anchor="middle" fill="#edf2f8" font-size="17">11. 클립 정보·파일 반환</text>
+<line x1="1320" y1="1488" x2="360" y2="1488" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<path d="M360,1540 h48 v48 h-48" class="seq-arrow" marker-end="url(#05-arrow)"/>
+<text x="424" y="1554" text-anchor="start" fill="#edf2f8" font-size="17">12. 선택한 클립 재생</text>
+<text x="240.0" y="1638" text-anchor="middle" fill="#edf2f8" font-size="17">13. Gleo 요청이면</text>
+<text x="240.0" y="1662" text-anchor="middle" fill="#edf2f8" font-size="17">callback 전송</text>
+<line x1="360" y1="1676" x2="120" y2="1676" class="seq-arrow" marker-end="url(#05-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="1718" width="1388" height="78" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="1747" text-anchor="middle" fill="#c8d8e8" font-size="17">callback에는 packageName과 JSON response를 넣습니다. data는 JSON 배열 문자열이며 재생 응답은 silent 모드입니다. 실제 음성 호출의 전체 성공·정식 연동</text>
+<text x="720.0" y="1771" text-anchor="middle" fill="#c8d8e8" font-size="17">승인은 별도 확인 대상입니다.</text>
+</svg>

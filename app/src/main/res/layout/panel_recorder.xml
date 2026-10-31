@@ -1,5 +1,6 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/recording_card"
     style="@style/Widget.Journal.Card" app:strokeColor="@color/accent_outline">
     <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
         android:orientation="vertical" android:padding="28dp" android:background="@drawable/bg_recorder">
@@ -14,7 +15,8 @@
         </LinearLayout>
         <TextView android:id="@+id/recording_title" style="@style/Text.Journal.Title"
             android:layout_width="match_parent" android:text="@string/idle_title"
-            android:layout_marginTop="22dp" android:lineSpacingExtra="4dp" />
+            android:layout_marginTop="22dp" android:lineSpacingExtra="4dp"
+            android:accessibilityLiveRegion="polite" />
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_weight="1" android:orientation="vertical" android:gravity="center"
             android:paddingTop="10dp" android:paddingBottom="10dp">
@@ -23,15 +25,24 @@
                 android:clickable="true" android:focusable="true"
                 android:contentDescription="@string/start_recording" />
             <TextView android:id="@+id/recording_action" style="@style/Text.Journal.Section"
-                android:text="@string/start_recording" android:layout_marginTop="4dp" />
-            <TextView android:id="@+id/recording_time" style="@style/Text.Journal"
-                android:text="@string/empty_duration" android:fontFamily="sans-serif-light"
-                android:fontFeatureSettings="tnum" android:textSize="58sp" android:letterSpacing="0.04"
-                android:layout_marginTop="18dp" />
+                android:text="@string/inline_start" android:layout_marginTop="4dp" />
+            <FrameLayout android:layout_width="match_parent" android:layout_height="86dp"
+                android:layout_marginTop="12dp">
+                <TextView android:id="@+id/recording_time" style="@style/Text.Journal"
+                    android:layout_gravity="center" android:text="@string/empty_duration"
+                    android:fontFamily="sans-serif-light" android:fontFeatureSettings="tnum"
+                    android:textSize="58sp" android:letterSpacing="0.04" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/skip_recording"
+                    style="@style/Widget.Journal.Navigation" android:layout_gravity="center"
+                    android:text="@string/consent_skip" android:visibility="gone" />
+            </FrameLayout>
         </LinearLayout>
         <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
         <TextView android:id="@+id/recording_hint" style="@style/Text.Journal.Body"
             android:layout_width="match_parent" android:gravity="center" android:text="@string/idle_hint"
-            android:layout_marginTop="18dp" android:minHeight="46dp" />
+            android:layout_marginTop="16dp" android:minHeight="26dp" />
+        <TextView android:id="@+id/recording_notice" style="@style/Text.Journal.Body"
+            android:layout_width="match_parent" android:gravity="center" android:text="@string/inline_notice"
+            android:textSize="14sp" android:layout_marginTop="6dp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -16,10 +16,13 @@ object GleoContract {
     const val RESPONSE = "ai.pleos.playground.intent.action.APP_ACTION_RESPONSE"
     val actions = setOf(ANALYZE, SHOW, PLAY)
 
+    // Gleo 4.2 prefixes actions with the app package; the public examples use bare names.
+    fun actionName(action: String?, packageName: String): String? =
+        action?.removePrefix("$packageName.")?.takeIf { it in actions }
+
     @Suppress("DEPRECATION") // Inspect the actual incoming type before accepting a parameter.
-    fun parse(intent: Intent): GleoRequest {
-        val action = requireNotNull(intent.action)
-        require(action in actions)
+    fun parse(intent: Intent, packageName: String): GleoRequest {
+        val action = requireNotNull(actionName(intent.action, packageName))
         val extras = intent.extras
         val packed = extras?.get("ACTION_PARAM")
         require(packed == null || packed is String)

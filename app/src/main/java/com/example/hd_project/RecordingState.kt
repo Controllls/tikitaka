@@ -26,7 +26,6 @@ object RecordingStore {
     private val listeners = linkedSetOf<(RecordingState) -> Unit>()
     var state = RecordingState()
         private set
-    val boardingGate = BoardingPromptGate()
 
     fun publish(next: RecordingState) {
         if (Looper.myLooper() != Looper.getMainLooper()) {

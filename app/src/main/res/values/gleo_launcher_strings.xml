@@ -1,0 +1,8 @@
+<resources>
+    <string name="use_gleo">Gleo 사용하기</string>
+    <string name="gleo_saving">녹음 저장 중…</string>
+    <string name="gleo_opening">Gleo 요청 중…</string>
+    <string name="gleo_requested">Gleo 호출을 요청했어요. 반응이 없으면 “글레오”라고 불러 주세요.</string>
+    <string name="gleo_unavailable">이 기기에서 Gleo를 찾을 수 없어요.</string>
+    <string name="gleo_request_failed">Gleo를 열지 못했어요. 녹음 종료 후 “글레오”라고 불러 주세요.</string>
+</resources>

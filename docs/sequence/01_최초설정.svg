@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1536" role="img" aria-label="01 · 최초 설정과 탑승 대기">
+<title>01 · 최초 설정과 탑승 대기</title>
+<defs><marker id="01-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L9 5 L0 10" fill="none" stroke="#ffb86b" stroke-width="1.7"/></marker></defs>
+<style>text{font-family:"Malgun Gothic","Noto Sans KR",sans-serif}.seq-life{stroke:#42566e;stroke-dasharray:6 7;stroke-width:1.4}.seq-arrow{fill:none;stroke:#ffb86b;stroke-width:2}</style>
+<rect width="1440" height="1536" rx="16" fill="#101925"/>
+<text x="28" y="36" text-anchor="start" fill="#ffb86b" font-size="22">01 · 최초 설정과 탑승 대기</text>
+<line x1="120" y1="134" x2="120" y2="1514" class="seq-life"/>
+<rect x="12" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="120" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">사용자</text>
+<line x1="360" y1="134" x2="360" y2="1514" class="seq-life"/>
+<rect x="252" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="360" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">앱 화면</text>
+<text x="360" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">MainActivity</text>
+<line x1="600" y1="134" x2="600" y2="1514" class="seq-life"/>
+<rect x="492" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="600" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">Android</text>
+<text x="600" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">권한·알림</text>
+<line x1="840" y1="134" x2="840" y2="1514" class="seq-life"/>
+<rect x="732" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="840" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">탑승 대기</text>
+<text x="840" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">BoardingService</text>
+<line x1="1080" y1="134" x2="1080" y2="1514" class="seq-life"/>
+<rect x="972" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1080" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">좌석 구독</text>
+<text x="1080" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Coordinator / Monitor</text>
+<line x1="1320" y1="134" x2="1320" y2="1514" class="seq-life"/>
+<rect x="1212" y="60" width="216" height="74" rx="12" fill="#233247" stroke="#4b627c"/>
+<text x="1320" y="92" text-anchor="middle" fill="#edf2f8" font-size="17">차량 좌석</text>
+<text x="1320" y="115" text-anchor="middle" fill="#edf2f8" font-size="13">Vehicle SDK</text>
+<text x="240.0" y="186" text-anchor="middle" fill="#edf2f8" font-size="17">1. 앱 실행</text>
+<line x1="120" y1="200" x2="360" y2="200" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="720.0" y="262" text-anchor="middle" fill="#edf2f8" font-size="17">2. 화면 표시 상태 전달</text>
+<line x1="360" y1="276" x2="1080" y2="276" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="1200.0" y="338" text-anchor="middle" fill="#edf2f8" font-size="17">3. 지원 좌석 확인 →</text>
+<text x="1200.0" y="362" text-anchor="middle" fill="#edf2f8" font-size="17">리스너 등록 → 현재 값</text>
+<text x="1200.0" y="386" text-anchor="middle" fill="#edf2f8" font-size="17">조회</text>
+<line x1="1080" y1="400" x2="1320" y2="400" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<rect x="26" y="442" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="471" text-anchor="middle" fill="#c8d8e8" font-size="17">화면이 보이면 안내 스위치가 꺼져 있어도 좌석을 확인합니다. 화면 밖 대기에는 사용자의 안내 켜기 설정이 필요합니다.</text>
+<text x="240.0" y="546" text-anchor="middle" fill="#edf2f8" font-size="17">4. 앱을 닫아도 탑승</text>
+<text x="240.0" y="570" text-anchor="middle" fill="#edf2f8" font-size="17">안내 켜기</text>
+<line x1="120" y1="584" x2="360" y2="584" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="480.0" y="646" text-anchor="middle" fill="#edf2f8" font-size="17">5. 알림 권한과 두</text>
+<text x="480.0" y="670" text-anchor="middle" fill="#edf2f8" font-size="17">채널의 차단 여부 확인</text>
+<line x1="360" y1="684" x2="600" y2="684" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="480.0" y="746" text-anchor="middle" fill="#edf2f8" font-size="17">6. 허용 결과</text>
+<line x1="600" y1="760" x2="360" y2="760" class="seq-arrow" marker-end="url(#01-arrow)" stroke-dasharray="6 5"/>
+<rect x="26" y="802" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="831" text-anchor="middle" fill="#c8d8e8" font-size="17">허용된 경우에만 다음 단계로 진행합니다. 거절·채널 차단이면 대기를 시작하지 않고 설정 안내를 표시합니다.</text>
+<text x="720.0" y="906" text-anchor="middle" fill="#edf2f8" font-size="17">7. 안내 켜짐 저장</text>
+<line x1="360" y1="920" x2="1080" y2="920" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="600.0" y="982" text-anchor="middle" fill="#edf2f8" font-size="17">8. 대기 서비스 시작 요청</text>
+<line x1="360" y1="996" x2="840" y2="996" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="720.0" y="1058" text-anchor="middle" fill="#edf2f8" font-size="17">9. specialUse</text>
+<text x="720.0" y="1082" text-anchor="middle" fill="#edf2f8" font-size="17">포그라운드 서비스·대기</text>
+<text x="720.0" y="1106" text-anchor="middle" fill="#edf2f8" font-size="17">알림 등록</text>
+<line x1="840" y1="1120" x2="600" y2="1120" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="960.0" y="1182" text-anchor="middle" fill="#edf2f8" font-size="17">10. 대기 서비스 실행</text>
+<text x="960.0" y="1206" text-anchor="middle" fill="#edf2f8" font-size="17">상태 전달</text>
+<line x1="840" y1="1220" x2="1080" y2="1220" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="240.0" y="1282" text-anchor="middle" fill="#edf2f8" font-size="17">11. 내비 등 다른</text>
+<text x="240.0" y="1306" text-anchor="middle" fill="#edf2f8" font-size="17">화면으로 이동</text>
+<line x1="120" y1="1320" x2="360" y2="1320" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<text x="720.0" y="1382" text-anchor="middle" fill="#edf2f8" font-size="17">12. 화면 비표시 상태 전달</text>
+<line x1="360" y1="1396" x2="1080" y2="1396" class="seq-arrow" marker-end="url(#01-arrow)"/>
+<rect x="26" y="1438" width="1388" height="54" rx="9" fill="#1d2d3e" stroke="#3c536c"/>
+<text x="720.0" y="1467" text-anchor="middle" fill="#c8d8e8" font-size="17">안내 켜짐 + 대기 서비스 실행 중이면 좌석 구독을 유지합니다. 대기에는 마이크를 사용하지 않습니다.</text>
+</svg>
