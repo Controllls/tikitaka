@@ -65,6 +65,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         findViewById<android.view.View>(R.id.history_button).setOnClickListener { openHistory() }
+        findViewById<android.view.View>(R.id.highlights_button).setOnClickListener {
+            startActivity(Intent(this, HighlightsActivity::class.java))
+        }
         findViewById<android.view.View>(R.id.recent_card).setOnClickListener { openHistory() }
         findViewById<android.view.View>(R.id.home_button).setOnClickListener {
             findViewById<android.widget.ScrollView>(R.id.dashboard_scroll).smoothScrollTo(0, 0)

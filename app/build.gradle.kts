@@ -19,6 +19,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = ".gleo"
+        }
         release {
             optimization {
                 enable = true
@@ -33,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.litert)
     implementation(libs.pleos.vehicle)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)

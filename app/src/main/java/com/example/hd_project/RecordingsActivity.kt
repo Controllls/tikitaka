@@ -33,6 +33,9 @@ class RecordingsActivity : AppCompatActivity() {
         }
         rows = findViewById(R.id.recording_rows)
         findViewById<View>(R.id.back_button).setOnClickListener { finish() }
+        findViewById<View>(R.id.highlights_button).setOnClickListener {
+            startActivity(android.content.Intent(this, HighlightsActivity::class.java))
+        }
         findViewById<View>(R.id.archive_home).setOnClickListener { finish() }
     }
 

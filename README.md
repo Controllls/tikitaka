@@ -2,7 +2,13 @@
 
 **차량 탑승을 계기로 녹음 여부를 묻고, 함께 나눈 대화를 기기에 저장해 다시 듣는 Pleos Connect 앱입니다.**
 
-현대자동차그룹 차량용 앱 개발 공모전을 준비하는 Android 프로토타입입니다. 현재는 사용자 동의 후 녹음·저장·재생하는 흐름과 운전석 점유 기반 안내를 구현했습니다. AI 전사·하이라이트 추출·Gleo 연동은 후속 개발 항목입니다.
+현대자동차그룹 차량용 앱 개발 공모전을 준비하는 Android 프로토타입입니다. 사용자 동의 후 녹음·저장·재생하며, 이 브랜치에는 **웃음 기반 하이라이트 추출과 Gleo 앱 기능 호출 인터페이스**를 추가했습니다. 대화 전사·의미 기반 재미 평가와 실제 Gleo 음성 호출 승인은 아직 포함하지 않습니다.
+
+`feature/gleo-highlights`는 커밋 `240df7b`에서 분리했습니다. 기존 작업 폴더의 커밋되지 않은 탑승 알림 수정은 포함하지 않습니다. Debug 앱은 `이동 기록 · Gleo` / `com.example.hd_project.gleo`로 별도 설치되어 기존 앱의 녹음을 보존합니다. [Gleo 구현·시연 방법](docs/GLEO_HIGHLIGHTS.md)을 먼저 확인하세요.
+
+![웃음 테스트 음원에서 실제로 추출한 하이라이트](docs/images/gleo-highlights.png)
+
+위 화면은 공개 웃음 테스트 음원의 앞뒤에 무음을 붙인 35초 파일에서 약 20초의 클립을 실제 저장한 결과입니다. 사용자 녹음이나 실제 Gleo 음성 호출 시연 화면은 아닙니다. 이 브랜치 검증 결과는 **단위 테스트 14개·기기 테스트 8개 통과, Lint 오류 0개·경고 15개**입니다.
 
 동작 설명·화면·검증 결과는 **2026-10-31의 앱 코드 `1c37144`**를 기준으로 합니다.
 
@@ -32,6 +38,8 @@
 | 녹음 상태 표시 | 경과 시간과 시작·녹음·저장·오류 상태를 표시합니다. 마이크 버튼의 파형은 실제 입력 크기에 반응합니다. |
 | 기록 보관·재생 | 앱 전용 공간에 M4A 파일을 저장하고 목록에서 재생·일시정지·삭제합니다. |
 | 기록 대시보드 | 실제 저장 파일을 바탕으로 기록 수, 총 시간, 가장 최근 기록을 표시합니다. |
+| 웃음 기반 하이라이트 | YAMNet을 기기에서 실행해 웃음 주변 구간을 최대 3개 추출합니다. AAC 패킷을 새 M4A로 저장하며 원본은 유지합니다. |
+| Gleo 인터페이스 | 분석 요청·목록 표시·번호로 재생하는 3개 action과 callback을 구현했습니다. 실제 음성 대화 연동은 스키마 승인 후 검증해야 합니다. |
 | 예외 처리 | 저장 공간 부족, 짧은 녹음, 저장 실패를 처리합니다. Android API 29 이상에서는 입력 무음 처리 통지를 확인해 녹음을 종료하는 경로가 있습니다. |
 
 <details>
@@ -56,7 +64,8 @@
 | Android SDK | `compileSdk 37`, `targetSdk 37`, `minSdk 28` |
 | Pleos Vehicle SDK | `ai.pleos.playground:Vehicle:2.3.2` |
 | 확인한 에뮬레이터 | `Pleos_Connect_v2.1.0`, Android 14 / API 34, x86_64 |
-| 앱 패키지 | `com.example.hd_project` |
+| 앱 패키지 | release `com.example.hd_project`, debug `com.example.hd_project.gleo` |
+| 오디오 분류 | YAMNet + LiteRT Interpreter 1.4.2, 기기 내 처리 |
 
 `minSdk`는 설치 하한 설정입니다. 모든 Android 기기나 차량에서 검증했다는 뜻은 아닙니다. 차량 기능 시험에는 Pleos Connect 환경이 필요합니다.
 
@@ -85,7 +94,7 @@ Android Studio에서 실행 구성 `app`, 실행 대상 `Pleos_Connect_v2.1.0`�
 $adb = Join-Path $env:LOCALAPPDATA 'Android\Sdk\platform-tools\adb.exe'
 & $adb devices
 & $adb -s emulator-5554 install -r app\build\outputs\apk\debug\app-debug.apk
-& $adb -s emulator-5554 shell am start -n com.example.hd_project/.MainActivity
+& $adb -s emulator-5554 shell am start -n com.example.hd_project.gleo/com.example.hd_project.MainActivity
 ```
 
 SDK 설치 위치와 기기 ID는 본인 환경에 맞게 바꿉니다.
@@ -127,7 +136,7 @@ Virtual Console 연결이 필요한 경우:
 
 현재 `.gitignore`는 APK를 제외하므로 제출 파일을 등록할 때 해당 파일의 추적 여부도 확인해야 합니다. 개발용 debug APK를 제출용 release APK로 표시하지 않습니다.
 
-## 검증 결과
+## 녹음 기능의 기존 검증 결과
 
 최근 코드 검증 기준: **2026-10-31**, 앱 코드 커밋 `1c37144`.
 
@@ -177,8 +186,8 @@ SDK Boolean만으로 복구할 수 없는 미확인 원시 값도 있습니다. 
 
 | 방향 | 확인·개발할 내용 |
 |---|---|
-| AI 대화 리플레이 | 전사와 시간 구간 연결, 사용자가 다시 듣고 싶은 구간을 찾는 기능을 검토합니다. 웃음이나 오래 이어진 주제를 단서로 쓰는 방안은 아직 검증하지 않았습니다. |
-| Gleo 연동 | 앱 기능 호출과 검색·재생 요청을 연결하는 방향을 검토합니다. 스키마 등록·승인과 실제 호출 시험이 필요합니다. |
+| AI 대화 리플레이 | 현재 웃음 감지 후보 추출을 구현했습니다. 다음 단계는 시간 정보가 있는 전사와 문맥을 이용한 후보 평가입니다. 웃음 없는 농담·흥미로운 주제는 아직 찾지 못합니다. |
+| Gleo 실환경 검증 | 앱 인터페이스는 구현했습니다. 스키마 등록·승인과 실제 자연어 음성 호출 시험이 필요합니다. |
 | 실차 검증 | 차량 마이크, 내비 화면 전환, 통화·Gleo 전후 입력 상태, 목표 녹음 시간 동안의 안정성을 확인합니다. |
 | 제출·배포 준비 | release APK 서명·실행 확인, 시연 영상, 라이브러리·리소스 사용 조건 점검을 진행합니다. |
 

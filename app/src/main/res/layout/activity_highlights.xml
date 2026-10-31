@@ -1,0 +1,68 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/highlights_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="88dp"
+        android:paddingHorizontal="@dimen/page_padding" android:gravity="center_vertical">
+        <com.google.android.material.button.MaterialButton android:id="@+id/highlights_back"
+            style="@style/Widget.Journal.Navigation" android:layout_width="56dp" android:minWidth="0dp"
+            android:paddingHorizontal="16dp" app:iconPadding="0dp" app:icon="@drawable/ic_back"
+            android:contentDescription="@string/back" />
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_marginStart="14dp" android:orientation="vertical">
+            <TextView style="@style/Text.Journal.Title" android:text="@string/highlights" />
+            <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/highlight_caption" android:layout_marginTop="3dp" />
+        </LinearLayout>
+        <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/highlight_local_badge"
+            android:textColor="@color/sample_primary" />
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="@dimen/page_padding">
+            <TextView style="@style/Text.Journal.Headline" android:text="@string/highlight_headline" />
+            <TextView style="@style/Text.Journal.Body" android:layout_width="match_parent"
+                android:text="@string/highlight_description" android:layout_marginTop="12dp" android:layout_marginBottom="22dp" />
+            <com.google.android.material.card.MaterialCardView style="@style/Widget.Journal.Card">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="24dp">
+                    <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/highlight_source_label" />
+                    <TextView android:id="@+id/selected_recording" style="@style/Text.Journal.Section"
+                        android:layout_width="match_parent" android:layout_marginTop="12dp" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp" android:gravity="center_vertical">
+                        <com.google.android.material.button.MaterialButton android:id="@+id/analyze_highlights"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:minHeight="56dp" android:text="@string/highlight_analyze" app:icon="@drawable/ic_audio" />
+                        <com.google.android.material.button.MaterialButton android:id="@+id/choose_recording"
+                            style="@style/Widget.Journal.Navigation" android:text="@string/highlight_choose"
+                            android:layout_marginStart="12dp" />
+                        <com.google.android.material.button.MaterialButton android:id="@+id/cancel_analysis"
+                            style="@style/Widget.Journal.Navigation" android:text="@string/cancel"
+                            android:layout_marginStart="12dp" android:visibility="gone" />
+                    </LinearLayout>
+                    <TextView android:id="@+id/highlight_status" style="@style/Text.Journal.Body"
+                        android:layout_width="match_parent" android:textColor="@color/sample_primary"
+                        android:layout_marginTop="12dp" android:accessibilityLiveRegion="polite" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <TextView style="@style/Text.Journal.Section" android:text="@string/highlight_saved"
+                android:layout_marginTop="26dp" android:layout_marginBottom="16dp" />
+            <TextView android:id="@+id/highlight_empty" style="@style/Text.Journal.Body"
+                android:layout_width="match_parent" android:text="@string/highlight_empty" android:paddingVertical="16dp" />
+            <LinearLayout android:id="@+id/highlight_rows" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="vertical" />
+            <com.google.android.material.card.MaterialCardView style="@style/Widget.Journal.Card"
+                android:layout_marginTop="22dp" app:cardBackgroundColor="@color/accent_surface" app:strokeColor="@color/accent_outline">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="24dp">
+                    <TextView style="@style/Text.Journal.Section" android:text="@string/highlight_gleo_title" />
+                    <TextView style="@style/Text.Journal.Body" android:layout_width="match_parent"
+                        android:text="@string/highlight_gleo_commands" android:layout_marginTop="12dp" />
+                    <TextView style="@style/Text.Journal.Body" android:layout_width="match_parent"
+                        android:text="@string/highlight_gleo_pending" android:textSize="14sp" android:layout_marginTop="12dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
