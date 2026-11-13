@@ -28,6 +28,14 @@ object EpisodeWork {
         return number
     }
     fun status(context: Context, source: String): JSONObject? = preferences(context).getString(source, null)?.let { JSONObject(it) }
+    @Synchronized fun dismissFailed(context: Context, source: String): Boolean {
+        val data=status(context,source) ?: return false
+        if(data.optString("state")!="failed")return false
+        // Retain a durable marker so startup recovery cannot recreate a deleted card.
+        data.put("state","dismissed").put("message","")
+        check(preferences(context).edit().putString(source,data.toString()).commit())
+        return true
+    }
     /** movies is append-only history. Completion must open the newest existing result. */
     fun latestMovie(context: Context, source: String): File? {
         val names=status(context,source)?.optJSONArray("movies") ?: return null
@@ -82,9 +90,8 @@ object EpisodeWork {
             }
             ProductionSettings.snapshot(context,source.name)
             if(recreate && refreshVoice) {
-                val saved=ProductionSettings.profile(context,source.name)
-                // New versions use the current voice reference, retaining the saved name/character and old movies.
-                PeopleRepository(context,"tikitaka-job-"+id(source.name)).save(saved.copy(voice=TikiProfile.get(context).voice))
+                // Explicit new productions use the current character and voice profile.
+                PeopleRepository(context,"tikitaka-job-"+id(source.name)).save(TikiProfile.get(context))
             }
             patch(context,source.name) {
                 if(it.optString("engine")!=MetadataEpisodes.ENGINE) it.put("previousEngine",it.optString("engine"))
