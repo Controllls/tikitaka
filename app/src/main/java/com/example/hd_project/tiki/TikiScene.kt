@@ -6,13 +6,6 @@ import com.example.hd_project.momo.people.*
 import java.io.File
 
 object TikiScene {
-    internal fun placeSelfAtDriver(people: List<Person>, selfSpeaker: Int?): List<Person> {
-        val self=selfSpeaker?.takeIf { it in people.indices } ?: return people
-        return people.mapIndexed { index,person ->
-            val appearance=when(index) { self -> people[0];0 -> people[self];else -> person }
-            person.copy(seat=appearance.seat,manifestRef=appearance.manifestRef)
-        }
-    }
     fun buildPerformance(context: Context, base: SceneProject, profile: PersonProfile = TikiProfile.get(context), count: Int = 2): SceneProject {
         val root=install(context)
         require(count in 1..4)
