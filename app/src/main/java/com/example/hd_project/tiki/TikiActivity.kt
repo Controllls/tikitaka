@@ -460,7 +460,7 @@ open class TikiActivity : AppCompatActivity() {
     private fun library(p: FrameLayout) {
         val records=RecordingFiles.list(this);val movies=movies();val pad=if(w>900)48f else 32f
         val drafts=if(RecordingStore.state.busy)emptyList() else RecordingJournal.drafts(this)
-        val jobs=EpisodeWork.all(this).filter { it.optString("state") != "completed" }
+        val jobs=EpisodeWork.all(this).filter { it.optString("state") !in listOf("completed","dismissed") }
         val count=if(tab=="recordings")records.size+drafts.size else jobs.size+movies.size
         val columns=if(w>=1200)4 else if(w>=880)3 else 2
         val tileWidth=(w-pad*2-16-(columns-1)*32)/columns
@@ -492,7 +492,7 @@ open class TikiActivity : AppCompatActivity() {
             records.forEachIndexed { i,recording->
             val rw=w-pad*2;val roomy=rw>900;val aw=if(roomy)272f else 152f;val tx=if(roomy)100f else 8f
             val row=FrameLayout(this).apply { background=TikiDesign.shape(Color.WHITE,0f,context=this@TikiActivity) }
-            val state=EpisodeWork.status(this,recording.file.name)?.optString("state")
+            val state=EpisodeWork.status(this,recording.file.name)?.optString("state")?.takeUnless { it=="dismissed" }
             val badge=when(state) { "completed"->"영상 완성";"failed"->"제작 실패";"empty"->"후보 없음";"waiting"->"처리 대기";"queued","running"->"제작 중";else->"미제작" }
             if(roomy) {
                 val icon=FrameLayout(this).apply { background=TikiDesign.shape(0xfff4f3f3.toInt(),16f,context=this@TikiActivity) }
@@ -510,12 +510,29 @@ open class TikiActivity : AppCompatActivity() {
             row.setOnClickListener { source=recording.file.name;go("audio") };put(c,row,pad,348f+i*160,rw,160f)
         } } else {
             jobs.forEachIndexed { i,job->
+                val canDelete=job.optString("state")=="failed"
+                val textWidth=w-pad*2-64-if(canDelete)168f else 0f
                 val row=FrameLayout(this).apply { background=TikiDesign.press(this@TikiActivity,Color.WHITE,24f)
                     setOnClickListener { source=job.getString("source");go("progress") } }
-                text(row,when(job.optString("state")) { "failed"->"영상 제작 확인이 필요해요";"empty"->"하이라이트 후보를 찾지 못했어요";"waiting"->"저장된 작업부터 제작을 이어갈게요";else->"에피소드를 만들고 있어요" },32f,22f,w-pad*2-64,52f,28f,500)
-                text(row,job.optString("message"),32f,84f,w-pad*2-64,50f,20f,color=TikiDesign.secondary).apply {
+                text(row,when(job.optString("state")) { "failed"->"영상 제작 확인이 필요해요";"empty"->"하이라이트 후보를 찾지 못했어요";"waiting"->"저장된 작업부터 제작을 이어갈게요";else->"에피소드를 만들고 있어요" },32f,22f,textWidth,52f,28f,500).apply {
+                    maxLines=1;ellipsize=android.text.TextUtils.TruncateAt.END
+                }
+                text(row,job.optString("message"),32f,84f,textWidth,50f,20f,color=TikiDesign.secondary).apply {
                     maxLines=2;ellipsize=android.text.TextUtils.TruncateAt.END
-                };put(c,row,pad,300f+i*180,w-pad*2,156f)
+                }
+                if(canDelete)button(row,"삭제",w-pad*2-184f,34f,152f,false) {
+                    MaterialAlertDialogBuilder(this).setTitle("제작 항목을 삭제할까요?")
+                        .setMessage("에피소드 목록에서 이 항목을 삭제해요. 원본 녹음은 보관되며 녹음 탭에서 다시 영상을 만들 수 있어요.")
+                        .setNegativeButton("취소",null)
+                        .setPositiveButton("삭제") { _,_ ->
+                            runCatching { EpisodeWork.dismissFailed(this,job.getString("source")) }
+                                .onSuccess { deleted ->
+                                    rememberScroll();render()
+                                    toast(if(deleted)"제작 항목을 삭제했어요." else "제작 상태가 변경되어 삭제하지 않았어요.")
+                                }.onFailure { toast("삭제하지 못했어요. 다시 시도해 주세요.") }
+                        }.show()
+                }
+                put(c,row,pad,300f+i*180,w-pad*2,156f)
             }
             val top=300f+jobs.size*180
             if(movies.isNotEmpty())text(c,"완성된 에피소드 ${movies.size}편",pad,top,w-pad*2,40f,24f)
@@ -782,13 +799,14 @@ open class TikiActivity : AppCompatActivity() {
         val file=File(AnimationFiles.directory(this),movie).canonicalFile
         if(file.parentFile!=AnimationFiles.directory(this).canonicalFile || !file.isFile) { text(p,"영상 파일을 찾을 수 없어요.",32f,200f,w-64,100f);return }
         val info=runCatching { JSONObject(File(file.path+".json").readText()) }.getOrNull()
-        val show=prefs.getBoolean("playbackDiagnostics",true)
-        diagnosticTimeline=runCatching { PlaybackDiagnostics.Timeline(JSONObject(PlaybackDiagnostics.file(file).readText())) }.getOrNull()
-        diagnosticAudioTracks=runCatching {
+        val diagnosticsEnabled=com.example.hd_project.BuildConfig.PLAYBACK_DIAGNOSTICS
+        val show=diagnosticsEnabled && prefs.getBoolean("playbackDiagnostics",false)
+        diagnosticTimeline=if(show)runCatching { PlaybackDiagnostics.Timeline(JSONObject(PlaybackDiagnostics.file(file).readText())) }.getOrNull() else null
+        diagnosticAudioTracks=if(show)runCatching {
             val extractor=android.media.MediaExtractor()
             try { extractor.setDataSource(file.path);(0 until extractor.trackCount).count { extractor.getTrackFormat(it).getString(android.media.MediaFormat.KEY_MIME)?.startsWith("audio/")==true } }
             finally { extractor.release() }
-        }.getOrDefault(-1)
+        }.getOrDefault(-1) else -1
         val count=(diagnosticTimeline?.data?.optJSONArray("castNames")?.length() ?: info?.optInt("castCount",1) ?: 1).coerceIn(1,4)
         val details=show && diagnosticTimeline!=null && prefs.getBoolean("playbackDiagnosticsDetails",false)
         val summaryHeight=324f+maxOf(0,count-2)*36f
@@ -799,7 +817,7 @@ open class TikiActivity : AppCompatActivity() {
         val videoTop=180f+diagnosticHeight
         val c=scroll(p,maxOf(h,videoTop+vh+440f))
         heading(c,"EP. ${EpisodeWork.episodeNumber(this,file).toString().padStart(2,'0')} · ${movieTitle(file)}",back=true)
-        put(c,art.button(if(show)"진단 켜짐" else "진단 꺼짐",false) {
+        if(diagnosticsEnabled)put(c,art.button(if(show)"진단 켜짐" else "진단 꺼짐",false) {
             prefs.edit().putBoolean("playbackDiagnostics",!show).apply();render()
         }.apply { tag="diagnostics_toggle" },32f,110f,156f,64f)
         val quickWidth=min(156f,w-400)
@@ -878,7 +896,7 @@ open class TikiActivity : AppCompatActivity() {
         }.also { viewport.addView(it,FrameLayout.LayoutParams(-1,-1)) }
         applyVideoRestriction(restrictions.state)
         val original=info?.optString("source")?.takeIf { it.isNotBlank() }?.let { File(RecordingFiles.directory(this),it).canonicalFile }
-        if(original!=null && original.parentFile==RecordingFiles.directory(this).canonicalFile && original.isFile)
+        if(diagnosticsEnabled && original!=null && original.parentFile==RecordingFiles.directory(this).canonicalFile && original.isFile)
             button(c,"진단용 새 버전 만들기",(w-min(420f,w-64))/2,videoTop+vh+320,min(420f,w-64),false) {
                 view.pause();focus.release();play?.text="재생";startProduction(original)
             }.tag="diagnostic_rebuild"

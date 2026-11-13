@@ -75,6 +75,7 @@ class PlaybackDiagnosticsTest {
         } finally { focus.release();first.release();second.release();source.delete() }
     }
     @Test fun diagnosticMovieFitsPresetsAndSeekingUpdatesThePanel() {
+        org.junit.Assume.assumeTrue("Playback diagnostic UI is disabled in this build",com.example.hd_project.BuildConfig.PLAYBACK_DIAGNOSTICS)
         val instrumentation=InstrumentationRegistry.getInstrumentation()
         val name=InstrumentationRegistry.getArguments().getString("diagnosticMovie")
         org.junit.Assume.assumeTrue("Explicit local diagnostic movie required",!name.isNullOrBlank())

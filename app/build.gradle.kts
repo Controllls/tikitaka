@@ -17,6 +17,7 @@ android {
         targetSdk = 37
         versionCode = 2
         versionName = "1.1"
+        buildConfigField("boolean", "PLAYBACK_DIAGNOSTICS", "false")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
