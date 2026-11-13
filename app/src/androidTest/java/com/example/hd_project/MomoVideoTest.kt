@@ -1,15 +1,9 @@
 @file:androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 package com.example.hd_project
 
-import android.content.Intent
-import android.content.ContentUris
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.media.MediaMetadataRetriever
 import android.os.SystemClock
-import android.provider.MediaStore
-import android.view.View
-import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.hd_project.momo.*
@@ -64,70 +58,4 @@ class MomoVideoTest {
         delay(1000);job.cancelAndJoin();delay(250)
         assertFalse(output.exists())
     }
-    @Test fun recordingButtonRunsRealAnalysisAndFixedVideo() {
-        val source=File(RecordingFiles.directory(context),"momo_validation_synthetic_20261.m4a")
-        if(!source.exists())asset("momo-synthetic-korean.m4a").use { input -> source.outputStream().use { input.copyTo(it) } }
-        val metadata=File(source.parentFile,source.nameWithoutExtension+".json")
-        metadata.writeText(JSONObject().put("title","MOMO 영상 데모 · 합성 한국어").toString())
-        val originalHash=sha256(source)
-        // This test-owned project is reset so every run exercises upload + real inference.
-        runBlocking { ProjectRepository(context).deleteLocal(MomoVideoSession.projectId(source.name)) }
-        val consent=context.getSharedPreferences("momo-consent",0)
-        val previousConsent=consent.getBoolean("server-voice-v1",false)
-        consent.edit().putBoolean("server-voice-v1",true).commit()
-        val output=AnimationFiles.output(context,source)
-        val previousStamp=output.lastModified()
-        try {
-            ActivityScenario.launch<AnimationActivity>(Intent(context,AnimationActivity::class.java).putExtra("sourceId",source.name)).use { scenario ->
-                val deadline=SystemClock.elapsedRealtime()+300000
-                var enabled=false
-                while(!enabled && SystemClock.elapsedRealtime()<deadline) {
-                    scenario.onActivity { enabled=it.findViewById<View>(R.id.animation_generate).isEnabled }
-                    SystemClock.sleep(100)
-                }
-                assertTrue("Video screen did not become ready",enabled)
-                scenario.onActivity { activity ->
-                    assertEquals(0,activity.resources.getIdentifier("animation_subtitles","id",context.packageName))
-                    activity.findViewById<View>(R.id.animation_generate).performClick()
-                }
-                while((!output.exists() || output.lastModified()==previousStamp) && SystemClock.elapsedRealtime()<deadline)SystemClock.sleep(500)
-                assertTrue("The video screen did not produce a new MP4",output.exists() && output.lastModified()!=previousStamp)
-                VideoComposer.validateMp4(output)
-                assertEquals(originalHash,sha256(source))
-                runBlocking {
-                    val repository=ProjectRepository(context)
-                    val bundle=repository.loadAnalysis(MomoVideoSession.projectId(source.name))!!
-                    assertEquals("inference",bundle.result.dataOrigin)
-                    assertTrue(bundle.result.captions.isNotEmpty())
-                    assertNotNull(bundle.result.voiceModelId)
-                    assertTrue("Synthetic solo speech must yield an enrollment sample",bundle.result.speakerSignatures.any { it.speechUs>=6_000_000 })
-                }
-                output.copyTo(File(context.filesDir,"momo-validation-server.mp4"),overwrite=true)
-                val beforeExport=latestExportId()
-                scenario.onActivity { it.findViewById<View>(R.id.animation_export).performClick() }
-                var exportedId=beforeExport
-                val saveDeadline=SystemClock.elapsedRealtime()+15000
-                while(exportedId<=beforeExport && SystemClock.elapsedRealtime()<saveDeadline) {
-                    SystemClock.sleep(100);exportedId=latestExportId()
-                }
-                assertTrue("MP4 was not published to Movies/이동기록",exportedId>beforeExport)
-                val exported=File(context.cacheDir,"momo-export-validation.mp4")
-                try {
-                    val uri=ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,exportedId)
-                    context.contentResolver.openInputStream(uri)!!.use { input -> exported.outputStream().use { input.copyTo(it) } }
-                    assertEquals("Published MP4 must match the completed movie",sha256(output),sha256(exported))
-                } finally { exported.delete() }
-                MediaMetadataRetriever().use { retriever ->
-                    retriever.setDataSource(output.path)
-                    assertEquals("540",retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH))
-                    assertEquals("960",retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT))
-                }
-            }
-        } finally { consent.edit().putBoolean("server-voice-v1",previousConsent).commit() }
-    }
-    private fun latestExportId(): Long = context.contentResolver.query(
-        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,arrayOf(MediaStore.Video.Media._ID),
-        "${MediaStore.Video.Media.RELATIVE_PATH} = ? AND ${MediaStore.Video.Media.DISPLAY_NAME} LIKE ? AND ${MediaStore.Video.Media.IS_PENDING} = 0",
-        arrayOf("Movies/이동기록/","MOMO_%"),"${MediaStore.Video.Media._ID} DESC"
-    )?.use { if(it.moveToFirst())it.getLong(0) else 0L } ?: 0L
 }

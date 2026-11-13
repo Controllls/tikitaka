@@ -1,7 +1,0 @@
-# Small isolated overlay; torch/tensorflow and the app dependencies are shared read-only from .venv.
-transformers==4.53.3
-safetensors==0.5.3
-numpy==2.0.2
-pillow==13.0.0
-# Windows CUDA cleanup fix after Whisper temperature fallback (upstream #1912).
-ctranslate2==4.8.5

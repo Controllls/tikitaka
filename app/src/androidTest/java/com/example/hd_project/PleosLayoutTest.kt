@@ -38,8 +38,7 @@ class PleosLayoutTest {
                 }
                 val themed = ContextThemeWrapper(context.createConfigurationContext(config), R.style.Theme_HD_project)
                 val scale = themed.resources.displayMetrics.density
-                for ((label, layout) in listOf("home" to R.layout.activity_main, "recordings" to R.layout.activity_recordings,
-                    "highlights" to R.layout.activity_highlights, "video" to R.layout.activity_animation)) {
+                for ((label, layout) in listOf("highlights" to R.layout.activity_highlights)) {
                     val root = LayoutInflater.from(themed).inflate(layout, null)
                     val w = (width*scale).roundToInt(); val h = (height*scale).roundToInt()
                     root.measure(View.MeasureSpec.makeMeasureSpec(w, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(h, View.MeasureSpec.EXACTLY))
@@ -62,7 +61,7 @@ class PleosLayoutTest {
                         if(view is ViewGroup) for(i in 0 until view.childCount) inspect(view.getChildAt(i), left)
                     }
                     inspect(root, 0)
-                    if (dpi == 160 && label == "home") {
+                    if (dpi == 160 && label == "highlights") {
                         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
                         root.draw(Canvas(bitmap))
                         File(output, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }

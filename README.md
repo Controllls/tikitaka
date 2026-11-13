@@ -58,7 +58,7 @@
 
 </details>
 
-[Figma 디자인 원본](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/Untitled?node-id=616-3028) · [제출 자료 페이지](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/Untitled?node-id=1042-1935) · [디자인 보관 기록](design/README.md)
+[Figma 디자인 원본](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/Untitled?node-id=616-3028) · [제출 자료 페이지](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/Untitled?node-id=1042-1935) · [이미지 출처](docs/images/readme/sources.json)
 
 Figma 링크는 파일 공유 권한이 필요할 수 있습니다. 위 이미지는 저장소에서 바로 볼 수 있습니다.
 
@@ -147,22 +147,19 @@ release 배포에는 별도 APK 서명이 필요합니다. 티키타카 전용 �
 
 | 자료 | 위치 / 상태 |
 | --- | --- |
-| 디자인 | [Figma 화면 원본 보관](design/figma/2026-11-12/screens) · [적용 범위](docs/FIGMA_IMPLEMENTATION_2026-11-12.md) |
-| 제목·장면 제작 | [최근 수정 및 기기 검증](docs/DIALOGUE_TITLE_FIX_2026-11-14.txt) |
-| 주행 중 영상 잠금 | [구현 정책 및 검증](docs/DRIVING_VIDEO_LOCK_2026-11-14.txt) |
+| 디자인 | [소개용 Figma 이미지](docs/images/readme) · [출처·체크섬](docs/images/readme/sources.json) |
+| 기능 검증 | [검증 범위와 남은 항목](docs/VALIDATION.md) |
 | release APK | 서명본 준비. 공개 다운로드 링크는 아직 등록하지 않았습니다. |
 | 시연 영상 | 공개용 영상 준비 중. 위 이미지는 디자인 시안입니다. |
-| 제출 준비 | [실행·제출 안내](docs/CONTEST_SUBMISSION_2026-11-14.txt) · [서명 검증 기록](docs/CONTEST_SIGNING_2026-11-14.txt) |
-| 이전 개발 기록 | [기존 README 보존본](docs/README_HISTORY_2026-11-14.md) |
+| 출처·라이선스 | [서드파티 고지](docs/THIRD_PARTY.md) |
 
 ### 저장소 구성
 
 ```text
 app/       Android 앱, 화면·녹음·기기 분석·영상 제작, 테스트
-docs/      기능별 구현·검증 기록과 README 이미지
-design/    Figma 및 Pleos 디자인 참고 자료와 출처
-tools/     에셋 준비·네이티브 빌드·서명 도구
-server/    이전 PC 실험 도구 — 현재 Android 앱 실행에는 필요하지 않음
+docs/      검증 현황·개발 규칙·출처와 README 이미지
+tools/     네이티브 빌드·서명·기기 테스트 도구
+third_party/  이식한 코드의 원본 라이선스
 ```
 
 서드파티 모델·라이브러리·폰트의 고지와 라이선스는 [NOTICE](app/src/main/assets/third_party/NOTICE.txt) 및 각 에셋 디렉터리에서 확인할 수 있습니다. 저장소 공개가 제3자 에셋의 권리나 재배포 조건을 변경하지는 않습니다.

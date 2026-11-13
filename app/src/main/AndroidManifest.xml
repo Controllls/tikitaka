@@ -41,9 +41,6 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-        <activity android:name=".RecordingsActivity" android:exported="false" />
-        <activity android:name=".AnimationActivity" android:exported="false" />
-        <activity android:name=".PeopleActivity" android:exported="false" />
         <activity android:name=".HighlightsActivity" android:exported="true" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="FIND_RECORDING_HIGHLIGHTS" />

@@ -4,7 +4,7 @@
 .gradle/
 .kotlin/
 local.properties
-.claude/settings.local.json
+/.claude/
 
 # Build output and generated captures
 build/
@@ -35,9 +35,9 @@ Thumbs.db
 .env
 .env.*
 !.env.example
-server/data/
-server/.venv/
-server/.lab-venv/
+# Retired PC experiments may retain local data and virtual environments.
+/server/
+/data/
 __pycache__/
 .pytest_cache/
 .ruff_cache/
