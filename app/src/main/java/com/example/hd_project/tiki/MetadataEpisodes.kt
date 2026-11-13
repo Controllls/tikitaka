@@ -200,14 +200,12 @@ object MetadataEpisodes {
             val base=SceneProject(key,story.title,input.path,audioHash,clipDuration,storyBeats=story.beats,mentionedPlace=story.mentionedPlace)
             val scene=withContext(Dispatchers.IO) {
                 val staged=TikiScene.buildPerformance(context,base,profile,renderCount)
-                staged.copy(people=staged.people.mapIndexed { index,person ->
+                staged.copy(people=TikiScene.placeSelfAtDriver(staged.people,diarization.selfSpeaker).mapIndexed { index,person ->
                     val self=diarization.selfSpeaker
-                    val character=when { self==null -> person.manifestRef;index==self -> staged.people[0].manifestRef
-                        index==0 -> staged.people[self].manifestRef;else -> person.manifestRef }
                     person.copy(name=when { index==self -> "화자 ${index+1} · ${profile.name}"
                         index<diarization.speakerCount -> "화자 ${index+1}"
                         automatic && diarization.speakerCount==0 -> "화자 미확정 · 캐릭터 ${index+1}"
-                        else -> "대기 캐릭터 ${index+1}" },manifestRef=character)
+                        else -> "대기 캐릭터 ${index+1}" })
                 })
             }
             EpisodeWork.update(context,source.name,"running","웃음·화자 진단 수치를 준비해요.")
