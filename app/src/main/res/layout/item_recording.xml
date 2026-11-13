@@ -12,6 +12,10 @@
                 android:textColor="@color/sample_primary" />
             <TextView android:id="@+id/item_title" style="@style/Text.Journal.Section" android:layout_marginTop="7dp" />
             <TextView android:id="@+id/item_details" style="@style/Text.Journal.Body" android:layout_marginTop="7dp" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/make_animation"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:minHeight="48dp" android:layout_marginTop="12dp"
+                android:text="@string/animation_make" />
         </LinearLayout>
         <ImageView android:layout_width="24dp" android:layout_height="24dp"
             android:src="@drawable/ic_arrow" app:tint="@color/text_secondary" android:importantForAccessibility="no" />

@@ -1,0 +1,9 @@
+<resources>
+    <item name="people_add" type="id" />
+    <item name="people_list" type="id" />
+    <item name="people_status" type="id" />
+    <item name="people_name" type="id" />
+    <item name="people_save" type="id" />
+    <item name="people_choose_voice" type="id" />
+    <string name="people_manage">사용자 관리</string>
+</resources>

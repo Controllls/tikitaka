@@ -1,0 +1,20 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="528.5" height="98" viewBox="0 0 528.5 98" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse id="Ground shadow / &#236;&#155;&#144;&#235;&#179;&#184; &#236;&#160;&#145;&#236;&#167;&#128; 2" cx="264.25" cy="49" rx="264.25" ry="49" fill="url(#paint0_radial_0_87)"/>
+<defs>
+<radialGradient id="paint0_radial_0_87" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(264.25 49) scale(264.25 49)">
+<stop stop-opacity="0.291875"/>
+<stop offset="0.0833333" stop-opacity="0.279721"/>
+<stop offset="0.166667" stop-opacity="0.24621"/>
+<stop offset="0.25" stop-opacity="0.199041"/>
+<stop offset="0.333333" stop-opacity="0.147787"/>
+<stop offset="0.416667" stop-opacity="0.100782"/>
+<stop offset="0.5" stop-opacity="0.0631224"/>
+<stop offset="0.583333" stop-opacity="0.0363111"/>
+<stop offset="0.666667" stop-opacity="0.0191845"/>
+<stop offset="0.75" stop-opacity="0.01"/>
+<stop offset="0.833333" stop-opacity="0.01"/>
+<stop offset="0.916667" stop-opacity="0.01"/>
+<stop offset="1" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

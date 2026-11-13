@@ -1,0 +1,22 @@
+<article><nav aria-label="탐색 경로" class="theme-doc-breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><span class="breadcrumbs__link">Pleos Connect 개발자 가이드</span><li class="breadcrumbs__item"><span class="breadcrumbs__link">앱 기획·설계 가이드</span><li class="breadcrumbs__item"><span class="breadcrumbs__link">앱 설계 원칙</span><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">하드웨어 접근 정책</span></li></li></li></li></ul></nav><div class="theme-doc-markdown markdown"><header><h1>하드웨어 접근 정책</h1></header><p>Pleos Connect 적용 차량에서 실행되는 앱은 Pleos Connect SDK가 제공하는 표준 플랫폼 API를 통해 하드웨어에 접근해야 합니다.
+모바일 환경을 기준으로 개발한 앱은 차량에서 그대로 실행하기 어려우며, 모바일용 API가 차량 환경에서 제공되지 않거나 제한될 수 있습니다.
+또한 Pleos Connect 적용 차량에서 실행되는 앱은 주행 중 네트워크 불안정에 대비해 설계해야 합니다.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="차량-하드웨어-접근-정책">차량 하드웨어 접근 정책<a aria-label="차량 하드웨어 접근 정책에 대한 직접 링크" class="hash-link" href="#차량-하드웨어-접근-정책" title="차량 하드웨어 접근 정책에 대한 직접 링크" translate="no">​</a></h2>
+<p>Pleos Connect 적용 차량에서 실행되는 앱은 보안과 시스템 안정성을 위해 차량 하드웨어에 직접 접근할 수 없습니다.</p>
+<ul>
+<li class="">직접 접근 금지: 차량의 물리적 제어나 센서에 직접 접근해서는 안 됩니다.</li>
+<li class="">플랫폼 API 우선 원칙: 차량 상태 정보는 Pleos Connect SDK가 제공하는 표준 플랫폼 API를 통해 확인하고 제어해야 합니다.</li>
+</ul>
+<div class="theme-admonition theme-admonition-caution admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewbox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z" fill-rule="evenodd"></path></svg></span>모바일 전용 API 사용 시 주의사항</div><div class="admonitionContent_BuS1"><p>모바일 앱 개발에 사용한 API는 차량용 플랫폼에서 제공되지 않거나 기능이 제한될 수 있습니다.
+모바일 앱을 차량용 앱으로 전환할 때는 사용하는 API가 차량 환경에서 지원되는지 반드시 확인해야 합니다.<ul>
+<li class="">제한될 수 있는 기능: Telephony(전화), SMS, 일부 센서(자이로, 근접 등), 캘린더, 주소록 등</li>
+<li class="">대응 전략: 차량 환경에서 필수적이지 않은 기능은 제거하거나, API 지원 여부를 확인한 뒤 동작하도록 Optional 구조로 설계합니다.</li>
+</ul></p></div></div>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="주행-중-네트워크-환경-대응">주행 중 네트워크 환경 대응<a aria-label="주행 중 네트워크 환경 대응에 대한 직접 링크" class="hash-link" href="#주행-중-네트워크-환경-대응" title="주행 중 네트워크 환경 대응에 대한 직접 링크" translate="no">​</a></h2>
+<p>Pleos Connect 적용 차량에서 실행되는 앱은 주행 중 셀룰러 또는 Wi-Fi 연결이 끊기거나 대역폭이 급격히 낮아지는 상황에 대비해야 합니다.
+오프라인 또는 저대역폭 환경에서도 핵심 기능을 사용할 수 있도록 다음과 같이 설계하는 것을 권장합니다.</p>
+<ul>
+<li class="">캐싱 전략: 최근 사용한 콘텐츠를 로컬에 저장하여 오프라인 상태에서도 표시</li>
+<li class="">통신 최적화: 요청 재시도(Retry) 로직과 적절한 타임아웃 설정 적용</li>
+<li class="">사용자 피드백: 네트워크가 끊겼을 때 사용자가 상태를 인지할 수 있도록 오프라인 모드 안내 UI 제공</li>
+</ul></div></article>

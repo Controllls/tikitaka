@@ -1,0 +1,89 @@
+const imgOriginalImageFit = "https://www.figma.com/api/mcp/asset/68fe6111-1a82-4799-9770-02e3ff4bf7ef.png";
+const imgTikiTakaLogoRoundExploration0110 = "https://www.figma.com/api/mcp/asset/142fff88-d3fe-4350-9d8c-8d0c8bbabba2.svg";
+const imgTikiTakaIconLibrary = "https://www.figma.com/api/mcp/asset/a29a5604-9c10-4eb2-97b7-d50b55ee90d4.svg";
+
+export default function F02() {
+  return (
+    <div className="bg-[var(--tikitaka-white,white)] content-stretch flex flex-col gap-[var(--tikitaka-space-24,24px)] items-start px-[var(--tikitaka-space-32,32px)] py-[var(--tikitaka-space-24,24px)] relative size-full" data-node-id="618:4250" data-name="F-02 / 에피소드 완성 / 휴대폰">
+      <div className="content-stretch flex gap-[var(--tikitaka-space-16,16px)] h-[56px] items-center overflow-clip relative shrink-0 w-[376px]" data-node-id="618:4251" data-name="휴대폰 헤더">
+        <div className="h-[52px] relative shrink-0 w-[156px]" data-node-id="618:4252" data-name="TikiTaka / Logo / Round exploration 01–10">
+          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaLogoRoundExploration0110} />
+        </div>
+      </div>
+      <div className="content-stretch flex flex-[1_0_0] flex-col gap-[var(--tikitaka-space-24,24px)] items-center justify-center min-h-px overflow-clip relative w-full" data-node-id="618:4258" data-name="휴대폰 본문">
+        <div className="[word-break:break-word] content-stretch flex flex-col gap-[var(--tikitaka-space-12,12px)] items-start overflow-clip relative shrink-0 text-center w-[376px]" data-node-id="618:4260" data-name="제목과 안내">
+          <div className="font-['Asta_Sans:SemiBold'] font-semibold leading-[0] relative shrink-0 text-[28px] text-[color:var(--tikitaka-ink,#343434)] w-[376px]" data-node-id="618:4261">
+            <p className="leading-[36px] mb-0">새 에피소드가</p>
+            <p className="leading-[36px]">완성됐어요</p>
+          </div>
+          <p className="font-['Asta_Sans:Regular'] font-normal leading-[26px] relative shrink-0 text-[18px] text-[color:var(--tikitaka-muted,#5d5d5d)] w-[376px]" data-node-id="618:4262">
+            오늘 나눈 이야기를 만나보세요.
+          </p>
+        </div>
+        <div className="bg-[var(--tikitaka-canvas,white)] content-stretch flex h-[212px] items-center justify-center overflow-clip relative rounded-[20px] shrink-0 w-[376px]" data-node-id="618:4263" data-name="TikiTaka / Artwork / Scene">
+          <div className="flex-[1_0_0] h-full min-w-px relative" data-node-id="I618:4263;529:4287" data-name="Original image / FIT">
+            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgOriginalImageFit} />
+          </div>
+        </div>
+        <div className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[0] relative shrink-0 text-[18px] text-[color:var(--tikitaka-ink,#343434)] text-center w-[376px]" data-node-id="618:4265">
+          <p className="leading-[26px] mb-0">목적지는 정했지만</p>
+          <p className="leading-[26px]">저녁은 못 정했다</p>
+        </div>
+        <p className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[20px] relative shrink-0 text-[14px] text-[color:var(--tikitaka-muted,#5d5d5d)] text-center w-[376px]" data-node-id="618:4266">
+          2026.11.06 · 00:30
+        </p>
+      </div>
+      <div className="content-stretch flex flex-col gap-[var(--tikitaka-space-16,16px)] items-start overflow-clip relative shrink-0 w-full" data-node-id="618:4259" data-name="휴대폰 하단 동작">
+        <div className="content-stretch flex flex-col gap-[var(--tikitaka-space-12,12px)] items-start overflow-clip relative shrink-0 w-[376px]" data-node-id="618:4267" data-name="버튼">
+          <a className="bg-[var(--tikitaka-ink,#343434)] content-stretch cursor-pointer flex h-[56px] items-center justify-center px-[32px] relative rounded-[var(--tikitaka-radius-button,44px)] shrink-0 w-[376px]" data-node-id="618:4268" data-name="Go|F-03|에피소드 보기">
+            <p className="[word-break:break-word] font-['Asta_Sans:SemiBold'] font-semibold leading-[26px] relative shrink-0 text-[18px] text-[color:var(--tikitaka-white,white)] text-left whitespace-nowrap" data-node-id="I618:4268;615:4569">
+              에피소드 보기
+            </p>
+          </a>
+        </div>
+        <div className="content-stretch flex flex-col gap-[var(--tikitaka-space-8,8px)] items-center overflow-clip relative shrink-0 w-[376px]" data-node-id="618:4270" data-name="휴대폰 하단 / 보관함">
+          <div className="bg-[var(--tikitaka-color-border,#dfdfdf)] h-px relative shrink-0 w-[376px]" data-node-id="618:4271" data-name="구분선" />
+          <a className="content-stretch cursor-pointer flex flex-col gap-[var(--tikitaka-space-4,4px)] items-center overflow-clip pt-[8px] relative shrink-0 w-[376px]" data-node-id="618:4272" data-name="Go|F-04|보관함">
+            <div className="relative shrink-0 size-[24px]" data-node-id="618:4273" data-name="TikiTaka / Icon / Library">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaIconLibrary} />
+            </div>
+            <p className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[20px] relative shrink-0 text-[14px] text-[color:var(--tikitaka-blue,#2450ff)] text-center w-[376px]" data-node-id="618:4276">
+              보관함
+            </p>
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+These styles are contained in the design: TikiTaka / Home v2 / mobileTitle: Font(family: "Asta Sans", style: SemiBold, size: 28, weight: 600, lineHeight: 36, letterSpacing: 0), TikiTaka / Home v2 / mobileBody: Font(family: "Asta Sans", style: Regular, size: 18, weight: 400, lineHeight: 26, letterSpacing: 0), TikiTaka / Home v2 / mobileMeta: Font(family: "Asta Sans", style: Regular, size: 14, weight: 400, lineHeight: 20, letterSpacing: 0), TikiTaka / Home v2 / mobileAction: Font(family: "Asta Sans", style: SemiBold, size: 18, weight: 600, lineHeight: 26, letterSpacing: 0).
+Component descriptions: The following components have usage descriptions or documentation links defined in Figma. These descriptions provide important context about the intended usage, best practices, and any constraints for each component. Follow these guidelines when implementing or using these components.
+
+## Round=04
+**Node ID:** 545:4505
+
+사용자 선택 04번. 2026-11-08 상단 네 곳의 짧은 직선 구간을 정리해 다른 획 끝과 일관된 라운드를 적용. 빨간 표시 레이어는 숨겨서 보관.
+
+## TikiTaka / Artwork / Scene
+**Node ID:** 529:4286
+
+가족 장면 · 16:9 · FIT · 비율 및 원본 색상 유지 · 글자를 겹치지 않음
+
+## TikiTaka / Home v2 / Button
+**Node ID:** 615:4592
+
+기존 인스턴스 연결을 위한 기반 컴포넌트입니다. 신규 구현은 01 현재 기준 보드와 04 UI 적용본의 Home source 규격을 따릅니다. 이전 기본 글자 크기·형상은 현재 규격으로 간주하지 않습니다.
+
+## TikiTaka / Icon / Library
+**Node ID:** 529:4285
+
+24-unit grid / 1.8-unit rounded stroke. Always pair actions with a visible Korean label.
+The generated code contains image and SVG URL constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These URLs are temporary download sources and expire after 7 days. Download each asset into the project with curl -L, then replace its URL in the generated code with a reference to the downloaded asset. Never use the temporary URLs as runtime image sources.

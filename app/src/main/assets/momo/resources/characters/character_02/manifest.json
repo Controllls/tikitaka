@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 2,
+  "id": "character_02",
+  "label": "여성형 / bob hair",
+  "sourceStatus": "Reconstructed from available style references; named original guide sheets unavailable",
+  "viewBox": [
+    0,
+    0,
+    512,
+    640
+  ],
+  "coordinates": "x right, y down; screen directions; full canvas registration",
+  "anchors": {
+    "root": [
+      256,
+      588
+    ],
+    "head": [
+      256,
+      324
+    ],
+    "shoulder_screen_left": [
+      179,
+      381
+    ],
+    "shoulder_screen_right": [
+      333,
+      381
+    ]
+  },
+  "bodyParts": [
+    "parts/body/arm_screen_left.svg",
+    "parts/body/arm_screen_right.svg",
+    "parts/body/torso.svg",
+    "parts/body/neck.svg"
+  ],
+  "drawOrder": [
+    "arm_screen_left",
+    "arm_screen_right",
+    "torso",
+    "neck",
+    "hair_back",
+    "face",
+    "hair_front",
+    "eyes",
+    "nose",
+    "mouth"
+  ],
+  "poses": {
+    "front": {
+      "headPivot": [
+        256,
+        324
+      ],
+      "mouth": [
+        256,
+        266
+      ],
+      "eyes": [
+        256,
+        212
+      ],
+      "nose": null,
+      "yawDegrees": 0,
+      "direction": "screen_front",
+      "parts": {
+        "hair_back": "parts/front/hair_back.svg",
+        "face": "parts/front/face.svg",
+        "hair_front": "parts/front/hair_front.svg",
+        "eyes_open": "parts/front/eyes_open.svg",
+        "eyes_blink": "parts/front/eyes_blink.svg",
+        "eyes_happy": "parts/front/eyes_happy.svg",
+        "mouth_closed": "parts/front/mouth_closed.svg",
+        "mouth_talk": "parts/front/mouth_talk.svg",
+        "mouth_smile": "parts/front/mouth_smile.svg"
+      },
+      "partsPng": {
+        "hair_back": "parts/front/hair_back.png",
+        "face": "parts/front/face.png",
+        "hair_front": "parts/front/hair_front.png",
+        "eyes_open": "parts/front/eyes_open.png",
+        "eyes_blink": "parts/front/eyes_blink.png",
+        "eyes_happy": "parts/front/eyes_happy.png",
+        "mouth_closed": "parts/front/mouth_closed.png",
+        "mouth_talk": "parts/front/mouth_talk.png",
+        "mouth_smile": "parts/front/mouth_smile.png"
+      }
+    },
+    "left": {
+      "headPivot": [
+        256,
+        324
+      ],
+      "mouth": [
+        230,
+        266
+      ],
+      "eyes": [
+        225.5,
+        213
+      ],
+      "nose": [
+        220,
+        234
+      ],
+      "yawDegrees": -45,
+      "direction": "screen_left",
+      "parts": {
+        "hair_back": "parts/left/hair_back.svg",
+        "face": "parts/left/face.svg",
+        "hair_front": "parts/left/hair_front.svg",
+        "eyes_open": "parts/left/eyes_open.svg",
+        "eyes_blink": "parts/left/eyes_blink.svg",
+        "eyes_happy": "parts/left/eyes_happy.svg",
+        "mouth_closed": "parts/left/mouth_closed.svg",
+        "mouth_talk": "parts/left/mouth_talk.svg",
+        "mouth_smile": "parts/left/mouth_smile.svg",
+        "nose": "parts/left/nose.svg"
+      },
+      "partsPng": {
+        "hair_back": "parts/left/hair_back.png",
+        "face": "parts/left/face.png",
+        "hair_front": "parts/left/hair_front.png",
+        "eyes_open": "parts/left/eyes_open.png",
+        "eyes_blink": "parts/left/eyes_blink.png",
+        "eyes_happy": "parts/left/eyes_happy.png",
+        "mouth_closed": "parts/left/mouth_closed.png",
+        "mouth_talk": "parts/left/mouth_talk.png",
+        "mouth_smile": "parts/left/mouth_smile.png",
+        "nose": "parts/left/nose.png"
+      }
+    },
+    "right": {
+      "headPivot": [
+        256,
+        324
+      ],
+      "mouth": [
+        282,
+        266
+      ],
+      "eyes": [
+        286.5,
+        213
+      ],
+      "nose": [
+        292,
+        234
+      ],
+      "yawDegrees": 45,
+      "direction": "screen_right",
+      "parts": {
+        "hair_back": "parts/right/hair_back.svg",
+        "face": "parts/right/face.svg",
+        "hair_front": "parts/right/hair_front.svg",
+        "eyes_open": "parts/right/eyes_open.svg",
+        "eyes_blink": "parts/right/eyes_blink.svg",
+        "eyes_happy": "parts/right/eyes_happy.svg",
+        "mouth_closed": "parts/right/mouth_closed.svg",
+        "mouth_talk": "parts/right/mouth_talk.svg",
+        "mouth_smile": "parts/right/mouth_smile.svg",
+        "nose": "parts/right/nose.svg"
+      },
+      "partsPng": {
+        "hair_back": "parts/right/hair_back.png",
+        "face": "parts/right/face.png",
+        "hair_front": "parts/right/hair_front.png",
+        "eyes_open": "parts/right/eyes_open.png",
+        "eyes_blink": "parts/right/eyes_blink.png",
+        "eyes_happy": "parts/right/eyes_happy.png",
+        "mouth_closed": "parts/right/mouth_closed.png",
+        "mouth_talk": "parts/right/mouth_talk.png",
+        "mouth_smile": "parts/right/mouth_smile.png",
+        "nose": "parts/right/nose.png"
+      }
+    },
+    "down": {
+      "headPivot": [
+        256,
+        324
+      ],
+      "mouth": [
+        256,
+        288
+      ],
+      "eyes": [
+        256,
+        234
+      ],
+      "nose": null,
+      "yawDegrees": 0,
+      "direction": "screen_down",
+      "parts": {
+        "hair_back": "parts/down/hair_back.svg",
+        "face": "parts/down/face.svg",
+        "hair_front": "parts/down/hair_front.svg",
+        "eyes_open": "parts/down/eyes_open.svg",
+        "eyes_blink": "parts/down/eyes_blink.svg",
+        "eyes_happy": "parts/down/eyes_happy.svg",
+        "mouth_closed": "parts/down/mouth_closed.svg",
+        "mouth_talk": "parts/down/mouth_talk.svg",
+        "mouth_smile": "parts/down/mouth_smile.svg"
+      },
+      "partsPng": {
+        "hair_back": "parts/down/hair_back.png",
+        "face": "parts/down/face.png",
+        "hair_front": "parts/down/hair_front.png",
+        "eyes_open": "parts/down/eyes_open.png",
+        "eyes_blink": "parts/down/eyes_blink.png",
+        "eyes_happy": "parts/down/eyes_happy.png",
+        "mouth_closed": "parts/down/mouth_closed.png",
+        "mouth_talk": "parts/down/mouth_talk.png",
+        "mouth_smile": "parts/down/mouth_smile.png"
+      }
+    }
+  },
+  "states": {
+    "neutral": {
+      "eyes": "eyes_open",
+      "mouth": "mouth_closed"
+    },
+    "talking": {
+      "eyes": "eyes_open",
+      "mouth": "mouth_talk"
+    },
+    "happy": {
+      "eyes": "eyes_happy",
+      "mouth": "mouth_smile"
+    },
+    "blink": {
+      "eyes": "eyes_blink",
+      "mouth": "mouth_closed"
+    }
+  },
+  "mouthMapping": {
+    "silence": "mouth_closed",
+    "speech_active": "mouth_talk",
+    "smile_or_laugh": "mouth_smile"
+  },
+  "compositing": "Choose exactly one pose, one eye part and one mouth part. All parts retain full viewBox. Do not add head.svg and its constituent parts together.",
+  "revision": "v2_45deg_png",
+  "formats": {
+    "vector": "svg",
+    "raster": "png",
+    "pngSize": [
+      512,
+      640
+    ],
+    "pngScale": 1,
+    "pngRule": "Replace .svg with .png; preserve full canvas and anchors. Transparent background, white interior fills."
+  },
+  "optionalParts": {
+    "nose": "Present only for left/right; omit for front/down"
+  },
+  "bodyPartsPng": [
+    "parts/body/arm_screen_left.png",
+    "parts/body/arm_screen_right.png",
+    "parts/body/torso.png",
+    "parts/body/neck.png"
+  ]
+}

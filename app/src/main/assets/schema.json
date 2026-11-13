@@ -1,27 +1,9 @@
 {
   "packageName": "com.example.hd_project",
-  "appDescription": "A driving audio journal that finds and plays laughter-based highlight clips from saved recordings.",
+  "appDescription": "A driving audio journal that automatically creates server-analyzed highlights after recording ends and plays saved clips.",
   "invokeWord": "이동 기록",
-  "version": "1.0",
+  "version": "1.1",
   "actionCalls": [
-    {
-      "type": "function",
-      "function": {
-        "component": "activity",
-        "name": "FIND_RECORDING_HIGHLIGHTS",
-        "description": "Start local laughter-based highlight analysis of a saved recording and acknowledge the request while analysis continues.",
-        "parameters": {
-          "type": "object",
-          "properties": {
-            "recordingId": {
-              "type": "string",
-              "description": "An already known recording identifier; omit it to analyze the most recent saved recording."
-            }
-          },
-          "required": []
-        }
-      }
-    },
     {
       "type": "function",
       "function": {

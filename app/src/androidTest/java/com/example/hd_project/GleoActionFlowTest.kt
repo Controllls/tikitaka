@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 /** Executes the public intents, without pretending to test Gleo's natural-language service. */
 @RunWith(AndroidJUnit4::class)
 class GleoActionFlowTest {
-    @Test fun publicActionsAnalyzeListAndPlayAndValidateArguments() {
+    @Test fun publicActionsShowAutomaticResultsAndPlayAndValidateArguments() {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
         val context = instrumentation.targetContext
         val responses = LinkedBlockingQueue<JSONObject>()
@@ -51,10 +51,10 @@ class GleoActionFlowTest {
             val original = source.readBytes()
             val accepted = call(GleoContract.ANALYZE) { putExtra("recordingId", source.name) }
             assertEquals("success", accepted.getString("status"))
-            assertTrue(accepted.getString("message").contains("accepted"))
-            val deadline = SystemClock.elapsedRealtime() + 20_000
-            while (HighlightService.runningSource != null && SystemClock.elapsedRealtime() < deadline) Thread.sleep(100)
-            assertNull(HighlightService.runningSource)
+            assertTrue(accepted.getString("message").contains("automatically"))
+            assertFalse(AutomaticHighlights.isPending(context, source.name))
+            // Prepare a test-owned saved clip; legacy FIND must never trigger another analysis.
+            HighlightStore.create(context, source, listOf(HighlightRange(0, 2000, .8f))) { false }
             val batch = HighlightStore.batches(context).first { it.sourceId == source.name }
             assertFalse(batch.clips.isEmpty())
             assertArrayEquals(original, source.readBytes())

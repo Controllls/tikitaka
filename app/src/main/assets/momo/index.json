@@ -1,0 +1,592 @@
+[
+  {
+    "path": "resources/backgrounds/city_rearview_loop_10s.mp4",
+    "sha256": "d066214e6e84c2fcf2c79e2ed215b7d0daf2ca86513f7a125d333970995538be",
+    "bytes": 34705584
+  },
+  {
+    "path": "resources/backgrounds/highway_rearview_loop_10s.mp4",
+    "sha256": "f16c741eae16b9d94f867fa84a7e000d4684befa70a61bdfae0e6351a2cd1fad",
+    "bytes": 22847084
+  },
+  {
+    "path": "resources/characters/character_01/base.png",
+    "sha256": "53432a8cf66898f7a9eede494f02e7c518f22c36a789b3b86616fe8802d2dd1b",
+    "bytes": 22046
+  },
+  {
+    "path": "resources/characters/character_01/heads/head_down.png",
+    "sha256": "dd82de246e31a3c9c8502a8dd577525b6e760c0ea59fff7df64dcae60092b3d1",
+    "bytes": 9219
+  },
+  {
+    "path": "resources/characters/character_01/heads/head_front.png",
+    "sha256": "8f99374ced7a2b35b1656407abea5a2078732dcdb1662b212bed9949dfdbe6c6",
+    "bytes": 9344
+  },
+  {
+    "path": "resources/characters/character_01/heads/head_left.png",
+    "sha256": "e3c5bae1b8228326171ad10dfe4cfbd5aae66ae74cbd6992030b9bb3e4ecb2e0",
+    "bytes": 9957
+  },
+  {
+    "path": "resources/characters/character_01/heads/head_right.png",
+    "sha256": "f735b48cd6252c3ef7ebd3b884d5e2416cd445dcecef13ded603b3b667270662",
+    "bytes": 10266
+  },
+  {
+    "path": "resources/characters/character_01/manifest.json",
+    "sha256": "a740bc0f444f43798ac66e7a4a16813f2f43a696d4ec78b03bab4687891949c2",
+    "bytes": 7124
+  },
+  {
+    "path": "resources/characters/character_01/parts/body/arm_screen_left.png",
+    "sha256": "6e9b8902e8ea807615ef2efd3b82c5607658c42415cd08505bd0f6fd73eb72a1",
+    "bytes": 5226
+  },
+  {
+    "path": "resources/characters/character_01/parts/body/arm_screen_right.png",
+    "sha256": "fd0c376075857b73f89014992c12872a2abedf2803f081ce5076f2e3d4f3d0df",
+    "bytes": 5123
+  },
+  {
+    "path": "resources/characters/character_01/parts/body/neck.png",
+    "sha256": "998053f0e0b0d1e07f1ac96cb041acfce1badccedd304e3ccef51c04e51549cb",
+    "bytes": 2905
+  },
+  {
+    "path": "resources/characters/character_01/parts/body/torso.png",
+    "sha256": "d634ea6ba76ce14f8565b484861b097475ea9b997108e24f1e248b31bdad9e69",
+    "bytes": 8873
+  },
+  {
+    "path": "resources/characters/character_01/parts/down/eyes_blink.png",
+    "sha256": "b907075ad4e85661f001648166ad901d6a6036f8d37b7a3965c3570bf99e6ddc",
+    "bytes": 1581
+  },
+  {
+    "path": "resources/characters/character_01/parts/down/eyes_happy.png",
+    "sha256": "f6ab887d6f0b4b2777c5fb3531680bd935a9ec1e1d593ab635deab6b7e81ffd5",
+    "bytes": 1691
+  },
+  {
+    "path": "resources/characters/character_01/parts/down/eyes_open.png",
+    "sha256": "373cc9144dcc2ea230f16711463bc2b1ebf3b84653747a53540f791b8c762b07",
+    "bytes": 1648
+  },
+  {
+    "path": "resources/characters/character_01/parts/down/face.png",
+    "sha256": "86facd32e9f1c112fb1c5561c12936810b76d94b91c28824164fe2fe40b38028",
+    "bytes": 7594
+  },
+  {
+    "path": "resources/characters/character_01/parts/down/hair_back.png",
+    "sha256": "9bc5d556eef0b7fd85c071961fe41eacc6ce7f6d6c274945d88e47208e5de5cd",
+    "bytes": 4294
+  },
+  {
+    "path": "resources/characters/character_01/parts/down/hair_front.png",
+    "sha256": "2c707303609526d8750a5f091e7a42f00a6af950d77891ada546f7d6576e50ed",
+    "bytes": 3580
+  },
+  {
+    "path": "resources/characters/character_01/parts/down/mouth_closed.png",
+    "sha256": "60457b87b4945df7428b834c19d22acc2a313da31ba01adb1a5ace66175f0fc8",
+    "bytes": 1520
+  },
+  {
+    "path": "resources/characters/character_01/parts/down/mouth_smile.png",
+    "sha256": "166e28ca90b29602523b777a5ab535186685d3026b8d36d8e51c0d97d335e4d1",
+    "bytes": 1919
+  },
+  {
+    "path": "resources/characters/character_01/parts/down/mouth_talk.png",
+    "sha256": "8c45f7e70306e23c216588d1c23f7a267f9f2262bc2539907dcad3342fd939a7",
+    "bytes": 1678
+  },
+  {
+    "path": "resources/characters/character_01/parts/front/eyes_blink.png",
+    "sha256": "cc883c9fd44cb975cf4dd850b608f935c79c4c0fe982d4aed7fbac747e9f4a25",
+    "bytes": 1582
+  },
+  {
+    "path": "resources/characters/character_01/parts/front/eyes_happy.png",
+    "sha256": "69a14ca45e365f706e1288312dce33c1e1cfa499d6789027f7181704342951fd",
+    "bytes": 1687
+  },
+  {
+    "path": "resources/characters/character_01/parts/front/eyes_open.png",
+    "sha256": "39ee6ae0d49a90cea22ca539208d8ba3dc2076822479f7cfc5ee02ab7addf40a",
+    "bytes": 1650
+  },
+  {
+    "path": "resources/characters/character_01/parts/front/face.png",
+    "sha256": "f441993d932efe5a3f00491da8584945977e4c8e7b9488dd4bccc33794c5223d",
+    "bytes": 7749
+  },
+  {
+    "path": "resources/characters/character_01/parts/front/hair_back.png",
+    "sha256": "9bc5d556eef0b7fd85c071961fe41eacc6ce7f6d6c274945d88e47208e5de5cd",
+    "bytes": 4294
+  },
+  {
+    "path": "resources/characters/character_01/parts/front/hair_front.png",
+    "sha256": "0bacad95496ae5f8e5466aa9a5d390ad0dc8c123c43e1a9f93b2cec931d3f08d",
+    "bytes": 3581
+  },
+  {
+    "path": "resources/characters/character_01/parts/front/mouth_closed.png",
+    "sha256": "cd8a78fe4b1eb1e5aeba5a777a756da53335f04f44407b827d155b4df2d7c636",
+    "bytes": 1521
+  },
+  {
+    "path": "resources/characters/character_01/parts/front/mouth_smile.png",
+    "sha256": "0819c69c62125db6554ba9db25b909b759b238001ddd25a1efbead61e0b6f791",
+    "bytes": 1919
+  },
+  {
+    "path": "resources/characters/character_01/parts/front/mouth_talk.png",
+    "sha256": "483783956cc010e34ae5031c82cf48273131f8faa27487256c04876d740e23e4",
+    "bytes": 1677
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/eyes_blink.png",
+    "sha256": "a25cdb471a702e3845a33b17e30657ccccfe7e17e41a4aabc019215aaaaa0410",
+    "bytes": 1682
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/eyes_happy.png",
+    "sha256": "6f4740d58fc0c38f782085f53cb4f56ff378d95c00e22ac99f5e0df48ca40797",
+    "bytes": 1843
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/eyes_open.png",
+    "sha256": "6b3155519c962e866dcfc49e44ff93d1689cb1e1a00b5f0b6b5677ea76506277",
+    "bytes": 1773
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/face.png",
+    "sha256": "99a03d661cae0f4ee92dba249c9acf80e268dcefda50f1124e349366cbe53cc1",
+    "bytes": 7268
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/hair_back.png",
+    "sha256": "9bc5d556eef0b7fd85c071961fe41eacc6ce7f6d6c274945d88e47208e5de5cd",
+    "bytes": 4294
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/hair_front.png",
+    "sha256": "50b36506a72f4550e9c828bb4b2c3b64166d5f2350cc7bf6add19f55a5837273",
+    "bytes": 3643
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/mouth_closed.png",
+    "sha256": "3c62b58f71f42bcd31f2a40eaa11d02162fb1982eb3ded2c97198c435c4eb9ca",
+    "bytes": 1518
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/mouth_smile.png",
+    "sha256": "a187e92b588facbb2eb119e01f8b8a2c4a24e6ebce7bf1225b776f8965cc5b2b",
+    "bytes": 1920
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/mouth_talk.png",
+    "sha256": "2c365d52e6798a9b8217b7e076f3fe27a5aa19ea07a17c68b0b9f2b5d2518ee1",
+    "bytes": 1677
+  },
+  {
+    "path": "resources/characters/character_01/parts/left/nose.png",
+    "sha256": "53d1b2d8510d75503fbe4733e0987aaa8d1beb09f05a81e7cf1be61ce6645cca",
+    "bytes": 1746
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/eyes_blink.png",
+    "sha256": "1dffc76f917818f838fb0ee4c07656876e4bf310094f13cd5f9baf8393a70012",
+    "bytes": 1668
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/eyes_happy.png",
+    "sha256": "b4d1e0d13a77ef81aaf852d60284419264f3c9b9fc045f017dcda7484a930fc8",
+    "bytes": 1833
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/eyes_open.png",
+    "sha256": "1a1211c7c507a2b0b8e50e192252e04fab6c7740b71ab64e6a9bb2ef56cbacf6",
+    "bytes": 1787
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/face.png",
+    "sha256": "2ec0815984a3f3da158c647c0b514fc3f3a0732eb8efb22c02f16446bfc3c3d7",
+    "bytes": 7349
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/hair_back.png",
+    "sha256": "9bc5d556eef0b7fd85c071961fe41eacc6ce7f6d6c274945d88e47208e5de5cd",
+    "bytes": 4294
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/hair_front.png",
+    "sha256": "aeb7170659fe58125c99abc64d130f3023b12789d08c702cfc7eca927cbdcc93",
+    "bytes": 3643
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/mouth_closed.png",
+    "sha256": "4b72160a6e830cffafd8c4dd2e7ba42713bbf2e5b65fd7478f09f9544c8956ff",
+    "bytes": 1521
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/mouth_smile.png",
+    "sha256": "69f5ed88f75fcc0248c14bc6408856ed51804d88ae01aa3558cea240fe0694bf",
+    "bytes": 1920
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/mouth_talk.png",
+    "sha256": "0fa953caa2b341f7b2203c9f6ba6847ecbdcc38d3e7659efd4eb1b5663702d25",
+    "bytes": 1678
+  },
+  {
+    "path": "resources/characters/character_01/parts/right/nose.png",
+    "sha256": "3666aef63015c9b010b589665e7c27c41da502ca137a0876c942156783d7f805",
+    "bytes": 1750
+  },
+  {
+    "path": "resources/characters/character_01/poses/down.png",
+    "sha256": "8ff15b264d4d054e59342fe23a310f2c7a35b38a277ac061633c7846fd1153de",
+    "bytes": 21947
+  },
+  {
+    "path": "resources/characters/character_01/poses/front.png",
+    "sha256": "53432a8cf66898f7a9eede494f02e7c518f22c36a789b3b86616fe8802d2dd1b",
+    "bytes": 22046
+  },
+  {
+    "path": "resources/characters/character_01/poses/left.png",
+    "sha256": "9053d6de89c33695a1eb8864851ea539c579e96e1112397fbc3e6188bacc798c",
+    "bytes": 22720
+  },
+  {
+    "path": "resources/characters/character_01/poses/right.png",
+    "sha256": "2a0af5e171ffafda3adc589e5aceb0c70e5bfdd02d5cef8dbcaf513dda622e02",
+    "bytes": 23001
+  },
+  {
+    "path": "resources/characters/character_01/preview_down.png",
+    "sha256": "8ff15b264d4d054e59342fe23a310f2c7a35b38a277ac061633c7846fd1153de",
+    "bytes": 21947
+  },
+  {
+    "path": "resources/characters/character_01/preview_front.png",
+    "sha256": "53432a8cf66898f7a9eede494f02e7c518f22c36a789b3b86616fe8802d2dd1b",
+    "bytes": 22046
+  },
+  {
+    "path": "resources/characters/character_01/preview_left.png",
+    "sha256": "9053d6de89c33695a1eb8864851ea539c579e96e1112397fbc3e6188bacc798c",
+    "bytes": 22720
+  },
+  {
+    "path": "resources/characters/character_01/preview_right.png",
+    "sha256": "2a0af5e171ffafda3adc589e5aceb0c70e5bfdd02d5cef8dbcaf513dda622e02",
+    "bytes": 23001
+  },
+  {
+    "path": "resources/characters/character_02/base.png",
+    "sha256": "2d499947aeb9f0474d6a9548001cf8a46cf2775152a2a78bf13f37e1f819bfdb",
+    "bytes": 22755
+  },
+  {
+    "path": "resources/characters/character_02/heads/head_down.png",
+    "sha256": "e9aeb76d1a5a538a5cdaff41253cb925159a6c54d42f61786f2562152182d4f3",
+    "bytes": 9977
+  },
+  {
+    "path": "resources/characters/character_02/heads/head_front.png",
+    "sha256": "7eff22f595a75b3d4073308bb5a53eb24071c3e0eca5599d4687e601fdf430cb",
+    "bytes": 10047
+  },
+  {
+    "path": "resources/characters/character_02/heads/head_left.png",
+    "sha256": "3a1613371364539173ac74dc1d158d0284f91ab651d4c8ffa48514f4239cd63d",
+    "bytes": 10692
+  },
+  {
+    "path": "resources/characters/character_02/heads/head_right.png",
+    "sha256": "c70fd768ddd9aa0946d483446db90f715f1ec14ca6c9e86fc272a62be27f7f98",
+    "bytes": 10926
+  },
+  {
+    "path": "resources/characters/character_02/manifest.json",
+    "sha256": "213ed5eec8a5ba3c008761823e73bcdc366ed0dded45b28a52dfc74a8c4cee16",
+    "bytes": 7122
+  },
+  {
+    "path": "resources/characters/character_02/parts/body/arm_screen_left.png",
+    "sha256": "6e9b8902e8ea807615ef2efd3b82c5607658c42415cd08505bd0f6fd73eb72a1",
+    "bytes": 5226
+  },
+  {
+    "path": "resources/characters/character_02/parts/body/arm_screen_right.png",
+    "sha256": "fd0c376075857b73f89014992c12872a2abedf2803f081ce5076f2e3d4f3d0df",
+    "bytes": 5123
+  },
+  {
+    "path": "resources/characters/character_02/parts/body/neck.png",
+    "sha256": "998053f0e0b0d1e07f1ac96cb041acfce1badccedd304e3ccef51c04e51549cb",
+    "bytes": 2905
+  },
+  {
+    "path": "resources/characters/character_02/parts/body/torso.png",
+    "sha256": "d634ea6ba76ce14f8565b484861b097475ea9b997108e24f1e248b31bdad9e69",
+    "bytes": 8873
+  },
+  {
+    "path": "resources/characters/character_02/parts/down/eyes_blink.png",
+    "sha256": "b907075ad4e85661f001648166ad901d6a6036f8d37b7a3965c3570bf99e6ddc",
+    "bytes": 1581
+  },
+  {
+    "path": "resources/characters/character_02/parts/down/eyes_happy.png",
+    "sha256": "f6ab887d6f0b4b2777c5fb3531680bd935a9ec1e1d593ab635deab6b7e81ffd5",
+    "bytes": 1691
+  },
+  {
+    "path": "resources/characters/character_02/parts/down/eyes_open.png",
+    "sha256": "373cc9144dcc2ea230f16711463bc2b1ebf3b84653747a53540f791b8c762b07",
+    "bytes": 1648
+  },
+  {
+    "path": "resources/characters/character_02/parts/down/face.png",
+    "sha256": "86facd32e9f1c112fb1c5561c12936810b76d94b91c28824164fe2fe40b38028",
+    "bytes": 7594
+  },
+  {
+    "path": "resources/characters/character_02/parts/down/hair_back.png",
+    "sha256": "22fa74920fe44d5b954db72a104e8cc76098f50a86352f916f3070029a4a37a9",
+    "bytes": 5645
+  },
+  {
+    "path": "resources/characters/character_02/parts/down/hair_front.png",
+    "sha256": "0a71c1df1a1f695719e48e360596c2c04cb6413d0772f649e90eed5c33069dc7",
+    "bytes": 3952
+  },
+  {
+    "path": "resources/characters/character_02/parts/down/mouth_closed.png",
+    "sha256": "60457b87b4945df7428b834c19d22acc2a313da31ba01adb1a5ace66175f0fc8",
+    "bytes": 1520
+  },
+  {
+    "path": "resources/characters/character_02/parts/down/mouth_smile.png",
+    "sha256": "166e28ca90b29602523b777a5ab535186685d3026b8d36d8e51c0d97d335e4d1",
+    "bytes": 1919
+  },
+  {
+    "path": "resources/characters/character_02/parts/down/mouth_talk.png",
+    "sha256": "8c45f7e70306e23c216588d1c23f7a267f9f2262bc2539907dcad3342fd939a7",
+    "bytes": 1678
+  },
+  {
+    "path": "resources/characters/character_02/parts/front/eyes_blink.png",
+    "sha256": "cc883c9fd44cb975cf4dd850b608f935c79c4c0fe982d4aed7fbac747e9f4a25",
+    "bytes": 1582
+  },
+  {
+    "path": "resources/characters/character_02/parts/front/eyes_happy.png",
+    "sha256": "69a14ca45e365f706e1288312dce33c1e1cfa499d6789027f7181704342951fd",
+    "bytes": 1687
+  },
+  {
+    "path": "resources/characters/character_02/parts/front/eyes_open.png",
+    "sha256": "39ee6ae0d49a90cea22ca539208d8ba3dc2076822479f7cfc5ee02ab7addf40a",
+    "bytes": 1650
+  },
+  {
+    "path": "resources/characters/character_02/parts/front/face.png",
+    "sha256": "f441993d932efe5a3f00491da8584945977e4c8e7b9488dd4bccc33794c5223d",
+    "bytes": 7749
+  },
+  {
+    "path": "resources/characters/character_02/parts/front/hair_back.png",
+    "sha256": "22fa74920fe44d5b954db72a104e8cc76098f50a86352f916f3070029a4a37a9",
+    "bytes": 5645
+  },
+  {
+    "path": "resources/characters/character_02/parts/front/hair_front.png",
+    "sha256": "8c5a3594a1e7be3e785b9da45967715a769e9f1f537e12f7f316955f77ea7ede",
+    "bytes": 3949
+  },
+  {
+    "path": "resources/characters/character_02/parts/front/mouth_closed.png",
+    "sha256": "cd8a78fe4b1eb1e5aeba5a777a756da53335f04f44407b827d155b4df2d7c636",
+    "bytes": 1521
+  },
+  {
+    "path": "resources/characters/character_02/parts/front/mouth_smile.png",
+    "sha256": "0819c69c62125db6554ba9db25b909b759b238001ddd25a1efbead61e0b6f791",
+    "bytes": 1919
+  },
+  {
+    "path": "resources/characters/character_02/parts/front/mouth_talk.png",
+    "sha256": "483783956cc010e34ae5031c82cf48273131f8faa27487256c04876d740e23e4",
+    "bytes": 1677
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/eyes_blink.png",
+    "sha256": "a25cdb471a702e3845a33b17e30657ccccfe7e17e41a4aabc019215aaaaa0410",
+    "bytes": 1682
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/eyes_happy.png",
+    "sha256": "6f4740d58fc0c38f782085f53cb4f56ff378d95c00e22ac99f5e0df48ca40797",
+    "bytes": 1843
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/eyes_open.png",
+    "sha256": "6b3155519c962e866dcfc49e44ff93d1689cb1e1a00b5f0b6b5677ea76506277",
+    "bytes": 1773
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/face.png",
+    "sha256": "99a03d661cae0f4ee92dba249c9acf80e268dcefda50f1124e349366cbe53cc1",
+    "bytes": 7268
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/hair_back.png",
+    "sha256": "22fa74920fe44d5b954db72a104e8cc76098f50a86352f916f3070029a4a37a9",
+    "bytes": 5645
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/hair_front.png",
+    "sha256": "e04105652814a9895fead25fed0b747e442ab9bf18995501f982cb1b9e6867d4",
+    "bytes": 3888
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/mouth_closed.png",
+    "sha256": "3c62b58f71f42bcd31f2a40eaa11d02162fb1982eb3ded2c97198c435c4eb9ca",
+    "bytes": 1518
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/mouth_smile.png",
+    "sha256": "a187e92b588facbb2eb119e01f8b8a2c4a24e6ebce7bf1225b776f8965cc5b2b",
+    "bytes": 1920
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/mouth_talk.png",
+    "sha256": "2c365d52e6798a9b8217b7e076f3fe27a5aa19ea07a17c68b0b9f2b5d2518ee1",
+    "bytes": 1677
+  },
+  {
+    "path": "resources/characters/character_02/parts/left/nose.png",
+    "sha256": "53d1b2d8510d75503fbe4733e0987aaa8d1beb09f05a81e7cf1be61ce6645cca",
+    "bytes": 1746
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/eyes_blink.png",
+    "sha256": "1dffc76f917818f838fb0ee4c07656876e4bf310094f13cd5f9baf8393a70012",
+    "bytes": 1668
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/eyes_happy.png",
+    "sha256": "b4d1e0d13a77ef81aaf852d60284419264f3c9b9fc045f017dcda7484a930fc8",
+    "bytes": 1833
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/eyes_open.png",
+    "sha256": "1a1211c7c507a2b0b8e50e192252e04fab6c7740b71ab64e6a9bb2ef56cbacf6",
+    "bytes": 1787
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/face.png",
+    "sha256": "2ec0815984a3f3da158c647c0b514fc3f3a0732eb8efb22c02f16446bfc3c3d7",
+    "bytes": 7349
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/hair_back.png",
+    "sha256": "22fa74920fe44d5b954db72a104e8cc76098f50a86352f916f3070029a4a37a9",
+    "bytes": 5645
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/hair_front.png",
+    "sha256": "ad440c7a6681a458b509aaaa0a82411f6db605e18f70bddeedd136a348a5f2d7",
+    "bytes": 3885
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/mouth_closed.png",
+    "sha256": "4b72160a6e830cffafd8c4dd2e7ba42713bbf2e5b65fd7478f09f9544c8956ff",
+    "bytes": 1521
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/mouth_smile.png",
+    "sha256": "69f5ed88f75fcc0248c14bc6408856ed51804d88ae01aa3558cea240fe0694bf",
+    "bytes": 1920
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/mouth_talk.png",
+    "sha256": "0fa953caa2b341f7b2203c9f6ba6847ecbdcc38d3e7659efd4eb1b5663702d25",
+    "bytes": 1678
+  },
+  {
+    "path": "resources/characters/character_02/parts/right/nose.png",
+    "sha256": "3666aef63015c9b010b589665e7c27c41da502ca137a0876c942156783d7f805",
+    "bytes": 1750
+  },
+  {
+    "path": "resources/characters/character_02/poses/down.png",
+    "sha256": "9f02025253d3c5a31c1368c288b8aa28e9ecbc916a2c73c25d1c9038ee5a87c3",
+    "bytes": 22714
+  },
+  {
+    "path": "resources/characters/character_02/poses/front.png",
+    "sha256": "2d499947aeb9f0474d6a9548001cf8a46cf2775152a2a78bf13f37e1f819bfdb",
+    "bytes": 22755
+  },
+  {
+    "path": "resources/characters/character_02/poses/left.png",
+    "sha256": "6330e2abba76fd59dd3a6113fc8c462e1386e1013bfc6b3096513772e2b5ccb5",
+    "bytes": 23453
+  },
+  {
+    "path": "resources/characters/character_02/poses/right.png",
+    "sha256": "f7fbcf1b4deac0585273f33a7f887b906b9e542aceeb64def840f04a20e5373b",
+    "bytes": 23686
+  },
+  {
+    "path": "resources/characters/character_02/preview_down.png",
+    "sha256": "9f02025253d3c5a31c1368c288b8aa28e9ecbc916a2c73c25d1c9038ee5a87c3",
+    "bytes": 22714
+  },
+  {
+    "path": "resources/characters/character_02/preview_front.png",
+    "sha256": "2d499947aeb9f0474d6a9548001cf8a46cf2775152a2a78bf13f37e1f819bfdb",
+    "bytes": 22755
+  },
+  {
+    "path": "resources/characters/character_02/preview_left.png",
+    "sha256": "6330e2abba76fd59dd3a6113fc8c462e1386e1013bfc6b3096513772e2b5ccb5",
+    "bytes": 23453
+  },
+  {
+    "path": "resources/characters/character_02/preview_right.png",
+    "sha256": "f7fbcf1b4deac0585273f33a7f887b906b9e542aceeb64def840f04a20e5373b",
+    "bytes": 23686
+  },
+  {
+    "path": "resources/vehicles/car_body_seats.png",
+    "sha256": "a6b6ae53208f5660ebc5398c15782388e0b2d982b80499965ff77fcba5eefa8a",
+    "bytes": 87574
+  },
+  {
+    "path": "resources/vehicles/seatbelts_overlay.png",
+    "sha256": "7720dca2514ec3363d2a3f6aedbec4bd5b41d183883d5512e3fd46881f1a6158",
+    "bytes": 33740
+  },
+  {
+    "path": "resources/vehicles/steering_wheel_optional.png",
+    "sha256": "ce0aa5e18c6a0e4b3b737df31b3a8726d99e43e5ed5864f7746879ec2c9e2824",
+    "bytes": 21532
+  },
+  {
+    "path": "preset.json",
+    "sha256": "64c03cc0fb428ac3ce47b8dcb38690676986a27ea795e538bd6bdc217e78c18f",
+    "bytes": 828
+  }
+]

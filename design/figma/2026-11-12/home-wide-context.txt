@@ -1,0 +1,323 @@
+const img = "https://www.figma.com/api/mcp/asset/6dd4c7d8-7cf6-4493-9c8d-b52d1677b0f1.png";
+const imgGroundShadow1 = "https://www.figma.com/api/mcp/asset/ba0a36c6-46d8-4609-a3c0-59323eafb0d2.svg";
+const imgGroundShadow2 = "https://www.figma.com/api/mcp/asset/47a2f66a-ea9d-4bcf-b84b-375ccef2bc0b.svg";
+const imgGroundShadow3 = "https://www.figma.com/api/mcp/asset/c2d5afe2-edbc-4572-90bc-0f8059e2ab4a.svg";
+const img3D = "https://www.figma.com/api/mcp/asset/49adac14-00d9-456d-82dc-deab0129dd17.svg";
+const imgTikiTakaCurrentLineIconHome = "https://www.figma.com/api/mcp/asset/2edadf49-2055-41aa-a339-2aa5922722bd.svg";
+const imgTikiTakaHomeLatestVerticalLogo = "https://www.figma.com/api/mcp/asset/a200dc80-7cfc-4028-bdd8-66f87af04e91.png";
+const imgThumbnail = "https://www.figma.com/api/mcp/asset/08fdd3bd-2088-4dcb-9f73-05502bda47ea.png";
+const imgThumbnail1 = "https://www.figma.com/api/mcp/asset/6df74204-2454-4f60-8ee4-0855dd8cd20c.png";
+const imgThumbnail2 = "https://www.figma.com/api/mcp/asset/9e3829cc-fa12-45ee-b709-7f93c75750ab.png";
+const imgThumbnail3 = "https://www.figma.com/api/mcp/asset/0d831426-b4a3-4a03-b18a-0042126aa004.png";
+const imgTikiTakaCurrentLineIconLibrary = "https://www.figma.com/api/mcp/asset/94e7e3c3-21da-4371-8441-84a0fc887f1b.svg";
+const imgFrame = "https://www.figma.com/api/mcp/asset/ba057e1a-d105-4dbf-933e-0522df636915.svg";
+const imgFrame1 = "https://www.figma.com/api/mcp/asset/440dc095-8811-4c50-a9b4-1f1678a0f913.svg";
+const imgFrame2 = "https://www.figma.com/api/mcp/asset/7e6255c8-4ecb-40c7-ad3c-2b78a16abce2.svg";
+const imgFrame3 = "https://www.figma.com/api/mcp/asset/a5681995-f6be-46f9-b805-6d5adbb2379e.svg";
+const imgFrame4 = "https://www.figma.com/api/mcp/asset/b2a23aaa-e285-4d30-a8f9-b01300acb794.svg";
+
+function TikiTakaHomeWideReferenceHeroArtwork({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[919.5px] overflow-clip relative w-[980px]"} data-node-id="965:1859" style={{ backgroundImage: "linear-gradient(180deg, rgb(244, 231, 220) 0%, rgb(244, 231, 220) 0.11414%, rgb(247, 248, 250) 96.389%, rgb(247, 248, 250) 100%)" }} data-name="TikiTaka / Home wide reference / Hero artwork">
+      <div className="absolute h-[127.75px] left-[276.13px] top-[782.63px] w-[509.25px]" data-node-id="965:1866" data-name="Ground shadow / 원본 접지 1">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroundShadow1} />
+      </div>
+      <div className="absolute h-[98px] left-[115px] top-[797.25px] w-[528.5px]" data-node-id="965:1867" data-name="Ground shadow / 원본 접지 2">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroundShadow2} />
+      </div>
+      <div className="absolute h-[98px] left-[343.25px] top-[800.75px] w-[532px]" data-node-id="965:1868" data-name="Ground shadow / 원본 접지 3">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroundShadow3} />
+      </div>
+      <div className="absolute inset-[3.72%_1.28%_-33.9%_3.72%]" data-node-id="965:1861" data-name="청록 / 손인사 · 웜화이트 얼굴">
+        <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={img} />
+      </div>
+      <div className="absolute inset-[11.58%_22.43%_72.46%_21.94%]" data-node-id="965:1862" data-name="말풍선 / 매트 3D · 여유 있는 가로형">
+        <div className="absolute inset-[-4.09%_-2.57%_-14.99%_-2.57%]">
+          <img alt="" className="block max-w-none size-full" src={img3D} />
+        </div>
+      </div>
+      <div className="[word-break:break-word] absolute flex flex-col font-['Jua:Regular'] inset-[15.06%_27.19%_78.41%_26.89%] justify-center leading-[0] not-italic text-[#333] text-[34.8px] text-center" data-node-id="965:1865">
+        <p className="leading-[50px]">오늘은 어떤 이야기를 들려줄래?</p>
+      </div>
+    </div>
+  );
+}
+
+function TikiTakaCurrentLineIconHome({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[32px]"} data-node-id="948:1863" data-name="TikiTaka / Current / Line icon / home">
+      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaCurrentLineIconHome} />
+    </div>
+  );
+}
+
+export default function H01() {
+  return (
+    <div className="bg-[#f7f8fa] border border-[#c9cacd] border-solid content-stretch flex items-start overflow-clip relative rounded-[40px] size-full" data-node-id="616:3028" data-name="H-01 / 홈">
+      <div className="bg-[#f7f8fa] content-stretch flex flex-col h-[1184px] items-center overflow-clip pb-[26px] pl-[3.4px] pt-[51px] relative shrink-0 w-[130px]" data-node-id="619:4434" data-name="전역 사이드바 / 홈 · 보관함 · 캐릭터 / 하단 설정">
+        <div className="h-[60px] mix-blend-multiply relative shrink-0 w-[58.8px]" data-node-id="828:10371" data-name="TikiTaka / Home latest / Vertical logo">
+          <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={imgTikiTakaHomeLatestVerticalLogo} />
+        </div>
+        <div className="h-[245px] relative shrink-0 w-px" data-node-id="828:10372" data-name="여백" />
+        <div className="content-stretch flex flex-col gap-[110px] items-center overflow-clip relative shrink-0" data-node-id="828:10373" data-name="주요 메뉴">
+          <div className="content-stretch flex flex-col gap-[4px] h-[72px] items-center py-[6px] relative shrink-0 w-[80px]" data-node-id="619:4435" data-name="Go|H-01|홈">
+            <TikiTakaCurrentLineIconHome className="relative shrink-0 size-[32px]" />
+            <p className="[word-break:break-word] font-['Asta_Sans:SemiBold'] font-semibold leading-[24px] relative shrink-0 text-[#4d4d4d] text-[16px] whitespace-nowrap" data-node-id="I619:4435;828:1911">
+              홈
+            </p>
+          </div>
+          <button className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="619:4442" data-name="Go|L-01|보관함">
+            <div className="relative shrink-0 size-[32px]" data-node-id="I619:4442;828:1904" data-name="TikiTaka / Current / Line icon / library">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaCurrentLineIconLibrary} />
+            </div>
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[24px] relative shrink-0 text-[#595959] text-[16px] text-left whitespace-nowrap" data-node-id="I619:4442;828:1905">
+              보관함
+            </p>
+          </button>
+          <button className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="800:6382" data-name="Go|C-01-saved|캐릭터">
+            <div className="relative shrink-0 size-[32px]" data-node-id="I800:6382;828:1904" data-name="TikiTaka / Current / Line icon / character">
+              <div className="absolute left-0 size-[32px] top-0" data-node-id="I800:6382;828:1904;948:1870" data-name="Frame">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[24px] relative shrink-0 text-[#595959] text-[16px] text-left whitespace-nowrap" data-node-id="I800:6382;828:1905">
+              캐릭터
+            </p>
+          </button>
+        </div>
+        <div className="h-[294px] relative shrink-0 w-px" data-node-id="828:10406" data-name="여백" />
+        <a className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center pb-[6px] pt-[8px] relative shrink-0 w-[80px]" data-node-id="619:4449" data-name="Go|S-01|설정">
+          <div className="relative shrink-0 size-[32px]" data-node-id="I619:4449;828:1904" data-name="TikiTaka / Current / Line icon / settings">
+            <div className="absolute left-[1.28px] size-[29.44px] top-[1.28px]" data-node-id="I619:4449;828:1904;948:1874" data-name="Frame">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame1} />
+            </div>
+          </div>
+        </a>
+      </div>
+      <div className="bg-[#f7f8fa] content-stretch flex flex-col gap-[26.5px] h-[1184px] items-center overflow-clip relative shrink-0 w-[980px]" data-node-id="616:3039" data-name="메인 / 청록 캐릭터 · 최신 첨부">
+        <TikiTakaHomeWideReferenceHeroArtwork className="h-[919.5px] overflow-clip relative shrink-0 w-[980px]" />
+        <div className="content-stretch flex flex-col gap-[18px] h-[132px] items-center overflow-clip relative shrink-0 w-full" data-node-id="616:3043" data-name="녹음 시작">
+          <a className="bg-[var(--reference-pleos-dark-gray-1,#343434)] content-stretch cursor-pointer flex gap-[16px] h-[88px] items-center justify-center p-[var(--tikitaka-space-16,16px)] relative rounded-[44px] shrink-0 w-[340px]" data-node-id="616:3044" data-name="Go|R-00|대화 녹음 시작">
+            <div className="relative shrink-0 size-[24px]" data-node-id="I616:3044;529:4295" data-name="TikiTaka / Icon / Mic">
+              <div className="absolute left-0 size-[24px] top-0" data-node-id="I616:3044;529:4295;529:4265" data-name="Frame">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame2} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[32px] relative shrink-0 text-[24px] text-[color:var(--reference-pleos-white,white)] text-left whitespace-nowrap" data-node-id="I616:3044;529:4299">
+              대화 녹음 시작
+            </p>
+          </a>
+          <p className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[24px] relative shrink-0 text-[#626262] text-[16px] whitespace-nowrap" data-node-id="616:3045">
+            녹음이 끝나면 영상으로 만들어드려요
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#f7f8fa] h-[1184px] left-[1109px] top-[-1px] w-px" data-node-id="616:3046" data-name="영역 구분선" />
+      <div className="bg-[#f7f8fa] content-stretch flex flex-col h-[1184px] items-start overflow-clip pl-[48.851px] pr-[63.834px] pt-[54px] relative shrink-0 w-[590px]" data-node-id="616:3047" data-name="최근 에피소드">
+        <div className="content-stretch flex gap-[17px] h-[44px] items-start pl-[8px] relative shrink-0 w-full" data-node-id="616:3048" data-name="최근 에피소드 제목">
+          <p className="[word-break:break-word] font-['Asta_Sans:SemiBold'] font-semibold leading-[44px] relative shrink-0 text-[34px] text-[color:var(--reference-pleos-dark-gray-1,#343434)] whitespace-nowrap" data-node-id="616:3049">
+            최근 에피소드
+          </p>
+          <div className="content-stretch flex flex-col h-[44px] items-start overflow-clip pt-[17px] relative shrink-0 w-[22px]" data-node-id="970:6900" data-name="에피소드 개수 / 원본 기준선">
+            <p className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[20px] relative shrink-0 text-[#626262] text-[14px] whitespace-nowrap" data-node-id="616:3050">
+              4편
+            </p>
+          </div>
+        </div>
+        <div className="content-stretch flex h-[41.041px] items-end justify-end overflow-clip pr-[3px] relative shrink-0 w-full" data-node-id="957:6926" data-name="전체 보기 행">
+          <button className="content-stretch cursor-pointer flex gap-[4px] h-[30px] items-center overflow-clip relative shrink-0 w-[74px]" data-node-id="616:3052" data-name="Go|L-01|전체 보기">
+            <div className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[0] relative shrink-0 text-[#626262] text-[14px] text-left w-[54px]" data-node-id="616:3053" role="button" tabIndex="0">
+              <p className="leading-[20px]">전체 보기</p>
+            </div>
+            <div className="relative shrink-0 size-[16px]" data-node-id="616:3054" data-name="TikiTaka / Icon / Chevron">
+              <div className="absolute left-0 size-[16px] top-0" data-node-id="I616:3054;529:4277" data-name="Frame">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame3} />
+              </div>
+            </div>
+          </button>
+        </div>
+        <div className="bg-[#dedede] h-px relative shrink-0 w-[477.315px]" data-node-id="800:6401" data-name="머리 구분선" />
+        <div className="content-stretch cursor-pointer flex flex-col items-start overflow-clip relative shrink-0 w-[477.315px]" data-node-id="616:3055" data-name="에피소드 목록">
+          <a className="border-[#dedede] border-b border-solid content-stretch flex gap-[46.11px] h-[240.928px] items-start pl-[11.039px] pt-[50.973px] relative shrink-0 w-[477.315px]" data-node-id="967:6925" data-name="Go|Episode 04|집으로 가는 길, 끝나지 않는 이야기">
+            <div className="content-stretch flex h-[131.982px] items-start relative shrink-0 w-[246px]" data-node-id="967:6926" data-name="Media">
+              <div className="h-[131.982px] relative shrink-0 w-[220.059px]" data-node-id="967:6927" data-name="Thumbnail">
+                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgThumbnail} />
+              </div>
+              <div className="absolute bg-[var(--tikitaka-white,white)] content-stretch flex items-center justify-center left-[196.66px] overflow-clip rounded-[25px] shadow-[0px_3px_6px_0px_rgba(0,0,0,0.18)] size-[48px] top-[97.3px]" data-node-id="967:6928" data-name="Play">
+                <div className="relative shrink-0 size-[24px]" data-node-id="967:6929" data-name="FINAL / Icon / Play">
+                  <div className="absolute left-0 size-[24px] top-0" data-node-id="I967:6929;140:1013" data-name="Frame">
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame4} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="[word-break:break-word] content-stretch flex flex-[1_0_0] flex-col font-['Asta_Sans:Regular'] font-normal gap-[13.916px] h-[131.982px] items-start min-w-px overflow-clip pt-[56.232px] relative text-left" data-node-id="967:6930" data-name="Episode copy">
+              <p className="indent-[2px] leading-[20px] relative shrink-0 text-[#626262] text-[16px] w-full" data-node-id="967:6931">
+                EP. 04
+              </p>
+              <div className="leading-[0] relative shrink-0 text-[#333] text-[22px] w-full" data-node-id="967:6932">
+                <p className="indent-px leading-[22px] mb-0">집으로 가는 길,</p>
+                <p className="indent-px leading-[22px]">끝나지 않는 이야기</p>
+              </div>
+            </div>
+          </a>
+          <a className="border-[#dedede] border-b border-solid content-stretch flex gap-[46.11px] h-[239.007px] items-start pl-[11.039px] pt-[55.052px] relative shrink-0 w-[477.315px]" data-node-id="967:6936" data-name="Go|Episode 03|목적지는 정했지만 저녁은 못 정했다">
+            <div className="content-stretch flex h-[131.982px] items-start relative shrink-0 w-[246px]" data-node-id="967:6937" data-name="Media">
+              <div className="h-[131.982px] relative shrink-0 w-[220.059px]" data-node-id="967:6938" data-name="Thumbnail">
+                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgThumbnail1} />
+              </div>
+              <div className="absolute bg-[var(--tikitaka-white,white)] content-stretch flex items-center justify-center left-[196.66px] overflow-clip rounded-[25px] shadow-[0px_3px_6px_0px_rgba(0,0,0,0.18)] size-[48px] top-[94.18px]" data-node-id="967:6939" data-name="Play">
+                <div className="relative shrink-0 size-[24px]" data-node-id="967:6940" data-name="FINAL / Icon / Play">
+                  <div className="absolute left-0 size-[24px] top-0" data-node-id="I967:6940;140:1013" data-name="Frame">
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame4} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="[word-break:break-word] content-stretch flex flex-[1_0_0] flex-col font-['Asta_Sans:Regular'] font-normal gap-[11.996px] h-[131.982px] items-start min-w-px overflow-clip pt-[55.992px] relative text-left" data-node-id="967:6941" data-name="Episode copy">
+              <p className="indent-[2px] leading-[20px] relative shrink-0 text-[#626262] text-[16px] w-full" data-node-id="967:6942">
+                EP. 03
+              </p>
+              <div className="leading-[0] relative shrink-0 text-[#333] text-[22px] w-full" data-node-id="967:6943">
+                <p className="leading-[22px] mb-0">목적지는 정했지만</p>
+                <p className="leading-[22px]">저녁은 못 정했다</p>
+              </div>
+            </div>
+          </a>
+          <a className="border-[#dedede] border-b border-solid content-stretch flex gap-[45.15px] h-[240.928px] items-start pl-[11.999px] pt-[52.893px] relative shrink-0 w-[477.315px]" data-node-id="967:6947" data-name="Go|Episode 02|친구들과 함께한 봄나들이 추억">
+            <div className="content-stretch flex h-[131.982px] items-start relative shrink-0 w-[246px]" data-node-id="967:6948" data-name="Media">
+              <div className="h-[131.982px] relative shrink-0 w-[220.059px]" data-node-id="967:6949" data-name="Thumbnail">
+                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgThumbnail2} />
+              </div>
+              <div className="absolute bg-[var(--tikitaka-white,white)] content-stretch flex items-center justify-center left-[195.7px] overflow-clip rounded-[25px] shadow-[0px_3px_6px_0px_rgba(0,0,0,0.18)] size-[48px] top-[95.38px]" data-node-id="967:6950" data-name="Play">
+                <div className="relative shrink-0 size-[24px]" data-node-id="967:6951" data-name="FINAL / Icon / Play">
+                  <div className="absolute left-0 size-[24px] top-0" data-node-id="I967:6951;140:1013" data-name="Frame">
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame4} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="[word-break:break-word] content-stretch flex flex-[1_0_0] flex-col font-['Asta_Sans:Regular'] font-normal gap-[11.996px] h-[131.982px] items-start min-w-px overflow-clip pt-[57.192px] relative text-left" data-node-id="967:6952" data-name="Episode copy">
+              <p className="indent-[2px] leading-[20px] relative shrink-0 text-[#626262] text-[16px] w-full" data-node-id="967:6953">
+                EP. 02
+              </p>
+              <div className="leading-[0] relative shrink-0 text-[#333] text-[22px] w-full" data-node-id="967:6954">
+                <p className="leading-[22px] mb-0">친구들과 함께한</p>
+                <p className="leading-[22px]">봄나들이 추억</p>
+              </div>
+            </div>
+          </a>
+          <a className="border-[#dedede] border-b border-solid content-stretch flex gap-[46.11px] h-[241.167px] items-start pl-[11.039px] pt-[51.933px] relative shrink-0 w-[477.315px]" data-node-id="967:6958" data-name="Go|Episode 01|맛있는 저녁식사, 즐거운 귀갓길">
+            <div className="content-stretch flex h-[131.982px] items-start relative shrink-0 w-[246px]" data-node-id="967:6959" data-name="Media">
+              <div className="h-[131.982px] relative shrink-0 w-[220.059px]" data-node-id="967:6960" data-name="Thumbnail">
+                <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgThumbnail3} />
+              </div>
+              <div className="absolute bg-[var(--tikitaka-white,white)] content-stretch flex items-center justify-center left-[196.66px] overflow-clip rounded-[25px] shadow-[0px_3px_6px_0px_rgba(0,0,0,0.18)] size-[48px] top-[95.38px]" data-node-id="967:6961" data-name="Play">
+                <div className="relative shrink-0 size-[24px]" data-node-id="967:6962" data-name="FINAL / Icon / Play">
+                  <div className="absolute left-0 size-[24px] top-0" data-node-id="I967:6962;140:1013" data-name="Frame">
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame4} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="[word-break:break-word] content-stretch flex flex-[1_0_0] flex-col font-['Asta_Sans:Regular'] font-normal gap-[11.996px] h-[131.982px] items-start min-w-px overflow-clip pt-[57.191px] relative text-left" data-node-id="967:6963" data-name="Episode copy">
+              <p className="indent-[2px] leading-[20px] relative shrink-0 text-[#626262] text-[16px] w-full" data-node-id="967:6964">
+                EP. 01
+              </p>
+              <div className="leading-[0] relative shrink-0 text-[#333] text-[22px] w-full" data-node-id="967:6965">
+                <p className="leading-[22px] mb-0">맛있는 저녁식사,</p>
+                <p className="leading-[22px]">즐거운 귀갓길</p>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div className="content-stretch flex flex-col h-[34px] items-end overflow-clip pt-[12px] relative shrink-0 w-[477.315px]" data-node-id="616:3077" data-name="주차 중 재생 안내">
+          <p className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[20px] relative shrink-0 text-[#666] text-[14px] whitespace-nowrap" data-node-id="616:3079">
+            영상은 주차 중에만 볼 수 있어요
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+These styles are contained in the design: TikiTaka / Current / Navigation outline: #4D4D4D, TikiTaka / Home / Background / Surface: #F7F8FA, TikiTaka / Home / Background / Hero: .
+
+Component descriptions: The following components have usage descriptions or documentation links defined in Figma. These descriptions provide important context about the intended usage, best practices, and any constraints for each component. Follow these guidelines when implementing or using these components.
+
+## TikiTaka / Home latest / Vertical logo
+**Node ID:** 800:6328
+
+최신 첨부의 수직 2단 브랜드 로고
+
+## State=Selected
+**Node ID:** 828:1909
+
+홈 원본 80×72 비례. 아이콘28, 라벨16/24, 활성 탭만 작은 차콜 표시.
+
+## TikiTaka / Current / Navigation item
+**Node ID:** 828:1915
+
+전역 홈/보관함/캐릭터와 하단 설정. 사용자 원본의 선형 아이콘: 32px 슬롯, 2.4px 선. 캐릭터는 사람형. 선택 표시와 이동 반응 유지.
+
+## TikiTaka / Current / Line icon / home
+**Node ID:** 948:1863
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## State=Default
+**Node ID:** 828:1903
+
+홈 원본 80×72 비례. 아이콘28, 라벨16/24, 활성 탭만 작은 차콜 표시.
+
+## TikiTaka / Current / Line icon / library
+**Node ID:** 948:1866
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## TikiTaka / Current / Line icon / character
+**Node ID:** 948:1869
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## TikiTaka / Current / Line icon / settings
+**Node ID:** 948:1873
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## TikiTaka / Home wide reference / Hero artwork
+**Node ID:** 965:1859
+
+1700×1184 넓은 홈 전용. 사용자 최종 픽셀 시안 eed8d6dd 기준. 좁은 홈과 원본 마스터는 별도 유지. 편집형 주아체 문구·네이티브 말풍선 및 접지 그림자.
+
+## TikiTaka / Button
+**Node ID:** 529:4294
+
+Home v1 · 연결된 색상·간격·글자 스타일 사용
+
+## TikiTaka / Icon / Mic
+**Node ID:** 529:4264
+
+24×24 고정 그리드 · 2px 선 · 색상은 역할 토큰을 사용
+
+## TikiTaka / Icon / Chevron
+**Node ID:** 529:4276
+
+24×24 고정 그리드 · 2px 선 · 색상은 역할 토큰을 사용
+
+## FINAL / Icon / Play
+**Node ID:** 140:1015
+
+B4 화이트·블랙 테마에 대응하는 Sitcom/Icon/Play. 기존 형태와 텍스트를 유지.
+
+The generated code contains image and SVG URL constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These URLs are temporary download sources and expire after 7 days. Download each asset into the project with curl -L, then replace its URL in the generated code with a reference to the downloaded asset. Never use the temporary URLs as runtime image sources.

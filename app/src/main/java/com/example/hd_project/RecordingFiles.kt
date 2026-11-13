@@ -5,10 +5,13 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import org.json.JSONObject
 
 data class SavedRecording(val file: File, val durationMs: Long) {
-    val title: String get() = SimpleDateFormat("M월 d일 · HH:mm", Locale.KOREA)
-        .format(Date(file.lastModified()))
+    val title: String get() = runCatching {
+        JSONObject(File(file.parentFile, file.nameWithoutExtension + ".json").readText())
+            .getString("title").take(100).takeIf { it.isNotBlank() }
+    }.getOrNull() ?: SimpleDateFormat("M월 d일 · HH:mm", Locale.KOREA).format(Date(file.lastModified()))
     val details: String get() = formatDuration(durationMs) + "  ·  " +
         String.format(Locale.KOREA, "%.1f MB", file.length() / 1_000_000.0)
 }
@@ -32,4 +35,13 @@ object RecordingFiles {
         .orEmpty().filter { it.isFile && it.extension == "m4a" }
         .sortedByDescending { it.lastModified() }
         .map { SavedRecording(it, it.nameWithoutExtension.substringAfterLast('_').toLongOrNull() ?: 0) }
+
+    fun subtitles(source: File) = File(source.parentFile, source.nameWithoutExtension + ".srt")
+
+    fun delete(recording: SavedRecording): Boolean {
+        if (!recording.file.delete()) return false
+        subtitles(recording.file).delete()
+        File(recording.file.parentFile, recording.file.nameWithoutExtension + ".json").delete()
+        return true
+    }
 }

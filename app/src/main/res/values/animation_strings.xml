@@ -1,0 +1,9 @@
+<resources>
+    <string name="animation_title">MOMO 영상 만들기</string>
+    <string name="animation_make">영상 만들기</string>
+    <string name="animation_caption">목소리는 그대로, 함께한 순간은 한 편의 영상으로.</string>
+    <string name="animation_empty">MOMO DRIVE\n\n완성된 영상이\n여기에 표시됩니다.</string>
+    <string name="animation_play">영상 재생</string>
+    <string name="animation_export">MP4 저장</string>
+    <string name="animation_busy">녹음 분석 또는 영상 제작 중에는 이 기록을 삭제할 수 없어요.</string>
+</resources>

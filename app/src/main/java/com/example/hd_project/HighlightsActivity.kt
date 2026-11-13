@@ -14,8 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.example.hd_project.pleos.applyPleosInsets
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.json.JSONArray
 import org.json.JSONObject
@@ -46,19 +45,13 @@ class HighlightsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_highlights)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.highlights_root)) { view, insets ->
-            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
-            view.setPadding(bars.left, bars.top, bars.right, bars.bottom)
-            insets
-        }
+        findViewById<View>(R.id.highlights_root).applyPleosInsets()
         selectedId = savedInstanceState?.getString("selected")
-            ?: HighlightService.runningSource ?: HighlightStore.batches(this).firstOrNull()?.sourceId
+            ?: AutomaticHighlights.latestSource(this) ?: HighlightStore.batches(this).firstOrNull()?.sourceId
             ?: RecordingFiles.list(this).firstOrNull()?.file?.name
         if (savedInstanceState == null && GleoContract.actionName(intent.action, packageName) != null) pendingIntent = intent
         findViewById<View>(R.id.highlights_back).setOnClickListener { finish() }
         findViewById<View>(R.id.choose_recording).setOnClickListener { chooseRecording() }
-        findViewById<View>(R.id.analyze_highlights).setOnClickListener { analyze(selectedId, false) }
-        findViewById<View>(R.id.cancel_analysis).setOnClickListener { HighlightService.cancel(this) }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -92,34 +85,6 @@ class HighlightsActivity : AppCompatActivity() {
             }.setNegativeButton(R.string.cancel, null).show()
     }
 
-    private fun analyze(sourceId: String?, gleo: Boolean) {
-        fun answer(status: String, message: String) {
-            if (gleo) GleoContract.respond(this, GleoContract.ANALYZE, status, message)
-        }
-        if (RecordingStore.state.busy) {
-            answer("fail", "Please finish the current recording before analyzing saved audio.")
-            Toast.makeText(this, R.string.highlight_recording_busy, Toast.LENGTH_LONG).show(); return
-        }
-        val recordings = RecordingFiles.list(this)
-        val source = if (sourceId == null) recordings.firstOrNull() else recordings.firstOrNull { it.file.name == sourceId }
-        if (source == null) {
-            answer("fail", "No matching saved recording is available. Save a recording first.")
-            Toast.makeText(this, R.string.highlight_no_recordings, Toast.LENGTH_LONG).show(); return
-        }
-        selectedId = source.file.name
-        val cached = currentBatch()
-        if (cached != null) {
-            answer("success", "This recording has already been analyzed. Its saved highlight candidates are displayed.")
-        } else if (HighlightService.runningSource == selectedId) {
-            answer("success", "Analysis of this recording is already in progress. Results are not ready yet.")
-        } else if (HighlightService.runningSource != null) {
-            answer("fail", "Another recording is being analyzed. Please wait for it to finish.")
-        } else if (HighlightService.enqueue(this, source)) {
-            answer("success", "The request to analyze the recording was accepted. Analysis is in progress; no highlights are ready yet.")
-        } else answer("fail", "Analysis could not be started. Please try again from the app.")
-        signature = ""; render()
-    }
-
     private fun handleGleo(intent: Intent) {
         dialog?.dismiss()
         val request = runCatching { GleoContract.parse(intent, packageName) }.getOrElse {
@@ -128,7 +93,14 @@ class HighlightsActivity : AppCompatActivity() {
             return
         }
         when (request.action) {
-            GleoContract.ANALYZE -> analyze(request.sourceId, true)
+            GleoContract.ANALYZE -> {
+                val source = request.sourceId ?: AutomaticHighlights.latestSource(this) ?: RecordingFiles.list(this).firstOrNull()?.file?.name
+                val exists = RecordingFiles.list(this).any { it.file.name == source } || HighlightStore.batches(this).any { it.sourceId == source }
+                selectedId = source
+                GleoContract.respond(this, request.action, if(exists) "success" else "fail",
+                    if(exists) "Highlights are generated automatically after recording ends. Showing saved results and current status." else "No matching saved recording is available.")
+                signature = ""; render()
+            }
             GleoContract.SHOW -> {
                 selectedId = HighlightStore.batches(this).firstOrNull()?.sourceId
                     ?: RecordingFiles.list(this).firstOrNull()?.file?.name
@@ -136,7 +108,7 @@ class HighlightsActivity : AppCompatActivity() {
                 val data = JSONArray()
                 clips.forEachIndexed { index, clip -> data.put(JSONObject().put("highlightNumber", index + 1)
                     .put("title", clip.title).put("durationSeconds", clip.durationMs / 1000)) }
-                val message = if (HighlightService.runningSource != null)
+                val message = if (AutomaticHighlights.isPending(this, selectedId))
                     "Analysis is still running. Any previously saved highlight candidates are displayed."
                 else if (clips.isEmpty()) "There are no saved highlight candidates for this recording."
                 else "The saved laughter-based highlight candidates are displayed."
@@ -160,22 +132,11 @@ class HighlightsActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.selected_recording).text = recording?.let {
             it.title + "  ·  " + formatDuration(it.durationMs)
         } ?: getString(if (selectedId == null) R.string.highlight_no_recordings else R.string.highlight_source_deleted)
-        val running = HighlightService.runningSource
-        val preferences = HighlightService.preferences(this)
         val batch = currentBatch()
-        val status = when {
-            running != null -> getString(R.string.highlight_progress, preferences.getInt("progress", 0))
-            batch != null -> getString(if (batch.clips.isEmpty()) R.string.highlight_none_found else R.string.highlight_done)
-            preferences.getString("sourceId", null) == selectedId && preferences.getString("state", "") == "running" ->
-                getString(R.string.highlight_interrupted)
-            preferences.getString("sourceId", null) == selectedId && preferences.getString("state", "") == "error" ->
-                preferences.getString("message", getString(R.string.highlight_failed)).orEmpty()
-            else -> getString(R.string.highlight_ready)
-        }
+        val status = AutomaticHighlights.message(this, selectedId) ?: if(batch != null)
+            getString(if(batch.clips.isEmpty()) R.string.highlight_none_found else R.string.highlight_done)
+            else getString(R.string.highlight_ready)
         findViewById<TextView>(R.id.highlight_status).text = status
-        findViewById<View>(R.id.analyze_highlights).isEnabled = recording != null && running == null &&
-            batch == null && !RecordingStore.state.busy
-        findViewById<View>(R.id.cancel_analysis).visibility = if (running != null) View.VISIBLE else View.GONE
         val clips = batch?.clips.orEmpty()
         val nextSignature = selectedId + ":" + batch?.createdAt + ":" + RecordingStore.state.busy
         if (signature == nextSignature) return
@@ -189,6 +150,7 @@ class HighlightsActivity : AppCompatActivity() {
             row.findViewById<TextView>(R.id.item_title).text = clip.title
             row.findViewById<TextView>(R.id.item_details).text = getString(R.string.highlight_clip_details,
                 formatDuration(clip.durationMs), formatDuration(clip.startMs), formatDuration(clip.endMs))
+            row.findViewById<View>(R.id.make_animation).visibility = View.GONE
             row.isEnabled = !RecordingStore.state.busy
             row.setOnClickListener { play(clip, false) }
             rows.addView(row)

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">이동 기록</string>
+    <string name="app_name">티키타카</string>
     <string name="empty_duration">00:00</string>
     <string name="recordings">저장된 기록</string>
     <string name="idle_title">이번 이동의 대화를\n기록해 보세요</string>
@@ -14,7 +14,7 @@
     <string name="error_status">녹음 중단</string>
     <string name="idle_hint">버튼을 눌러 녹음을 시작하세요</string>
     <string name="recording_hint">녹음 버튼이나 Gleo 사용하기를 누르면 종료하고 저장해요.</string>
-    <string name="local_storage">음성은 이 기기에만 저장됩니다</string>
+    <string name="local_storage">녹음 후 서버가 하이라이트를 자동으로 만들어요</string>
     <string name="start_recording">녹음 시작</string>
     <string name="stop_recording">녹음 종료</string>
     <string name="boarding_wait">탑승 감지 대기</string>
@@ -26,7 +26,7 @@
     <string name="inline_waiting_status">시작 대기</string>
     <string name="inline_start">눌러서 녹음 시작</string>
     <string name="inline_boarding_hint">준비되면 위의 마이크 버튼을 눌러 주세요.</string>
-    <string name="inline_notice">함께 탄 분의 동의를 확인한 뒤 시작해 주세요.\n음성은 이 기기에만 저장됩니다.</string>
+    <string name="inline_notice">함께 탄 분께 녹음과 서버 분석을 안내하고 동의를 확인해 주세요.\n녹음 종료 후 하이라이트 분석을 위해 음성이 자동 전송됩니다.</string>
     <string name="inline_skipped">이번 이동은 녹음하지 않아요. 필요하면 버튼을 눌러 시작하세요.</string>
     <string name="permission_denied">마이크 권한이 필요합니다. 버튼을 눌러 다시 허용해 주세요.</string>
     <string name="permission_settings">마이크 권한이 꺼져 있습니다. 앱 설정에서 마이크를 허용해 주세요.</string>
@@ -72,7 +72,7 @@
     <string name="no_recent_title">첫 번째 이야기를 기다리고 있어요</string>
     <string name="no_recent_description">녹음을 마치면 이곳에서\n다시 만나볼 수 있어요.</string>
     <string name="privacy_title">우리의 대화는 소중하니까.</string>
-    <string name="privacy_description">음성은 이 기기에만 저장됩니다.\n함께 탄 분께 녹음 사실을 알려 주세요.</string>
+    <string name="privacy_description">원본과 완성 하이라이트는 기기에 보관합니다. 서버의 음성 사본은 분석 종료 후 24시간, 결과는 30일 후 정리합니다.\n함께 탄 분께 녹음과 서버 분석 사실을 알려 주세요.</string>
     <string name="archive_caption">OUR CONVERSATIONS</string>
     <string name="archive_description">함께 나눈 이야기를 다시 들어보세요.</string>
     <string name="archive_empty_title">아직 담아 둔 이야기가 없어요</string>

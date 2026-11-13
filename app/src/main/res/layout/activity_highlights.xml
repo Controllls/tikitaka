@@ -17,7 +17,7 @@
             android:textColor="@color/sample_primary" />
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
-    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+    <ScrollView android:id="@+id/highlights_scroll" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="vertical" android:padding="@dimen/page_padding">
             <TextView style="@style/Text.Journal.Headline" android:text="@string/highlight_headline" />
@@ -31,15 +31,9 @@
                         android:layout_width="match_parent" android:layout_marginTop="12dp" />
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginTop="16dp" android:gravity="center_vertical">
-                        <com.google.android.material.button.MaterialButton android:id="@+id/analyze_highlights"
-                            android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:minHeight="56dp" android:text="@string/highlight_analyze" app:icon="@drawable/ic_audio" />
                         <com.google.android.material.button.MaterialButton android:id="@+id/choose_recording"
                             style="@style/Widget.Journal.Navigation" android:text="@string/highlight_choose"
                             android:layout_marginStart="12dp" />
-                        <com.google.android.material.button.MaterialButton android:id="@+id/cancel_analysis"
-                            style="@style/Widget.Journal.Navigation" android:text="@string/cancel"
-                            android:layout_marginStart="12dp" android:visibility="gone" />
                     </LinearLayout>
                     <TextView android:id="@+id/highlight_status" style="@style/Text.Journal.Body"
                         android:layout_width="match_parent" android:textColor="@color/sample_primary"

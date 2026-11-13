@@ -55,7 +55,7 @@ class LaughterAnalyzer(private val context: Context) {
         }
     }
 
-    private fun decode(file: File, cancelled: () -> Boolean, duration: (Long) -> Unit,
+    internal fun decode(file: File, cancelled: () -> Boolean, duration: (Long) -> Unit,
         progress: (Int) -> Unit, sample: (Float) -> Unit) {
         val extractor = MediaExtractor()
         var codec: MediaCodec? = null

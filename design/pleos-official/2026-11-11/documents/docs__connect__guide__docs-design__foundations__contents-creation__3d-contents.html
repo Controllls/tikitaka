@@ -1,0 +1,64 @@
+<article><div class="theme-doc-markdown markdown"><header><h1>3D Assets</h1></header><p>Pleos Connect는 직관적인 사용성을 위해 3D model data를 활용하는 것을 권장합니다. <br/>
+<a class="" href="https://www.figma.com/design/FYc6zTha14GLPvqsb1zmkD/%5BInternal%5D-Connect-2.0-Design-Kit(WIP)?node-id=29874-25562" rel="noopener noreferrer" target="_blank">Go to Sample</a></p>
+<br/>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3d-model">3D Model<a aria-label="3D Model에 대한 직접 링크" class="hash-link" href="#3d-model" title="3D Model에 대한 직접 링크" translate="no">​</a></h2>
+<ul>
+<li class="">
+<p>Lowpoly 상태의 차량 데이터 필요</p>
+<ul>
+<li class="">내외장 포함 3Ds Max 기준 30 MB, FBX 기준 6 MB</li>
+<li class="">Catia, Alias 같은 도면 데이터에서 추출된 Highpoly 데이터일 경우, Retopology 진행</li>
+<li class="">Material, object 최적화 하여 Drawcall 최소화 작업</li>
+</ul>
+</li>
+<li class="">
+<p>3D Data Format</p>
+<ul>
+<li class="">glTF(gl Transmission Format)</li>
+<li class="">개발사: Khronos group 3D formats working group(Rhino3D)</li>
+<li class="">3D 모델 정보를 JSON 형식으로 저장하는 3D 파일 형식</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="engine">Engine<a aria-label="Engine에 대한 직접 링크" class="hash-link" href="#engine" title="Engine에 대한 직접 링크" translate="no">​</a></h2>
+<ul>
+<li class="">Google Filament(link <a class="" href="https://github.com/google/filament" rel="noopener noreferrer" target="_blank">Filament google</a>, <a class="" href="https://google.github.io/filament/" rel="noopener noreferrer" target="_blank">Filament git</a>)</li>
+<li class="">PBR 엔진으로써 모바일 우선이지만 멀티 플랫폼을 지원</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="properties">Properties<a aria-label="Properties에 대한 직접 링크" class="hash-link" href="#properties" title="Properties에 대한 직접 링크" translate="no">​</a></h2>
+<ul>
+<li class="">
+<p>glTF animation : Naming, 속성 값으로 컨트롤 되며 해당 naming은 차량 특성에 따라 변경 가능</p>
+<ul>
+<li class="">3D Tool에서 animation key setting 후 export</li>
+<li class="">glTF의 animation 값을 control하거나, glTF의 rotation 값 변경으로 animation 가능</li>
+</ul>
+</li>
+<li class="">
+<p>Part namaing rule : 각 Part 별 컨트롤에 영향이 없도록 정확한 naming을 부여</p>
+</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="use-cases">Use cases<a aria-label="Use cases에 대한 직접 링크" class="hash-link" href="#use-cases" title="Use cases에 대한 직접 링크" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="climate">Climate<a aria-label="Climate에 대한 직접 링크" class="hash-link" href="#climate" title="Climate에 대한 직접 링크" translate="no">​</a></h3>
+<p>공조를 버튼이 아닌 실내 환경 모델링 이미지를 통해 좌석별 편리한 공조 조작 경험을 제공할 수 있습니다.</p>
+<p><strong>Light</strong></p>
+<p><img alt="Climate1" class="img_ev3q" decoding="async" height="2480" loading="lazy" src="/assets/images/Climate1-202d8f18b6a88c0e1c28a6856852490c.svg" width="2000"/></p>
+<p><strong>Dark</strong></p>
+<p><img alt="Climate2" class="img_ev3q" decoding="async" height="2480" loading="lazy" src="/assets/images/Climate2-9e314cb92b2fdb886abdbfbc7ce1f8b0.svg" width="2000"/></p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="steering-wheel">Steering wheel<a aria-label="Steering wheel에 대한 직접 링크" class="hash-link" href="#steering-wheel" title="Steering wheel에 대한 직접 링크" translate="no">​</a></h3>
+<p>3D 소스 직관적으로 인지될 수 있도록 필요한 영역을 클로즈업하여 사용할 수 있습니다. <br/></p>
+<p><img alt="3D1" class="img_ev3q" decoding="async" height="1415" loading="lazy" src="/assets/images/3D1-6ebe8f94e6827a71d357a6193f55fbdf.svg" width="3090"/></p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="seat-position">Seat Position<a aria-label="Seat Position에 대한 직접 링크" class="hash-link" href="#seat-position" title="Seat Position에 대한 직접 링크" translate="no">​</a></h3>
+<p>3D 소스와 함께 버튼을 활용한 조작을 연동할 때 사용할 수 있습니다. <br/></p>
+<p><img alt="3D2" class="img_ev3q" decoding="async" height="1635" loading="lazy" src="/assets/images/3D2-aa028c57fc8892a14e2a8df753fc8b97.svg" width="3090"/></p>
+<hr/>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="appendix">Appendix<a aria-label="Appendix에 대한 직접 링크" class="hash-link" href="#appendix" title="Appendix에 대한 직접 링크" translate="no">​</a></h2>
+<p><strong>glTF Part Naming_Exterior</strong> <br/>
+Connect 모델링별 조작 가능한 요소에 대해 안내합니다.</p>
+<table><thead><tr><th>구분<th>Exterior 구성요소<th>Partname<tbody><tr><td>Base<td>Static Object<td>Body<tr><td rowspan="10">Door<td>Door Front Left<td>Door_F_L<tr><td>Door Front Right<td>Door_F_R<tr><td>Door Rear Left<td>Door_R_L<tr><td>Door Rear Right<td>Door_R_R<tr><td>Sidemirror Right<td>Door_Sidemirror_L<tr><td>Sidemirror Left<td>Door_Sidemirror_R<tr><td>Door Front Left Window<td>Door_F_L_Window<tr><td>Door Front Right Window<td>Door_F_R_Window<tr><td>Door Rear Left Window<td>Door_R_L_Window<tr><td>Door Rear Right Window<td>Door_R_R_Window<tr><td rowspan="2">Trunk<td>Trunk<td>Trunk<tr><td>Trunk shock absorber<td>Trunk_shock_absorber<tr><td rowspan="2">Frunk<td>Frunk<td>Frunk<tr><td>Frunk shock absorber<td>Frunk_shock_absorber<tr><td rowspan="3">Wheel<td>Wheel Front Right<td>Wheel_F_R<tr><td>Wheel Front Light<td>Wheel_F_L<tr><td>Wheel Rear All<td>Wheel_R_RL<tr><td>Charge<td>Charging Port<td>Charging_Port<tr><td rowspan="3">Roof<td rowspan="2">Sun roof<td>Sunroof_Glass<tr><td>Sunroof_Shade<tr><td>Roof glass<td>Roofglass_Shade<tr><td rowspan="3">Wiper<td rowspan="2">Wiper Front<td>Wiper_F_R<tr><td>Wiper_F_L<tr><td>Wiper Rear<td>Wiper_R</td></td></tr></td></tr></td></td></td></tr></td></td></tr></td></tr></td></td></td></tr></td></td></td></tr></td></td></tr></td></td></tr></td></td></td></tr></td></td></tr></td></td></td></tr></td></td></tr></td></td></td></tr></td></td></tr></td></td></tr></td></td></tr></td></td></tr></td></td></tr></td></td></tr></td></td></tr></td></td></tr></td></td></tr></td></td></td></tr></td></td></td></tr></tbody></th></th></th></tr></thead></table>
+<br/>
+<p><strong>glTF Part Naming_Interior(Connect기준)</strong></p>
+<table><thead><tr><th>구분<th>Interior 구성요소<th>Partname<tbody><tr><td>Base<td>Static Object<td>Body<tr><td>Steering Wheel<td>Steering Wheel<td>Steering_Wheel<tr><td rowspan="4">Seat_Front<td>Seat Front Left Top<td>Seat_F_L_Top<tr><td>Seat Front Left Low<td>Seat_F_L_Low<tr><td>Seat Front Right Top<td>Seat_F_R_Top<tr><td>Seat Front Right Low<td>Seat_F_R_Low<tr><td rowspan="2">Seat_Rear<td>Seat Rear Top<td>Seat_R_Top<tr><td>Seat Rear Low<td>Seat_R_Low</td></td></tr></td></td></td></tr></td></td></tr></td></td></tr></td></td></tr></td></td></td></tr></td></td></td></tr></td></td></td></tr></tbody></th></th></th></tr></thead></table>
+<br/>
+<p><strong>glTF Part Naming_Lamp(Connect기준)</strong></p>
+<table><thead><tr><th>Lamp<th>Material name<th>Emissive<th>Alpha<th>etc<tbody><tr><td>Head lamp All Off(Default)<td>Head_L_All<td>0<td>1<td>Head_L_Light glTF Hide<tr><td>Head lamp All On<td>Head_L_All<td>10<td>1<td>Head_L_Light glTF Show<tr><td>Rear lamp Positioning Off(Default)<td>Rear_L_Pos<td>0<td>1<td>cell<tr><td>Rear lamp Positioning On<td>Rear_L_Pos<td>2<td>1<td>cell<tr><td>Rear lamp Stop Off(Default)<td>Rear_L_Stop<td>0<td>0.5<td>cell<tr><td>Rear lamp Stop On<td>Rear_L_Stop<td>5<td>1<td>cell<tr><td>Turn signal All Off(Default)<td>Turn_S_All<td>0<td>0<td>cell<tr><td>Turn signal All On<td>Turn_S_All<td>5<td>1<td>cell</td></td></td></td></td></tr></td></td></td></td></td></tr></td></td></td></td></td></tr></td></td></td></td></td></tr></td></td></td></td></td></tr></td></td></td></td></td></tr></td></td></td></td></td></tr></td></td></td></td></td></tr></tbody></th></th></th></th></th></tr></thead></table></div></article>

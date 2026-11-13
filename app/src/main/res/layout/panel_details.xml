@@ -76,7 +76,7 @@
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                 android:layout_weight="1" android:layout_marginStart="18dp" android:orientation="vertical">
                 <TextView style="@style/Text.Journal.Section" android:text="@string/privacy_title" android:textSize="18sp" />
-                <TextView style="@style/Text.Journal.Body" android:text="@string/privacy_description"
+                <TextView style="@style/Text.Journal.Body" android:layout_width="match_parent" android:text="@string/privacy_description"
                     android:layout_marginTop="8dp" android:textSize="14sp" />
             </LinearLayout>
         </LinearLayout>

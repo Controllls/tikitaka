@@ -18,7 +18,7 @@
             app:tint="@color/sample_primary" android:contentDescription="@string/private_badge" />
     </LinearLayout>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
-    <ScrollView android:layout_width="match_parent" android:layout_height="0dp"
+    <ScrollView android:id="@+id/recordings_scroll" android:layout_width="match_parent" android:layout_height="0dp"
         android:layout_weight="1" android:fillViewport="true">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
             android:orientation="vertical" android:padding="@dimen/page_padding">
@@ -30,7 +30,7 @@
         </LinearLayout>
     </ScrollView>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
-    <LinearLayout android:layout_width="match_parent" android:layout_height="80dp"
+    <com.example.hd_project.pleos.NavigationBarLayout android:layout_width="match_parent" android:layout_height="88dp"
         android:paddingHorizontal="@dimen/page_padding" android:gravity="center_vertical">
         <com.google.android.material.button.MaterialButton android:id="@+id/archive_home"
             style="@style/Widget.Journal.Navigation" android:text="@string/home" app:icon="@drawable/ic_home" />
@@ -43,5 +43,5 @@
             app:icon="@drawable/ic_audio" />
         <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/local_storage"
             android:visibility="@integer/wide_footer_visibility" />
-    </LinearLayout>
+    </com.example.hd_project.pleos.NavigationBarLayout>
 </LinearLayout>

@@ -1,0 +1,14 @@
+{
+  "pipeline": "segments",
+  "threshold": 0.1,
+  "max_clips": 3,
+  "vad": "silero-v5",
+  "laughter": "yamnet",
+  "stt": "whisper-small",
+  "diarization": "nemotron",
+  "voice": "ecapa",
+  "topics": "qwen-local",
+  "laughter_captions": true,
+  "segment_separation": true,
+  "speaker_review": { "mode": "local", "model": "" }
+}

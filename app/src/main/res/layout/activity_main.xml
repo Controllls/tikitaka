@@ -15,6 +15,9 @@
             <TextView style="@style/Text.Journal.Eyebrow" android:text="@string/brand_caption"
                 android:layout_marginTop="3dp" />
         </LinearLayout>
+        <com.google.android.material.button.MaterialButton android:id="@+id/people_button"
+            android:layout_width="wrap_content" android:layout_height="56dp"
+            android:text="@string/people_manage" android:layout_marginEnd="12dp" />
         <TextView style="@style/Text.Journal.Body" android:text="@string/private_badge"
             android:background="@drawable/bg_status" android:paddingHorizontal="18dp"
             android:paddingVertical="12dp" app:drawableStartCompat="@drawable/ic_shield"
@@ -33,7 +36,7 @@
         </LinearLayout>
     </ScrollView>
     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" />
-    <LinearLayout android:layout_width="match_parent" android:layout_height="80dp"
+    <com.example.hd_project.pleos.NavigationBarLayout android:layout_width="match_parent" android:layout_height="88dp"
         android:paddingHorizontal="@dimen/page_padding" android:gravity="center_vertical">
         <com.google.android.material.button.MaterialButton android:id="@+id/home_button"
             style="@style/Widget.Journal.Navigation.Selected" android:text="@string/home"
@@ -51,5 +54,5 @@
             app:icon="@drawable/ic_audio" />
         <TextView android:id="@+id/footer_caption" style="@style/Text.Journal.Eyebrow"
             android:text="@string/footer_caption" android:visibility="@integer/wide_footer_visibility" />
-    </LinearLayout>
+    </com.example.hd_project.pleos.NavigationBarLayout>
 </LinearLayout>

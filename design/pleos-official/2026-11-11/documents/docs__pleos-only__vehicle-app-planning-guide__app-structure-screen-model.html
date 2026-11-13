@@ -1,0 +1,38 @@
+<article><nav aria-label="탐색 경로" class="theme-doc-breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><span class="breadcrumbs__link">Pleos Connect 개발자 가이드</span><li class="breadcrumbs__item"><span class="breadcrumbs__link">앱 기획·설계 가이드</span><li class="breadcrumbs__item"><span class="breadcrumbs__link">앱 설계 원칙</span><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">앱 구조 및 동작 모델</span></li></li></li></li></ul></nav><div class="theme-doc-markdown markdown"><header><h1>앱 구조 및 동작 모델</h1></header><p>Pleos Connect는 Driving view와 앱 영역을 함께 표시하고, 앱 영역에 최대 2개의 앱을 배치할 수 있는 차량용 멀티 윈도우 환경을 제공합니다.
+앱은 화면에 표시되는 영역과 화면 방향이 변경될 수 있으므로, 모바일 환경과 다른 화면 구성 및 앱 생명주기를 고려해야 합니다.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="화면-구성-및-멀티-윈도우-대응">화면 구성 및 멀티 윈도우 대응<a aria-label="화면 구성 및 멀티 윈도우 대응에 대한 직접 링크" class="hash-link" href="#화면-구성-및-멀티-윈도우-대응" title="화면 구성 및 멀티 윈도우 대응에 대한 직접 링크" translate="no">​</a></h2>
+<p>Pleos Connect 화면은 운전자에게 차량 정보를 제공하는 Driving view 영역과 앱을 표시하는 영역으로 구성됩니다.
+Driving view는 운전자와 가까운 고정 영역에 표시되며, 앱이 임의로 가리거나 종료할 수 없습니다.
+앱 영역은 차량 및 디스플레이 구성에 따라 하나 또는 두 개의 window로 나뉩니다.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="portrait와-landscape-화면-모델">Portrait와 landscape 화면 모델<a aria-label="Portrait와 landscape 화면 모델에 대한 직접 링크" class="hash-link" href="#portrait와-landscape-화면-모델" title="Portrait와 landscape 화면 모델에 대한 직접 링크" translate="no">​</a></h3>
+<p>Pleos Connect에서 앱은 화면이 차지하는 window 영역에 따라 <code>portrait</code> 또는 <code>landscape</code> 형태로 표시됩니다.</p>
+<ul>
+<li class=""><code>portrait</code>: 앱이 앱 영역 중 하나의 window를 사용하는 화면 형태입니다. 두 개의 앱을 동시에 표시할 때 각 앱은 일반적으로 portrait로 표시됩니다.</li>
+<li class=""><code>landscape</code>: 하나의 앱이 두 개의 앱 영역을 확장해 사용하는 화면 형태입니다. 앱이 더 넓은 화면을 사용하므로 추가 정보나 확장된 콘텐츠를 제공할 수 있습니다.</li>
+<li class="">Portrait와 landscape 각각에 맞는 화면을 설계해야 합니다.</li>
+<li class="">Portrait에서는 핵심 기능과 주요 정보를 제공하고, landscape에서는 확장된 영역을 활용해 부가 정보와 확장 기능을 제공하도록 구분해 설계합니다.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="앱-실행-및-window-전환">앱 실행 및 window 전환<a aria-label="앱 실행 및 window 전환에 대한 직접 링크" class="hash-link" href="#앱-실행-및-window-전환" title="앱 실행 및 window 전환에 대한 직접 링크" translate="no">​</a></h3>
+<p>새로운 앱이 실행되거나 현재 앱의 window 상태가 변경되면 앱의 표시 위치와 화면 방향이 달라질 수 있습니다. 세부적인 window 배치와 전환 방식은 차량 및 디스플레이 구성에 따라 달라질 수 있습니다.</p>
+<ul>
+<li class="">새 앱은 현재 표시 중인 앱의 화면 방향을 기준으로 표시됩니다. 하나의 landscape 앱이 표시 중이면 새 앱도 landscape로 실행되고, 두 개의 portrait 앱이 표시 중이면 새 앱은 primary window에 portrait로 실행됩니다.</li>
+<li class="">화면에서 사라진 앱이 종료되는 것은 아닙니다. 해당 앱은 백그라운드에 남아 있을 수 있으며, 표시 중인 앱이 종료되면 최근에 사용한 앱 순으로 다시 window에 표시될 수 있으므로 앱이 다시 foreground로 전환되는 상황을 고려해야 합니다.</li>
+<li class="">사용자는 window bar 또는 제스처를 통해 앱의 위치와 크기를 변경할 수 있습니다. Window 크기가 변경되어도 핵심 기능을 사용할 수 있도록 화면을 유연하게 구성해야 합니다.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="화면-방향-및-크기-대응">화면 방향 및 크기 대응<a aria-label="화면 방향 및 크기 대응에 대한 직접 링크" class="hash-link" href="#화면-방향-및-크기-대응" title="화면 방향 및 크기 대응에 대한 직접 링크" translate="no">​</a></h2>
+<p>Pleos Connect에서는 Activity의 화면 방향 설정에 따라 사용하는 window 수와 화면 크기가 달라집니다.</p>
+<ul>
+<li class=""><code>screenOrientation</code>을 별도로 지정하지 않으면 Activity는 기본적으로 portrait로 실행되며 하나의 window를 사용합니다.</li>
+<li class=""><code>screenOrientation</code>을 <code>landscape</code>로 지정하면 두 개의 window 영역을 사용할 수 있습니다.</li>
+<li class="">portrait와 landscape 화면을 각각 설계하고, 화면 전환 시 콘텐츠의 우선순위와 배치가 자연스럽게 변경되도록 구성합니다.</li>
+<li class="">화면 방향과 window 크기 변경에 따라 레이아웃이 깨지지 않도록 반응형 레이아웃을 사용합니다. 화면 방향은 <code>AndroidManifest.xml</code>의 <code>screenOrientation</code> 설정을 기준으로 동작하므로 앱의 화면 설계와 함께 검토해야 합니다.</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="포그라운드백그라운드-전환-및-동작-설계">포그라운드·백그라운드 전환 및 동작 설계<a aria-label="포그라운드·백그라운드 전환 및 동작 설계에 대한 직접 링크" class="hash-link" href="#포그라운드백그라운드-전환-및-동작-설계" title="포그라운드·백그라운드 전환 및 동작 설계에 대한 직접 링크" translate="no">​</a></h2>
+<p>Pleos Connect 앱은 화면 분할, window 위치 변경, 다른 앱 실행 및 주행 상황 변화에 따라 포그라운드와 백그라운드를 빈번하게 전환할 수 있습니다. 화면에서 사라진 앱이 종료되지 않고 백그라운드에 남아 있을 수 있다는 점을 고려해야 합니다.</p>
+<ul>
+<li class="">포그라운드 진입 시 현재 상태를 복원하고, 화면 크기와 방향에 맞게 UI를 다시 구성합니다.</li>
+<li class="">백그라운드 전환 시 화면 갱신, 애니메이션, 불필요한 센서 수집 등 즉시 중단할 수 있는 작업을 정리합니다.</li>
+<li class="">오디오 재생, 통신, 다운로드와 같이 백그라운드에서도 지속할 작업은 작업별 실행 조건과 중단·재개 정책을 명확히 정의합니다.</li>
+<li class="">백그라운드에서 불필요한 상주, 타이머, 폴링 및 네트워크 요청을 최소화하여 차량의 시스템 리소스를 절약합니다.</li>
+<li class="">앱이 종료되거나 프로세스가 재생성되는 경우에도 사용자 데이터와 진행 상태를 복원할 수 있도록 상태 저장 전략을 마련합니다.</li>
+</ul></div></article>

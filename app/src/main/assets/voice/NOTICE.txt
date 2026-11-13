@@ -1,0 +1,31 @@
+Local speaker verification
+
+Runtime: sherpa-onnx v2.0.1 (k2-fsa), Apache-2.0.
+Official Android binary archive SHA-256:
+39003753ec293425ed56723ea9b972b98841a490af3311670c3060548d654330
+https://github.com/k2-fsa/sherpa-onnx/releases/tag/v2.0.1
+Bundled ONNX Runtime (Microsoft) is MIT licensed; see ONNXRUNTIME-LICENSE.
+The Kotlin JNI bindings are copied from the v2.0.1 release source.
+
+Model: ModelScope / 3D-Speaker CAM++ VoxCeleb speaker verification, Apache-2.0.
+Original: https://www.modelscope.cn/models/iic/speech_campplus_sv_en_voxceleb_16k
+ONNX conversion: https://github.com/k2-fsa/sherpa-onnx/releases/tag/speaker-recongition-models
+Model SHA-256: 357a834f702b80161e5b981182c038e18553c1f2ca752ed6cec2052365d4129b
+16 kHz mono, 512 dimensions. Korean and vehicle-noise accuracy is not calibrated.
+The model is used for an optional on-device character match, not authentication.
+See MODEL_CARD.md, LICENSE, and 3D-SPEAKER-LICENSE.
+
+On-device speaker diarization (added 2026-11-13)
+Segmentation: pyannote/segmentation-3.0, MIT, Copyright (c) 2023 CNRS.
+https://huggingface.co/pyannote/segmentation-3.0
+https://github.com/k2-fsa/sherpa-onnx/releases/tag/speaker-segmentation-models
+segmentation.int8.onnx SHA-256: d582f4b4c6b48205de7e0643c57df0df5615a3c176189be3fc461e9d18827b5d
+See SEGMENTATION-LICENSE.
+
+Diarization embeddings: 3D-Speaker ERes2Net-base, Apache-2.0.
+https://www.modelscope.cn/models/iic/speech_eres2net_base_sv_zh-cn_3dspeaker_16k
+https://github.com/k2-fsa/sherpa-onnx/releases/tag/speaker-recongition-models
+eres2net.onnx SHA-256: 1a331345f04805badbb495c775a6ddffcdd1a732567d5ec8b3d5749e3c7a5e4b
+See ERES2NET-MODEL_CARD.md and 3D-SPEAKER-LICENSE.
+The existing CAM++ model remains exclusively for optional self-voice verification.
+Diarization IDs are clip-local and do not identify real people.

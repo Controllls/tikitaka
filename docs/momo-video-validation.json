@@ -1,0 +1,40 @@
+[
+  {
+    "file": "momo-validation-3.mp4",
+    "width": 540,
+    "height": 960,
+    "fps": 30,
+    "video": "H.264",
+    "audio": "AAC",
+    "duration_seconds": 3.0,
+    "input_kind": "Synthetic contract fixture",
+    "audio_offset_ms": 9.312,
+    "audio_correlation": 0.994086,
+    "export_ms": 4195
+  },
+  {
+    "file": "momo-validation-30.mp4",
+    "width": 540,
+    "height": 960,
+    "fps": 30,
+    "video": "H.264",
+    "audio": "AAC",
+    "duration_seconds": 30.0,
+    "input_kind": "Synthetic contract fixture",
+    "audio_offset_ms": 9.312,
+    "audio_correlation": 0.99714,
+    "export_ms": 32426
+  },
+  {
+    "file": "momo-validation-server.mp4",
+    "width": 540,
+    "height": 960,
+    "fps": 30,
+    "video": "H.264",
+    "audio": "AAC",
+    "duration_seconds": 20.266667,
+    "input_kind": "Synthetic Korean speech + actual server inference",
+    "audio_offset_ms": 9.312,
+    "audio_correlation": 0.997606
+  }
+]

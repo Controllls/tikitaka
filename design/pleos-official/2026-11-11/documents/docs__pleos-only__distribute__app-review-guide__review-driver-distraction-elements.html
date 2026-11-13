@@ -1,0 +1,53 @@
+<article><nav aria-label="탐색 경로" class="theme-doc-breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><span class="breadcrumbs__link">앱 리뷰 가이드라인</span><li class="breadcrumbs__item"><span class="breadcrumbs__link">App Review Guidelines</span><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">운전자 주의 분산 요소 최소화 설계</span></li></li></li></ul></nav><div class="theme-doc-markdown markdown"><header><h1>운전자 주의 분산 요소 최소화 설계</h1></header><h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="주행-중-상호작용-최적화-앱-설계">주행 중 상호작용 최적화 앱 설계<a aria-label="주행 중 상호작용 최적화 앱 설계에 대한 직접 링크" class="hash-link" href="#주행-중-상호작용-최적화-앱-설계" title="주행 중 상호작용 최적화 앱 설계에 대한 직접 링크" translate="no">​</a></h2>
+<p>주행 중 상태에서도 운전자와 지속적인 상호작용을 하는 앱을 디자인하기 위해서는 운전자 주의 분산 요소를 최소화한 디자인 원칙 준수가 필요합니다. Pleos Connect의 <a class="" href="/docs/connect/guide/docs-design/Introduction/intro">Pleos Connect UI Design Guide</a> 가이드를 반드시 사전 확인하시고 개발된 앱을 제출하시기 바랍니다. 다만, 제공되는 가이드 전반의 준수는 위험 요소의 완전한 배제를 의미하는 것은 아니며 심사 단계에서 운전자 주의 분산 관련 추가 위험 요소가 있다고 판단될 경우 앱 등록이 거부될 수 있습니다.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="미디어-앱-설계">미디어 앱 설계<a aria-label="미디어 앱 설계에 대한 직접 링크" class="hash-link" href="#미디어-앱-설계" title="미디어 앱 설계에 대한 직접 링크" translate="no">​</a></h3>
+<p>미디어 콘텐츠를 포함하는 앱은 사용자의 집중을 분산시키는 동작이 다수 존재하므로, 운전 중에 실행할 수 없어야만 합니다.</p>
+<p>백그라운드로 이동했다가 복귀하면, 마지막 사용 중이던 상태가 복원되어야 합니다.</p>
+<ul>
+<li class="">사용자가 앱으로 다시 돌아온 시간에 따라 적용 상태 변경이 가능합니다.<!-- -->
+<blockquote>
+<p>예) 수 분 이내에 복귀하는 경우 : 마지막 사용 중이던 상태에 최대한 가깝게 복원하고, 수 시간 이상 사용하지 않는 경우 마지막 사용 상태 또는 기본 상태에서 시작 가능합니다.</p>
+</blockquote>
+</li>
+</ul>
+<p>모든 미디어 앱은 운전 중에 실행하거나, 사용할 수 없어야 합니다.</p>
+<ul>
+<li class="">미디어 앱은 동영상, 게임, 브라우저 기능을 갖는 앱을 지칭합니다.</li>
+<li class="">모든 미디어 앱은 정차 중에만 사용 가능합니다.</li>
+</ul>
+<p>미디어 앱은 운전이 시작되면 사용이 일시 중지되어야 합니다.</p>
+<ul>
+<li class="">운전이 시작되면 앱의 UI를 숨깁니다.</li>
+<li class="">운전 중에는 동영상, 게임, 브라우저 앱의 ‘일시 중지’를 해제할 수 없습니다.</li>
+</ul>
+<p>미디어 앱은 모든 미디어 항목에 적절한 제목 및 썸네일을 제공해야 합니다.</p>
+<ul>
+<li class="">제목 및 썸네일은 한눈에 들어오도록 구성되어야 합니다.</li>
+<li class="">제목 또는 썸네일, 미리보기 등에서 부적절한 내용이 출력되어서는 안 됩니다.<!-- -->
+<blockquote>
+<p><a class="" href="/docs/pleos-only/distribute/app-review-guide/review-content-safety#inappropriate-content">부적절한 콘텐츠</a> 항목을 참고하시기 바랍니다.</p>
+</blockquote>
+</li>
+</ul>
+<p>미디어 앱은 헤드업 알림을 게시해서는 안 됩니다.</p>
+<ul>
+<li class="">운전과 관련되지 않은 알림은 사용할 수 없습니다.</li>
+</ul>
+<p>동영상 앱은 미디어 세션과 통합되어 동작해야 합니다.</p>
+<ul>
+<li class="">여러 미디어를 동시에 사용하는 것은 불가합니다.</li>
+<li class="">동영상은 콘텐츠에 따라 재생/일시정지/중지 명령어를 지원해야 합니다.</li>
+</ul>
+<p>브라우저 앱은 비밀번호나 결제 정보에 대한 액세스를 저장/허용하면 안 됩니다.</p>
+<ul>
+<li class="">사용자가 프로필 잠금을 사용하여 비밀번호 액세스를 차단할 수 있는 경우 제외적으로 허용합니다.</li>
+</ul>
+<p>비밀번호 또는 결제 데이터를 동기화하는 브라우저 앱인 경우 다음 과정을 준수해야 합니다.</p>
+<ul>
+<li class="">데이터를 자동차에 동기화하기 전, 다음의 단계를 실행해야 합니다.<!-- -->
+<ul>
+<li class="">사용자에게 인증 메시지를 표시합니다.</li>
+<li class="">자동차 화면에서 사용자에게 데이터가 자동차와 동기화된다고 알립니다</li>
+</ul>
+</li>
+</ul></div></article>

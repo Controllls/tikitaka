@@ -1,0 +1,212 @@
+const imgFrame = "https://www.figma.com/api/mcp/asset/e5de0461-aedb-42ec-9070-ace34d9ed416.svg";
+const imgFrame1 = "https://www.figma.com/api/mcp/asset/a4f272e8-52d3-4d4f-b41a-c7cd05783f37.svg";
+const imgTikiTakaCurrentLineIconLibrary = "https://www.figma.com/api/mcp/asset/1623ffe6-79c9-41e2-9b73-9fe2d23a4eb4.svg";
+const imgTikiTakaCurrentLineIconHome = "https://www.figma.com/api/mcp/asset/4d3250a3-ad65-44a1-9313-9f0820fa0635.svg";
+const imgTikiTakaHomeLatestVerticalLogo = "https://www.figma.com/api/mcp/asset/50218c5f-6a8f-4319-a66b-6b6470db6747.png";
+const imgTikiTakaCharacter3D01 = "https://www.figma.com/api/mcp/asset/c23da75c-f5a1-4e53-bb5c-7ab49188dd41.png";
+const imgCharacterArtwork = "https://www.figma.com/api/mcp/asset/10d47348-f9e5-4c6e-ac33-42f48451dce9.png";
+const imgCharacterArtwork1 = "https://www.figma.com/api/mcp/asset/dd4aa049-4e13-4866-9376-00c6faf23642.png";
+const imgCharacterArtwork2 = "https://www.figma.com/api/mcp/asset/bee0c516-2d10-4b0b-9010-990536d22461.png";
+const imgCharacterArtwork3 = "https://www.figma.com/api/mcp/asset/1eb8b155-88f1-4a30-90d1-aef52a144c06.png";
+const imgCharacterArtwork4 = "https://www.figma.com/api/mcp/asset/db0d1853-54d5-49e1-890e-4f8460cbce80.png";
+const imgCharacterArtwork5 = "https://www.figma.com/api/mcp/asset/b9b60048-71e8-4535-b489-66886111024b.png";
+const imgCharacterArtwork6 = "https://www.figma.com/api/mcp/asset/80fe502e-80da-4231-9ca4-074b4b0ecdc1.png";
+const imgFrame2 = "https://www.figma.com/api/mcp/asset/8d6074e3-1d97-416b-8159-bfd03793535e.svg";
+const img = "https://www.figma.com/api/mcp/asset/d2e0f7f0-e270-4239-8d0a-81e94cd77fed.svg";
+const imgFrame3 = "https://www.figma.com/api/mcp/asset/d01958a5-e1fb-44d8-833c-797001485caf.svg";
+const imgFrame4 = "https://www.figma.com/api/mcp/asset/7546c7f3-ef76-483a-ad27-8aff64ea0b15.svg";
+
+function TikiTakaCurrentLineIconSettings({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[32px]"} data-node-id="948:1873" data-name="TikiTaka / Current / Line icon / settings">
+      <div className="absolute left-[1.28px] size-[29.44px] top-[1.28px]" data-node-id="948:1874" data-name="Frame">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame} />
+      </div>
+    </div>
+  );
+}
+
+function TikiTakaCurrentLineIconCharacter({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[32px]"} data-node-id="948:1869" data-name="TikiTaka / Current / Line icon / character">
+      <div className="absolute left-0 size-[32px] top-0" data-node-id="948:1870" data-name="Frame">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame1} />
+      </div>
+    </div>
+  );
+}
+
+function TikiTakaCurrentLineIconLibrary({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[32px]"} data-node-id="948:1866" data-name="TikiTaka / Current / Line icon / library">
+      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaCurrentLineIconLibrary} />
+    </div>
+  );
+}
+
+function TikiTakaCurrentLineIconHome({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[32px]"} data-node-id="948:1863" data-name="TikiTaka / Current / Line icon / home">
+      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaCurrentLineIconHome} />
+    </div>
+  );
+}
+
+function TikiTakaHomeLatestVerticalLogo({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[60px] relative w-[58.8px]"} data-node-id="800:6328" data-name="TikiTaka / Home latest / Vertical logo">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={imgTikiTakaHomeLatestVerticalLogo} />
+    </div>
+  );
+}
+
+export default function NC014() {
+  return (
+    <div className="bg-[#f7f8fa] border border-[#c9cacd] border-solid overflow-clip relative rounded-[40px] size-full" data-node-id="987:33576" data-name="N / C-01-4 / 내 캐릭터 선택">
+      <div className="absolute content-stretch flex h-[96px] items-center left-[162px] overflow-clip top-[47px] w-[645px]" data-node-id="987:33577" data-name="상단 / 뒤로 · 제목">
+        <div className="[word-break:break-word] content-stretch flex flex-col gap-[8px] h-[88px] items-start overflow-clip relative shrink-0 w-[645px]" data-node-id="987:33579" data-name="화면 안내">
+          <p className="font-['Asta_Sans:SemiBold'] font-semibold leading-[48px] relative shrink-0 text-[36px] text-[color:var(--reference-pleos-dark-gray-1,#343434)] w-[645px]" data-node-id="987:33580">
+            내 캐릭터 선택
+          </p>
+          <p className="font-['Asta_Sans:Regular'] font-normal leading-[32px] relative shrink-0 text-[24px] text-[color:var(--reference-pleos-dark-gray-2,#5d5d5d)] w-[645px]" data-node-id="987:33581">
+            영상 속 나를 골라주세요.
+          </p>
+        </div>
+      </div>
+      <div className="absolute h-[900px] left-[-1px] overflow-clip top-[-1px] w-[840px]" data-node-id="987:33582" data-name="캐릭터 회전 선택 / 8종 순환">
+        <a className="absolute bg-[var(--color\/character-card\/bear,#e5d2b5)] content-stretch cursor-pointer drop-shadow-[0px_5.053px_6.568px_rgba(0,0,0,0.06)] flex flex-col gap-[8.084px] items-center justify-center left-[167.5px] pb-[8.084px] pt-[11.116px] rounded-[var(--radius-character-option,28.295px)] size-[96px] top-[472px]" data-node-id="987:33583" data-name="캐릭터 후보 / 01">
+          <div className="h-[74.779px] relative shrink-0 w-[68.716px]" data-node-id="I987:33583;585:4524" data-name="TikiTaka / Character 3D / 01 곰">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[110.21%] left-[-8.68%] max-w-none top-[-5.55%] w-[119.94%]" src={imgTikiTakaCharacter3D01} />
+            </div>
+          </div>
+        </a>
+        <a className="absolute bg-[var(--color\/character-card\/rabbit,#d99b7a)] content-stretch cursor-pointer drop-shadow-[0px_5.053px_6.568px_rgba(0,0,0,0.06)] flex flex-col gap-[8.084px] items-center justify-center left-[227.5px] pb-[8.084px] pt-[11.116px] rounded-[var(--radius-character-option,28.295px)] size-[96px] top-[332px]" data-node-id="987:33584" data-name="캐릭터 후보 / 02">
+          <div className="h-[74.779px] relative shrink-0 w-[68.716px]" data-node-id="I987:33584;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[109.57%] left-[-9.05%] max-w-none top-[-6.36%] w-[119.24%]" src={imgCharacterArtwork} />
+            </div>
+          </div>
+        </a>
+        <a className="absolute bg-[var(--color\/character-card\/chick,#a3c5d9)] content-stretch cursor-pointer drop-shadow-[0px_5.053px_6.568px_rgba(0,0,0,0.06)] flex flex-col gap-[8.084px] items-center justify-center left-[319.5px] pb-[8.084px] pt-[11.116px] rounded-[var(--radius-character-option,28.295px)] size-[96px] top-[226px]" data-node-id="987:33585" data-name="캐릭터 후보 / 03">
+          <div className="h-[74.779px] relative shrink-0 w-[68.716px]" data-node-id="I987:33585;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[120.03%] left-[-14.79%] max-w-none top-[-10.97%] w-[130.62%]" src={imgCharacterArtwork1} />
+            </div>
+          </div>
+        </a>
+        <div className="absolute bg-[var(--color\/character-card\/teal,#cfb3bf)] border-[#343434] border-[2.021px] border-solid content-stretch drop-shadow-[0px_5.053px_6.568px_rgba(0,0,0,0.06)] flex flex-col gap-[8.084px] items-center justify-center left-[437.5px] pb-[8.084px] pt-[11.116px] rounded-[var(--radius-character-option,28.295px)] size-[96px] top-[184px]" data-node-id="987:33586" data-name="캐릭터 후보 / 04">
+          <div className="h-[74.779px] relative shrink-0 w-[68.716px]" data-node-id="I987:33586;585:4527" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[123.75%] left-[-17.01%] max-w-none top-[-12.66%] w-[134.67%]" src={imgCharacterArtwork2} />
+            </div>
+          </div>
+          <div className="absolute bg-[#343434] border-[1.516px] border-[var(--reference-pleos-white,white)] border-solid content-stretch flex items-center justify-center left-[66.69px] overflow-clip rounded-[11.621px] size-[23.242px] top-[2.02px]" data-node-id="I987:33586;585:4529" data-name="선택 체크">
+            <div className="relative shrink-0 size-[16.168px]" data-node-id="I987:33586;585:4530" data-name="FINAL / Icon / Check">
+              <div className="absolute left-0 size-[16.168px] top-0" data-node-id="I987:33586;585:4530;145:477" data-name="Frame">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame2} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <a className="absolute bg-[var(--color\/character-card\/seal,#dbbe80)] content-stretch cursor-pointer drop-shadow-[0px_5.053px_6.568px_rgba(0,0,0,0.06)] flex flex-col gap-[8.084px] items-center justify-center left-[555.5px] pb-[8.084px] pt-[11.116px] rounded-[var(--radius-character-option,28.295px)] size-[96px] top-[226px]" data-node-id="987:33587" data-name="캐릭터 후보 / 05">
+          <div className="h-[74.779px] relative shrink-0 w-[68.716px]" data-node-id="I987:33587;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[113.77%] left-[-11.51%] max-w-none top-[-10.24%] w-[123.81%]" src={imgCharacterArtwork3} />
+            </div>
+          </div>
+        </a>
+        <a className="absolute bg-[var(--color\/character-card\/fox,#bac88f)] content-stretch cursor-pointer drop-shadow-[0px_5.053px_6.568px_rgba(0,0,0,0.06)] flex flex-col gap-[8.084px] items-center justify-center left-[647.5px] pb-[8.084px] pt-[11.116px] rounded-[var(--radius-character-option,28.295px)] size-[96px] top-[332px]" data-node-id="987:33588" data-name="캐릭터 후보 / 06">
+          <div className="h-[74.779px] relative shrink-0 w-[68.716px]" data-node-id="I987:33588;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[115.28%] left-[-15.23%] max-w-none top-[-11.73%] w-[125.45%]" src={imgCharacterArtwork4} />
+            </div>
+          </div>
+        </a>
+        <a className="absolute bg-[var(--color\/character-card\/sheep,#ce9ca1)] content-stretch cursor-pointer drop-shadow-[0px_5.053px_6.568px_rgba(0,0,0,0.06)] flex flex-col gap-[8.084px] items-center justify-center left-[707.5px] pb-[8.084px] pt-[11.116px] rounded-[var(--radius-character-option,28.295px)] size-[96px] top-[472px]" data-node-id="987:33589" data-name="캐릭터 후보 / 07">
+          <div className="h-[74.779px] relative shrink-0 w-[68.716px]" data-node-id="I987:33589;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[110.65%] left-[-9.72%] max-w-none top-[-7.18%] w-[120.41%]" src={imgCharacterArtwork5} />
+            </div>
+          </div>
+        </a>
+        <div className="absolute bg-[var(--color\/character-card\/frog,#bbb1d5)] content-stretch drop-shadow-[0px_5.053px_6.568px_rgba(0,0,0,0.06)] flex flex-col gap-[8.084px] items-center justify-center left-[437.5px] opacity-0 pb-[8.084px] pt-[11.116px] rounded-[var(--radius-character-option,28.295px)] size-[96px] top-[1500px]" data-node-id="987:33590" data-name="캐릭터 후보 / 08">
+          <div className="h-[74.779px] relative shrink-0 w-[68.716px]" data-node-id="I987:33590;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[108.94%] left-[-8.9%] max-w-none top-[-7.68%] w-[118.55%]" src={imgCharacterArtwork6} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute h-[14px] left-[374.5px] top-[821px] w-[220px]" data-node-id="987:33591" data-name="캐릭터 발밑 / 약한 접지 그림자">
+        <div className="absolute inset-[-157.14%_-10%]">
+          <img alt="" className="block max-w-none size-full" src={img} />
+        </div>
+      </div>
+      <div className="absolute content-stretch flex flex-col gap-[96px] h-[582px] items-center left-[284.5px] overflow-clip top-[499px] w-[400px]" data-node-id="987:33592" data-name="선택한 캐릭터 · 확인">
+        <div className="relative shrink-0 size-[340px]" data-node-id="987:33593" data-name="현재 선택 / 캐릭터 04">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <img alt="" className="absolute left-[-11.58%] max-w-none size-[123.75%] top-[-12.66%]" src={imgCharacterArtwork2} />
+          </div>
+        </div>
+        <button className="bg-[var(--tikitaka-action,#343434)] content-stretch cursor-pointer flex gap-[var(--tikitaka-space-12,12px)] h-[88px] items-center justify-center p-[var(--tikitaka-space-16,16px)] relative rounded-[44px] shrink-0 w-[360px]" data-node-id="987:33594" data-name="캐릭터 선택 확정">
+          <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[32px] relative shrink-0 text-[24px] text-[color:var(--tikitaka-on-action,white)] text-left whitespace-nowrap" data-node-id="I987:33594;529:4299">
+            이 캐릭터로 선택
+          </p>
+        </button>
+      </div>
+      <div className="absolute content-stretch flex gap-[36px] items-center left-[206.5px] top-[633px]" data-node-id="987:33595" data-name="캐릭터 탐색">
+        <a className="bg-[var(--reference-pleos-white,white)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex items-center justify-center relative rounded-[36px] shrink-0 size-[72px]" data-node-id="987:33596" data-name="이전 캐릭터">
+          <div className="relative shrink-0 size-[24px]" data-node-id="I987:33596;529:4320" data-name="TikiTaka / Icon / Chevron left / Aligned 24">
+            <div className="absolute flex items-center justify-center left-0 size-[24px] top-0" data-node-id="I987:33596;529:4320;747:7153">
+              <div className="flex-none rotate-180">
+                <div className="relative size-[24px]" data-name="TikiTaka / Icon / Chevron">
+                  <div className="absolute left-0 size-[24px] top-0" data-node-id="I987:33596;529:4320;747:7153;529:4277" data-name="Frame">
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame3} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+        <div className="h-px relative shrink-0 w-[340px]" data-node-id="987:33597" data-name="선택 캐릭터 공간" />
+        <a className="bg-[var(--reference-pleos-white,white)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex items-center justify-center relative rounded-[36px] shrink-0 size-[72px]" data-node-id="987:33598" data-name="다음 캐릭터">
+          <div className="relative shrink-0 size-[24px]" data-node-id="I987:33598;529:4320" data-name="TikiTaka / Icon / Chevron">
+            <div className="absolute left-0 size-[24px] top-0" data-node-id="I987:33598;529:4320;529:4277" data-name="Frame">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame4} />
+            </div>
+          </div>
+        </a>
+      </div>
+      <div className="absolute bg-[#f7f8fa] content-stretch flex flex-col h-[1184px] items-center left-[-1px] overflow-clip pb-[26px] pl-[3.4px] pt-[51px] top-[-1px] w-[130px]" data-node-id="987:33599" data-name="전역 사이드바 / 홈 · 보관함 · 캐릭터 / 하단 설정">
+        <TikiTakaHomeLatestVerticalLogo className="h-[60px] relative shrink-0 w-[58.8px]" />
+        <div className="h-[245px] relative shrink-0 w-px" data-node-id="987:33601" data-name="여백" />
+        <div className="content-stretch flex flex-col gap-[110px] items-center overflow-clip relative shrink-0" data-node-id="987:33602" data-name="주요 메뉴">
+          <a className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="987:33603" data-name="Go|H-01|홈">
+            <TikiTakaCurrentLineIconHome className="relative shrink-0 size-[32px]" />
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[24px] relative shrink-0 text-[#595959] text-[16px] text-left whitespace-nowrap" data-node-id="I987:33603;828:1905">
+              홈
+            </p>
+          </a>
+          <button className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="987:33604" data-name="Go|L-01|보관함">
+            <TikiTakaCurrentLineIconLibrary className="relative shrink-0 size-[32px]" />
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[24px] relative shrink-0 text-[#595959] text-[16px] text-left whitespace-nowrap" data-node-id="I987:33604;828:1905">
+              보관함
+            </p>
+          </button>
+          <div className="content-stretch flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="987:33605" data-name="Go|C-01-saved|캐릭터">
+            <TikiTakaCurrentLineIconCharacter className="relative shrink-0 size-[32px]" />
+            <p className="[word-break:break-word] font-['Asta_Sans:SemiBold'] font-semibold leading-[24px] relative shrink-0 text-[#333] text-[16px] whitespace-nowrap" data-node-id="I987:33605;828:1911">
+              캐릭터
+            </p>
+          </div>
+        </div>
+        <div className="h-[294px] relative shrink-0 w-px" data-node-id="987:33606" data-name="여백" />
+        <a className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center pb-[6px] pt-[8px] relative shrink-0 w-[80px]" data-node-id="987:33607" data-name="Go|S-01|설정">
+          <TikiTakaCurrentLineIconSettings className="relative shrink-0 size-[32px]" />
+        </a>
+      </div>
+      <div className="absolute bg-[#f7f8fa] h-[1184px] left-[129px] top-[-1px] w-px" data-node-id="987:33608" data-name="전역 사이드바 구분선" />
+    </div>
+  );
+}

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="pleos.car.permission.CAR_SEATS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="pleos.car.permission.STT_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
@@ -22,6 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HD_project">
+        <uses-library android:name="android.car" android:required="false" />
         <service android:name=".RecordingService" android:exported="false"
             android:foregroundServiceType="microphone" />
         <service android:name=".BoardingService" android:exported="false"
@@ -37,8 +40,8 @@
             </intent-filter>
         </receiver>
         <activity android:name=".RecordingsActivity" android:exported="false" />
-        <service android:name=".HighlightService" android:exported="false"
-            android:foregroundServiceType="dataSync" />
+        <activity android:name=".AnimationActivity" android:exported="false" />
+        <activity android:name=".PeopleActivity" android:exported="false" />
         <activity android:name=".HighlightsActivity" android:exported="true" android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="FIND_RECORDING_HIGHLIGHTS" />

@@ -1,0 +1,63 @@
+name: momo-drive
+x-environment: &environment
+  MOMO_PROFILE: production
+  MOMO_DATABASE_URL: postgresql+psycopg://momo:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@postgres:5432/momo
+  MOMO_BROKER_URL: redis://redis:6379/0
+  MOMO_JWT_SECRET: ${MOMO_JWT_SECRET:?Set a random MOMO_JWT_SECRET}
+  MOMO_STORAGE_ROOT: /data/objects
+  MOMO_MODEL_ROOT: /data/models
+  MOMO_INFERENCE_DEVICE: ${MOMO_INFERENCE_DEVICE:-cuda}
+x-app: &app
+  build: {context: .., dockerfile: infra/Dockerfile, target: api}
+  environment: *environment
+  volumes:
+    - objects:/data/objects
+    - ${MOMO_MODELS_DIR:?Set model directory}:/data/models:ro
+  restart: unless-stopped
+  depends_on:
+    postgres: {condition: service_healthy}
+    redis: {condition: service_healthy}
+  security_opt: [no-new-privileges:true]
+services:
+  postgres:
+    image: postgres:17.6-bookworm@sha256:f3bd19c606e442c3d7bdfa8002e03fe260a1023351e0ea4598032022b68dd6e3
+    environment: {POSTGRES_USER: momo, POSTGRES_DB: momo, POSTGRES_PASSWORD: '${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}'}
+    volumes: [postgres:/var/lib/postgresql/data]
+    healthcheck: {test: [CMD-SHELL, 'pg_isready -U momo -d momo'], interval: 5s, timeout: 3s, retries: 20}
+    restart: unless-stopped
+  redis:
+    image: redis:7.4.5-bookworm@sha256:90e7a336d044f1abc9e9dbc05d65566850896d11453bbd1dd0fb7e5059f0e8fb
+    command: [redis-server, --appendonly, 'yes']
+    volumes: [redis:/data]
+    healthcheck: {test: [CMD, redis-cli, ping], interval: 5s, timeout: 3s, retries: 20}
+    restart: unless-stopped
+  api:
+    <<: *app
+    ports: ['127.0.0.1:8765:8765']
+    command: [sh, -c, 'alembic upgrade head && exec uvicorn momo.api:app --host 0.0.0.0 --port 8765']
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/health/live')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+  dispatcher:
+    <<: *app
+    command: [python, -m, momo.worker, dispatcher]
+    depends_on: {api: {condition: service_healthy}}
+  worker:
+    <<: *app
+    build: {context: .., dockerfile: infra/Dockerfile, target: worker}
+    command: [celery, -A, 'momo.worker:celery', worker, --pool=solo, --concurrency=1, --loglevel=WARNING]
+    depends_on: {api: {condition: service_healthy}}
+    deploy:
+      resources:
+        reservations:
+          devices: [{driver: nvidia, count: 1, capabilities: [gpu]}]
+  maintenance:
+    <<: *app
+    command: [python, -m, momo.maintenance]
+    depends_on: {api: {condition: service_healthy}}
+volumes:
+  postgres:
+  redis:
+  objects:

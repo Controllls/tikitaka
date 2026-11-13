@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/animation_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="80dp" android:paddingHorizontal="@dimen/page_padding" android:gravity="center_vertical">
+        <com.google.android.material.button.MaterialButton android:id="@+id/animation_back" android:layout_width="wrap_content" android:layout_height="56dp" android:text="@string/back" />
+        <TextView style="@style/Text.Journal.Title" android:layout_marginStart="20dp" android:text="@string/animation_title" />
+    </LinearLayout>
+    <ScrollView android:id="@+id/animation_scroll" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/page_padding">
+            <TextView android:id="@+id/animation_source" style="@style/Text.Journal.Section" />
+            <TextView style="@style/Text.Journal.Body" android:layout_marginTop="8dp" android:text="@string/animation_caption" />
+            <FrameLayout android:id="@+id/animation_preview_frame" android:layout_width="200dp" android:layout_height="356dp" android:layout_gravity="center_horizontal" android:layout_marginTop="16dp" android:background="#F9F8F4">
+                <TextView android:id="@+id/animation_empty" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:padding="20dp" android:text="@string/animation_empty" android:textColor="#536652" android:textSize="18sp" />
+                <com.example.hd_project.pleos.RestrictedVideoView android:id="@+id/animation_video" android:layout_width="match_parent" android:layout_height="match_parent" android:visibility="gone" />
+            </FrameLayout>
+            <TextView android:id="@+id/animation_status" style="@style/Text.Journal.Body" android:layout_marginTop="16dp" android:accessibilityLiveRegion="polite" />
+            <ProgressBar android:id="@+id/animation_progress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="8dp" android:layout_marginTop="8dp" android:visibility="gone" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="12dp">
+                <com.google.android.material.button.MaterialButton android:id="@+id/animation_generate" android:layout_width="0dp" android:layout_height="56dp" android:layout_weight="1" android:text="@string/animation_make" android:enabled="false" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/animation_cancel" android:layout_width="wrap_content" android:layout_height="56dp" android:layout_marginStart="12dp" android:text="@string/cancel" android:visibility="gone" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton android:id="@+id/animation_play" android:layout_width="0dp" android:layout_height="56dp" android:layout_weight="1" android:text="@string/animation_play" android:enabled="false" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/animation_export" android:layout_width="0dp" android:layout_height="56dp" android:layout_weight="1" android:layout_marginStart="12dp" android:text="@string/animation_export" android:enabled="false" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

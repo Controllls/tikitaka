@@ -1,0 +1,5 @@
+<resources>
+    <string name="pleos_video_checking">차량의 재생 가능 상태를 확인하고 있어요.</string>
+    <string name="pleos_video_restricted">주행 제한 중에는 영상을 재생할 수 없어요. 주차 후 재생 버튼을 눌러 주세요.</string>
+    <string name="pleos_audio_unavailable">다른 차량 음성이 사용 중이에요. 잠시 후 다시 재생해 주세요.</string>
+</resources>

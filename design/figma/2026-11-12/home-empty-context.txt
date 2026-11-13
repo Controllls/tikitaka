@@ -1,0 +1,237 @@
+const img = "https://www.figma.com/api/mcp/asset/4af524ad-0713-4545-b7d9-57d3d14cfa39.png";
+const imgGroundShadow1 = "https://www.figma.com/api/mcp/asset/e76ec919-7965-42d1-bdb1-3c37ed1d721f.svg";
+const imgGroundShadow2 = "https://www.figma.com/api/mcp/asset/c33a0858-40b4-4c5c-a4bb-18064ada9c8b.svg";
+const imgGroundShadow3 = "https://www.figma.com/api/mcp/asset/784f0718-dff3-4807-a84f-6364d2e4c943.svg";
+const img3D = "https://www.figma.com/api/mcp/asset/1e3709ea-5edf-4667-9ace-b1a1c93de3a8.svg";
+const imgTikiTakaCurrentLineIconHome = "https://www.figma.com/api/mcp/asset/c003cf00-4ed2-4d74-83f0-36d971fd1122.svg";
+const imgTikiTakaHomeLatestVerticalLogo = "https://www.figma.com/api/mcp/asset/96a79111-6339-4807-9dc0-12dc6ab72b95.png";
+const imgTikiTakaCurrentLineIconLibrary = "https://www.figma.com/api/mcp/asset/1f9db7d3-c381-4171-b94b-d25ec4984f72.svg";
+const imgFrame = "https://www.figma.com/api/mcp/asset/837cdd62-c0c7-4440-9ac5-0647636ef87c.svg";
+const imgFrame1 = "https://www.figma.com/api/mcp/asset/57f19ebb-152e-423d-a68c-9e9375d60233.svg";
+const imgFrame2 = "https://www.figma.com/api/mcp/asset/baa48ea6-c4de-4acb-9619-7074a37f0360.svg";
+const imgFrame3 = "https://www.figma.com/api/mcp/asset/fc83ca92-15ce-48f9-b137-a4c271bd442d.svg";
+const imgTikiTakaIconLibrary = "https://www.figma.com/api/mcp/asset/7dfbdc17-04f7-452e-a1bb-199717880268.svg";
+
+function TikiTakaHomeWideReferenceHeroArtwork({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[919.5px] overflow-clip relative w-[980px]"} data-node-id="965:1859" style={{ backgroundImage: "linear-gradient(180deg, rgb(244, 231, 220) 0%, rgb(244, 231, 220) 0.11414%, rgb(247, 248, 250) 96.389%, rgb(247, 248, 250) 100%)" }} data-name="TikiTaka / Home wide reference / Hero artwork">
+      <div className="absolute h-[127.75px] left-[276.13px] top-[782.63px] w-[509.25px]" data-node-id="965:1866" data-name="Ground shadow / 원본 접지 1">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroundShadow1} />
+      </div>
+      <div className="absolute h-[98px] left-[115px] top-[797.25px] w-[528.5px]" data-node-id="965:1867" data-name="Ground shadow / 원본 접지 2">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroundShadow2} />
+      </div>
+      <div className="absolute h-[98px] left-[343.25px] top-[800.75px] w-[532px]" data-node-id="965:1868" data-name="Ground shadow / 원본 접지 3">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgGroundShadow3} />
+      </div>
+      <div className="absolute inset-[3.72%_1.28%_-33.9%_3.72%]" data-node-id="965:1861" data-name="청록 / 손인사 · 웜화이트 얼굴">
+        <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={img} />
+      </div>
+      <div className="absolute inset-[11.58%_22.43%_72.46%_21.94%]" data-node-id="965:1862" data-name="말풍선 / 매트 3D · 여유 있는 가로형">
+        <div className="absolute inset-[-4.09%_-2.57%_-14.99%_-2.57%]">
+          <img alt="" className="block max-w-none size-full" src={img3D} />
+        </div>
+      </div>
+      <div className="[word-break:break-word] absolute flex flex-col font-['Jua:Regular'] inset-[15.06%_27.19%_78.41%_26.89%] justify-center leading-[0] not-italic text-[#333] text-[34.8px] text-center" data-node-id="965:1865">
+        <p className="leading-[50px]">오늘은 어떤 이야기를 들려줄래?</p>
+      </div>
+    </div>
+  );
+}
+
+function TikiTakaCurrentLineIconHome({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[32px]"} data-node-id="948:1863" data-name="TikiTaka / Current / Line icon / home">
+      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaCurrentLineIconHome} />
+    </div>
+  );
+}
+
+export default function H01E() {
+  return (
+    <div className="bg-[#f7f8fa] border border-[#c9cacd] border-solid content-stretch flex items-start overflow-clip relative rounded-[40px] size-full" data-node-id="619:4457" data-name="H-01E / 홈 · 첫 대화 전">
+      <div className="bg-[#f7f8fa] content-stretch flex flex-col h-[1184px] items-center overflow-clip pb-[26px] pl-[3.4px] pt-[51px] relative shrink-0 w-[130px]" data-node-id="801:6428" data-name="전역 사이드바 / 홈 · 보관함 · 캐릭터 / 하단 설정">
+        <div className="h-[60px] mix-blend-multiply relative shrink-0 w-[58.8px]" data-node-id="828:11515" data-name="TikiTaka / Home latest / Vertical logo">
+          <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={imgTikiTakaHomeLatestVerticalLogo} />
+        </div>
+        <div className="h-[245px] relative shrink-0 w-px" data-node-id="828:11516" data-name="여백" />
+        <div className="content-stretch flex flex-col gap-[110px] items-center overflow-clip relative shrink-0" data-node-id="828:11517" data-name="주요 메뉴">
+          <div className="content-stretch flex flex-col gap-[4px] h-[72px] items-center py-[6px] relative shrink-0 w-[80px]" data-node-id="801:6432" data-name="Go|H-01|홈">
+            <TikiTakaCurrentLineIconHome className="relative shrink-0 size-[32px]" />
+            <p className="[word-break:break-word] font-['Asta_Sans:SemiBold'] font-semibold leading-[24px] relative shrink-0 text-[#4d4d4d] text-[16px] whitespace-nowrap" data-node-id="I801:6432;828:1911">
+              홈
+            </p>
+          </div>
+          <button className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="801:6433" data-name="Go|L-01|보관함">
+            <div className="relative shrink-0 size-[32px]" data-node-id="I801:6433;828:1904" data-name="TikiTaka / Current / Line icon / library">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaCurrentLineIconLibrary} />
+            </div>
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[24px] relative shrink-0 text-[#595959] text-[16px] text-left whitespace-nowrap" data-node-id="I801:6433;828:1905">
+              보관함
+            </p>
+          </button>
+          <button className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="801:6434" data-name="Go|C-01-saved|캐릭터">
+            <div className="relative shrink-0 size-[32px]" data-node-id="I801:6434;828:1904" data-name="TikiTaka / Current / Line icon / character">
+              <div className="absolute left-0 size-[32px] top-0" data-node-id="I801:6434;828:1904;948:1870" data-name="Frame">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[24px] relative shrink-0 text-[#595959] text-[16px] text-left whitespace-nowrap" data-node-id="I801:6434;828:1905">
+              캐릭터
+            </p>
+          </button>
+        </div>
+        <div className="h-[294px] relative shrink-0 w-px" data-node-id="828:11550" data-name="여백" />
+        <a className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center pb-[6px] pt-[8px] relative shrink-0 w-[80px]" data-node-id="801:6436" data-name="Go|S-01|설정">
+          <div className="relative shrink-0 size-[32px]" data-node-id="I801:6436;828:1904" data-name="TikiTaka / Current / Line icon / settings">
+            <div className="absolute left-[1.28px] size-[29.44px] top-[1.28px]" data-node-id="I801:6436;828:1904;948:1874" data-name="Frame">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame1} />
+            </div>
+          </div>
+        </a>
+      </div>
+      <div className="bg-[#f7f8fa] content-stretch flex flex-col gap-[26.5px] h-[1184px] items-center overflow-clip relative shrink-0 w-[980px]" data-node-id="801:6455" data-name="메인 / 청록 캐릭터 · 최신 첨부">
+        <TikiTakaHomeWideReferenceHeroArtwork className="h-[919.5px] overflow-clip relative shrink-0 w-[980px]" />
+        <div className="content-stretch flex flex-col gap-[18px] h-[132px] items-center overflow-clip relative shrink-0 w-full" data-node-id="801:6457" data-name="녹음 시작">
+          <a className="bg-[var(--reference-pleos-dark-gray-1,#343434)] content-stretch cursor-pointer flex gap-[16px] h-[88px] items-center justify-center p-[var(--tikitaka-space-16,16px)] relative rounded-[44px] shrink-0 w-[340px]" data-node-id="801:6458" data-name="Go|R-00|대화 녹음 시작">
+            <div className="relative shrink-0 size-[24px]" data-node-id="I801:6458;529:4295" data-name="TikiTaka / Icon / Mic">
+              <div className="absolute left-0 size-[24px] top-0" data-node-id="I801:6458;529:4295;529:4265" data-name="Frame">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame2} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[32px] relative shrink-0 text-[24px] text-[color:var(--reference-pleos-white,white)] text-left whitespace-nowrap" data-node-id="I801:6458;529:4299">
+              대화 녹음 시작
+            </p>
+          </a>
+          <p className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[24px] relative shrink-0 text-[#626262] text-[16px] whitespace-nowrap" data-node-id="801:6459">
+            녹음이 끝나면 영상으로 만들어드려요
+          </p>
+        </div>
+      </div>
+      <div className="absolute bg-[#f7f8fa] h-[1184px] left-[1109px] top-[-1px] w-px" data-node-id="619:4469" data-name="영역 구분선" />
+      <div className="bg-[#f7f8fa] content-stretch flex flex-col h-[1184px] items-start overflow-clip pl-[48.851px] pr-[63.834px] pt-[54px] relative shrink-0 w-[590px]" data-node-id="619:4470" data-name="최근 에피소드">
+        <div className="content-stretch flex gap-[17px] h-[44px] items-start pl-[8px] relative shrink-0 w-full" data-node-id="619:4471" data-name="최근 에피소드 제목">
+          <p className="[word-break:break-word] font-['Asta_Sans:SemiBold'] font-semibold leading-[44px] relative shrink-0 text-[34px] text-[color:var(--reference-pleos-dark-gray-1,#343434)] whitespace-nowrap" data-node-id="619:4472">
+            최근 에피소드
+          </p>
+          <div className="content-stretch flex flex-col h-[44px] items-start overflow-clip pt-[17px] relative shrink-0 w-[22px]" data-node-id="970:6901" data-name="에피소드 개수 / 원본 기준선">
+            <p className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[20px] relative shrink-0 text-[#626262] text-[14px] whitespace-nowrap" data-node-id="619:4473">
+              0편
+            </p>
+          </div>
+        </div>
+        <div className="content-stretch flex h-[41.041px] items-end justify-end overflow-clip pr-[3px] relative shrink-0 w-full" data-node-id="957:6927" data-name="전체 보기 행">
+          <a className="content-stretch cursor-pointer flex gap-[4px] h-[30px] items-center overflow-clip relative shrink-0 w-[74px]" data-node-id="619:4475" data-name="Go|L-01E|전체 보기">
+            <div className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[0] relative shrink-0 text-[#626262] text-[14px] text-left w-[54px]" data-node-id="619:4476">
+              <p className="leading-[20px]">전체 보기</p>
+            </div>
+            <div className="relative shrink-0 size-[16px]" data-node-id="619:4477" data-name="TikiTaka / Icon / Chevron">
+              <div className="absolute left-0 size-[16px] top-0" data-node-id="I619:4477;529:4277" data-name="Frame">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame3} />
+              </div>
+            </div>
+          </a>
+        </div>
+        <div className="bg-[#e6e6e6] h-px relative shrink-0 w-[478px]" data-node-id="803:6512" data-name="Rectangle" />
+        <div className="content-stretch flex flex-col gap-[var(--tikitaka-space-24,24px)] h-[962px] items-center justify-center overflow-clip relative shrink-0 w-[478px]" data-node-id="619:4555" data-name="최근 에피소드 / 빈 상태">
+          <div className="relative shrink-0 size-[64px]" data-node-id="619:4556" data-name="TikiTaka / Icon / Library">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaIconLibrary} />
+          </div>
+          <p className="[word-break:break-word] font-['Asta_Sans:SemiBold'] font-semibold leading-[40px] relative shrink-0 text-[32px] text-[color:var(--tikitaka-ink,#343434)] text-center w-[468px]" data-node-id="619:4559">
+            아직 에피소드가 없어요
+          </p>
+          <div className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[0] relative shrink-0 text-[22px] text-[color:var(--tikitaka-muted,#5d5d5d)] text-center w-[468px]" data-node-id="619:4560">
+            <p className="leading-[28px] mb-0">첫 대화를 녹음하고</p>
+            <p className="leading-[28px]">우리만의 이야기를 만들어보세요.</p>
+          </div>
+        </div>
+        <div className="content-stretch flex flex-col h-[34px] items-end overflow-clip pt-[12px] relative shrink-0 w-[477.315px]" data-node-id="619:4500" data-name="주차 중 재생 안내">
+          <p className="[word-break:break-word] font-['Asta_Sans:Regular'] font-normal leading-[20px] relative shrink-0 text-[#666] text-[14px] whitespace-nowrap" data-node-id="619:4502">
+            영상은 주차 중에만 볼 수 있어요
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+These styles are contained in the design: TikiTaka / Current / Navigation outline: #4D4D4D, TikiTaka / Home / Background / Surface: #F7F8FA, TikiTaka / Home / Background / Hero: , TikiTaka / Home v2 / section: Font(family: "Asta Sans", style: SemiBold, size: 32, weight: 600, lineHeight: 40, letterSpacing: 0), TikiTaka / Home v2 / caption: Font(family: "Asta Sans", style: Regular, size: 22, weight: 400, lineHeight: 28, letterSpacing: 0).
+
+Component descriptions: The following components have usage descriptions or documentation links defined in Figma. These descriptions provide important context about the intended usage, best practices, and any constraints for each component. Follow these guidelines when implementing or using these components.
+
+## TikiTaka / Home latest / Vertical logo
+**Node ID:** 800:6328
+
+최신 첨부의 수직 2단 브랜드 로고
+
+## State=Selected
+**Node ID:** 828:1909
+
+홈 원본 80×72 비례. 아이콘28, 라벨16/24, 활성 탭만 작은 차콜 표시.
+
+## TikiTaka / Current / Navigation item
+**Node ID:** 828:1915
+
+전역 홈/보관함/캐릭터와 하단 설정. 사용자 원본의 선형 아이콘: 32px 슬롯, 2.4px 선. 캐릭터는 사람형. 선택 표시와 이동 반응 유지.
+
+## TikiTaka / Current / Line icon / home
+**Node ID:** 948:1863
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## State=Default
+**Node ID:** 828:1903
+
+홈 원본 80×72 비례. 아이콘28, 라벨16/24, 활성 탭만 작은 차콜 표시.
+
+## TikiTaka / Current / Line icon / library
+**Node ID:** 948:1866
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## TikiTaka / Current / Line icon / character
+**Node ID:** 948:1869
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## TikiTaka / Current / Line icon / settings
+**Node ID:** 948:1873
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## TikiTaka / Home wide reference / Hero artwork
+**Node ID:** 965:1859
+
+1700×1184 넓은 홈 전용. 사용자 최종 픽셀 시안 eed8d6dd 기준. 좁은 홈과 원본 마스터는 별도 유지. 편집형 주아체 문구·네이티브 말풍선 및 접지 그림자.
+
+## TikiTaka / Button
+**Node ID:** 529:4294
+
+Home v1 · 연결된 색상·간격·글자 스타일 사용
+
+## TikiTaka / Icon / Mic
+**Node ID:** 529:4264
+
+24×24 고정 그리드 · 2px 선 · 색상은 역할 토큰을 사용
+
+## TikiTaka / Icon / Chevron
+**Node ID:** 529:4276
+
+24×24 고정 그리드 · 2px 선 · 색상은 역할 토큰을 사용
+
+## TikiTaka / Icon / Library
+**Node ID:** 529:4285
+
+24-unit grid / 1.8-unit rounded stroke. Always pair actions with a visible Korean label.
+
+The generated code contains image and SVG URL constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These URLs are temporary download sources and expire after 7 days. Download each asset into the project with curl -L, then replace its URL in the generated code with a reference to the downloaded asset. Never use the temporary URLs as runtime image sources.

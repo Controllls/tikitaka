@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 3,
+  "id": "07-sheep",
+  "label": "07-sheep",
+  "renderMode": "sprite-sheet",
+  "viewBox": [
+    0,
+    0,
+    361,
+    388
+  ],
+  "anchors": {
+    "root": [
+      180.5,
+      380
+    ]
+  },
+  "poses": {
+    "front": {},
+    "left": {},
+    "right": {}
+  },
+  "sprites": {
+    "neutral": "neutral.png",
+    "happy": "happy.png",
+    "talk": "talk.png",
+    "left": "left.png",
+    "right": "right.png"
+  },
+  "source": {
+    "file": "source.png",
+    "layout": "three-plus-two",
+    "crops": {
+      "neutral": [
+        151,
+        93,
+        510,
+        472
+      ],
+      "happy": [
+        589,
+        93,
+        948,
+        472
+      ],
+      "talk": [
+        1022,
+        93,
+        1383,
+        472
+      ],
+      "left": [
+        352,
+        523,
+        695,
+        911
+      ],
+      "right": [
+        840,
+        524,
+        1184,
+        911
+      ]
+    },
+    "alphaThreshold": 64
+  },
+  "animationNote": "정면 기본·웃음·말하기 이미지를 전환합니다. 좌우 포즈는 제공된 정지 이미지이며, 별도 눈깜빡임·입 파츠는 없습니다."
+}

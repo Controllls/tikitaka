@@ -1,0 +1,11 @@
+const imgTikiTakaCharacter3D08 = "https://www.figma.com/api/mcp/asset/94ec019f-9881-4e45-81df-bc9094ec7455.png";
+
+export default function TikiTakaCharacter3D08({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[160px]"} data-node-id="632:4548" data-name="TikiTaka / Character 3D / 08 개구리">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <img alt="" className="absolute left-[-4.12%] max-w-none size-[108.94%] top-[-7.68%]" src={imgTikiTakaCharacter3D08} />
+      </div>
+    </div>
+  );
+}

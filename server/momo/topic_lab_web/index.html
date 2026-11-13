@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>MOMO · Topic Lab</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%232b5146'/%3E%3Cpath d='M9 27V13l11 10 11-10v14' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="MOMO Topic Lab 홈"><span class="brand-mark">m</span><span>MOMO<span class="brand-sub">DEVELOPER WORKSPACE</span></span></a>
+    <div class="nav-caption">PLAYGROUND</div>
+    <div class="nav-active"><span aria-hidden="true">◫</span> 주제 &amp; 하이라이트 <span class="nav-dot"></span></div>
+    <div class="sidebar-note"><span class="eyebrow">THE EXPERIMENT</span><p>대화 속 이야기의 경계를<br>모델별로 비교해 보세요.</p><div class="pipeline"><span>전사문</span><i>↓</i><strong>GPT 주제 분할</strong><i>↓</i><span>웃음 후보와 결합</span></div></div>
+    <div class="sidebar-bottom"><span class="local-dot"></span> LOCAL WORKSPACE<p>이 PC에서 실행하는 실험실</p></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><div><span class="muted">Playground</span><span class="breadcrumb">/</span> Topic Lab</div><button id="connection-button" class="connection-button"><span id="connection-dot" class="status-dot"></span><span id="connection-status">연결 확인 중</span><span aria-hidden="true">↗</span></button></header>
+    <main>
+      <section class="intro"><div><div class="eyebrow">CONVERSATION INTELLIGENCE <span class="beta">LAB</span></div><h1>이야기를 발견하는 모델 찾기<span>.</span></h1><p>같은 대화, 다른 모델. 주제 경계와 하이라이트가 어떻게 달라지는지 확인하세요.</p></div><span class="scope-tag">주제 분석 전용</span></section>
+      <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+      <div class="lab-grid">
+        <section class="panel input-panel" aria-labelledby="input-heading">
+          <div class="panel-heading"><div><span class="step">01</span><h2 id="input-heading">실험 설정</h2></div><span class="small-label">INPUT</span></div>
+          <div class="input-body">
+            <div class="label-row"><label for="model-select">분석 모델</label><button id="refresh-models" class="text-button" title="OpenAI에서 모델 목록 다시 불러오기">↻ 새로고침</button></div>
+            <select id="model-select"><option value="">API 키 연결 후 목록을 불러옵니다</option><option value="__custom">모델 ID 직접 입력</option></select>
+            <div id="custom-model-wrap" hidden><label for="custom-model" class="sr-only">직접 입력할 모델 ID</label><input id="custom-model" placeholder="OpenAI 모델 ID 입력" maxlength="200" autocomplete="off" spellcheck="false"></div>
+            <p id="model-note" class="hint">계정의 모델 목록을 불러옵니다. 모델 ID를 직접 입력할 수도 있습니다.</p>
+            <div class="divider"></div>
+            <div class="label-row"><label for="transcript">대화 전사문</label><div class="inline-actions"><button id="load-sample" class="text-button">샘플</button><button id="import-transcript" class="text-button">파일 열기 ↗</button></div></div>
+            <input id="transcript-file" type="file" accept=".json,.txt,application/json,text/plain" hidden>
+            <div class="editor-bar"><span id="input-kind">JSON / TEXT</span><span id="input-count">0자</span></div>
+            <textarea id="transcript" rows="13" spellcheck="false" placeholder="대화를 한 줄에 한 발화씩 입력하거나, 서버의 transcript.json을 열어 주세요." aria-describedby="transcript-help"></textarea>
+            <p id="transcript-help" class="hint">텍스트는 한 줄 = 한 발화. <code>transcript.json</code>은 실제 시간 정보를 함께 사용합니다. 오디오 파일은 먼저 기존 서버에서 전사해 주세요.</p>
+            <details class="options" id="laughter-options"><summary>웃음 후보 연결 <span id="window-count" class="count-badge">선택</span></summary><div class="options-body"><div class="label-row"><label for="windows">YAMNet 구간 JSON</label><button id="import-windows" class="text-button">파일 열기 ↗</button></div><input id="windows-file" type="file" accept=".json,application/json" hidden><textarea id="windows" rows="5" spellcheck="false" aria-describedby="window-help">[]</textarea><p id="window-help" class="hint">각 항목: startMs, endMs, laughter, music. 시간이 있는 전사와 결합해 실제 서버 규칙으로 클립 후보를 고릅니다.</p><div class="two-fields"><div><label for="threshold">웃음 기준</label><input id="threshold" type="number" value="0.1" min="0.001" max="1" step="0.01"></div><div><label for="max-clips">최대 하이라이트</label><input id="max-clips" type="number" value="3" min="1" max="10" step="1"></div></div></div></details>
+            <details class="options"><summary>응답 설정</summary><div class="options-body"><label for="output-tokens">출력 토큰 한도</label><select id="output-tokens"><option value="4096">4,096</option><option value="8192" selected>8,192</option><option value="16384">16,384</option><option value="32768">32,768</option></select><p class="hint">추론 토큰도 포함됩니다. 불완전한 응답이면 한도를 늘려 보세요.</p></div></details>
+            <button id="run" class="primary run-button"><span id="run-icon" aria-hidden="true">▶</span><span id="run-label">이 모델로 분석하기</span><kbd>Ctrl ↵</kbd></button>
+            <p class="run-help">클릭하면 전사문이 OpenAI API로 전송되며 사용 요금이 발생할 수 있습니다.</p>
+          </div>
+        </section>
+        <section class="panel results-panel" aria-labelledby="result-heading">
+          <div class="panel-heading"><div><span class="step">02</span><h2 id="result-heading">분석 결과</h2></div><button id="export" class="text-button" disabled>JSON 내려받기 ↓</button></div>
+          <div class="result-top"><div class="result-model"><span id="result-state" class="small-label">READY TO EXPERIMENT</span><h3 id="result-model">첫 번째 실험을 기다리는 중</h3></div><span id="api-badge" class="api-badge" hidden>OpenAI API</span></div>
+          <div class="metrics"><div><span>응답 시간</span><strong id="metric-time">—<small>초</small></strong></div><div><span>사용 토큰</span><strong id="metric-tokens">—</strong></div><div><span>대화 주제</span><strong id="metric-topics">—<small>개</small></strong></div><div><span>하이라이트</span><strong id="metric-clips">—<small>개</small></strong></div></div>
+          <div class="tabs" role="tablist" aria-label="분석 결과 보기"><button class="tab active" id="tab-topics" data-tab="topics" role="tab" aria-selected="true" aria-controls="result-content">주제 분할</button><button class="tab" id="tab-clips" data-tab="clips" role="tab" aria-selected="false" aria-controls="result-content" tabindex="-1">하이라이트</button><button class="tab" id="tab-compare" data-tab="compare" role="tab" aria-selected="false" aria-controls="result-content" tabindex="-1">모델 비교 <span id="compare-count">0</span></button></div>
+          <div id="result-content" class="result-content" role="tabpanel" aria-labelledby="tab-topics" tabindex="0">
+            <div class="empty-state"><div class="empty-illustration" aria-hidden="true"><div class="mock-line"></div><div class="mock-line short"></div><div class="topic-block"><span></span><i></i><i></i></div><div class="topic-block second"><span></span><i></i></div></div><h3>대화에서 이야기를 꺼내 보세요.</h3><p>API 키를 연결하고 모델을 선택하면<br>주제, 선정 이유, 하이라이트 구간이 여기에 표시됩니다.</p><span class="empty-footnote">샘플로 시작하거나 직접 전사문을 불러오세요.</span></div>
+          </div>
+          <div class="result-footer"><span id="usage-detail">전사문과 실험 기록은 이 페이지 메모리에만 유지됩니다.</span><span id="prompt-version"></span></div>
+        </section>
+      </div>
+      <section class="panel history-panel"><div class="panel-heading"><div><span class="history-icon" aria-hidden="true">↺</span><h2>실험 기록</h2><span id="history-count" class="count-badge">0</span></div><button id="clear-history" class="text-button" disabled>기록 비우기</button></div><div id="history"><p class="history-empty">모델을 바꿔 실행해 보세요. 최근 10개 결과가 여기에 쌓입니다. 새로고침하면 기록이 지워집니다.</p></div></section>
+      <footer class="page-footer"><span>MOMO / TOPIC LAB</span><p>GPT가 발화 ID로 주제를 나누고, 기존 서버 규칙이 웃음 후보와 결합합니다.</p></footer>
+    </main>
+  </div>
+  <dialog id="connection-dialog" aria-labelledby="connection-title"><form id="connection-form"><div class="dialog-heading"><span class="eyebrow">OPENAI CONNECTION</span><button type="button" id="close-dialog" class="icon-button" aria-label="닫기">×</button></div><h2 id="connection-title">API 키로 연결하기</h2><p class="dialog-description">로그인 아이디 대신 OpenAI API 키가 필요합니다.<br>입력한 키는 이 브라우저 세션의 로컬 서버 메모리에만 보관합니다. 서버 종료 또는 12시간 미사용 시 만료됩니다.</p><label for="api-key">OpenAI API key</label><input id="api-key" type="password" placeholder="sk-…" autocomplete="off" spellcheck="false" maxlength="512"><p class="hint"><a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">OpenAI에서 API 키 발급하기 ↗</a></p><details class="options"><summary>프로젝트 / 조직 지정 <span class="muted">선택</span></summary><div class="options-body"><label for="project-id">Project ID</label><input id="project-id" placeholder="proj_…" autocomplete="off"><label for="organization-id">Organization ID</label><input id="organization-id" placeholder="org-…" autocomplete="off"><p class="hint">특정 프로젝트·조직을 지정해야 할 때만 입력하세요.</p></div></details><p id="connection-error" class="inline-error" role="alert" hidden></p><div class="dialog-actions"><button type="button" id="disconnect" class="secondary" hidden>연결 해제</button><button type="submit" id="connect" class="primary">키 연결 &amp; 모델 불러오기</button></div><p id="env-hint" class="hint" hidden>서버 환경에 키가 있습니다. 키 입력란을 비워 연결하면 환경 설정을 사용합니다.</p><p class="hint">키를 코드·채팅에 붙여 넣을 필요가 없습니다. 모델 목록 읽기가 제한된 키는 모델 ID를 직접 입력해 실행할 수 있습니다.</p></form></dialog>
+</body>
+</html>

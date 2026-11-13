@@ -1,0 +1,13 @@
+{
+  "preset_id": "momo-drive-supplied-v1",
+  "background": "resources/backgrounds/city_rearview_loop_10s.mp4",
+  "vehicle": "resources/vehicles/car_body_seats.png",
+  "seatbelts": "resources/vehicles/seatbelts_overlay.png",
+  "steering_wheel": "resources/vehicles/steering_wheel_optional.png",
+  "people": [
+    {"person_id": "P1", "name": "첫 번째 목소리", "seat": "driver", "manifest": "resources/characters/character_01/manifest.json", "pose": "front"},
+    {"person_id": "P2", "name": "두 번째 목소리", "seat": "front_passenger", "manifest": "resources/characters/character_02/manifest.json", "pose": "front"}
+  ],
+  "speaker_mapping": {"S1": "P1", "S2": "P2"},
+  "layout": {"car_left": -120, "car_top": 220, "car_width": 780, "front_height": 900, "rear_height": 620, "front_root_y": 1000, "rear_root_y": 730}
+}

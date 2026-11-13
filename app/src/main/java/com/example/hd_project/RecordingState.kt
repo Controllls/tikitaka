@@ -5,7 +5,7 @@ import android.os.Looper
 import android.os.SystemClock
 import java.util.Locale
 
-enum class RecordingPhase { IDLE, STARTING, RECORDING, STOPPING, ERROR }
+enum class RecordingPhase { IDLE, STARTING, RECORDING, PAUSED, STOPPING, ERROR }
 
 data class RecordingState(
     val phase: RecordingPhase = RecordingPhase.IDLE,
@@ -15,7 +15,7 @@ data class RecordingState(
     val message: Int? = null
 ) {
     val busy: Boolean get() = phase == RecordingPhase.STARTING ||
-        phase == RecordingPhase.RECORDING || phase == RecordingPhase.STOPPING
+        phase == RecordingPhase.RECORDING || phase == RecordingPhase.PAUSED || phase == RecordingPhase.STOPPING
     fun durationMs(): Long = if (phase == RecordingPhase.RECORDING)
         SystemClock.elapsedRealtime() - startedAt else elapsedMs
 }

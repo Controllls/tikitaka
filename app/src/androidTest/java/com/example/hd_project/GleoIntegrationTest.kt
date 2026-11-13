@@ -24,10 +24,11 @@ class GleoIntegrationTest {
         val schema = JSONObject(context.assets.open("schema.json").bufferedReader().use { it.readText() })
         assertEquals(context.packageName, schema.getString("packageName"))
         val calls = schema.getJSONArray("actionCalls")
-        assertEquals(3, calls.length())
+        assertEquals(2, calls.length())
         for (i in 0 until calls.length()) {
             val function = calls.getJSONObject(i).getJSONObject("function")
             val action = function.getString("name")
+            assertNotEquals(GleoContract.ANALYZE, action)
             assertTrue(action in GleoContract.actions)
             assertEquals("activity", function.getString("component"))
             for (intentAction in listOf(action, "${context.packageName}.$action")) {

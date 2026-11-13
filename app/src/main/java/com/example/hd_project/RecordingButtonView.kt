@@ -29,6 +29,8 @@ class RecordingButtonView @JvmOverloads constructor(
     private val mic = ContextCompat.getDrawable(context, R.drawable.ic_mic)?.mutate()
         ?.apply { setTint(ink) }
     private var active = false
+    var motionAllowed = false
+        set(value) { field = value; invalidate() }
     private var targetLevel = 0f
     private var shownLevel = 0f
     private var invitationHighlighted = false
@@ -73,8 +75,8 @@ class RecordingButtonView @JvmOverloads constructor(
         val cx = width / 2f
         val cy = height / 2f
         shownLevel += (targetLevel - shownLevel) * 0.2f
-        val time = SystemClock.uptimeMillis() / 1000.0
-        val pulse = if (active) (sin(time * 2.2).toFloat() + 1f) / 2f else 0f
+        val time = if (motionAllowed) SystemClock.uptimeMillis() / 1000.0 else 0.0
+        val pulse = if (active && motionAllowed) (sin(time * 2.2).toFloat() + 1f) / 2f else 0f
         paint.style = Paint.Style.FILL
         paint.shader = halo
         paint.alpha = when {
@@ -94,7 +96,7 @@ class RecordingButtonView @JvmOverloads constructor(
                 invitationHighlighted -> (58 + attention * 80).toInt()
                 else -> 28
             }
-            val radius = (101 + index * 24 + if (active) pulse * 3 + shownLevel * index * 3 else 0f) * unit
+            val radius = (101 + index * 24 + if (active && motionAllowed) pulse * 3 + shownLevel * index * 3 else 0f) * unit
             canvas.drawCircle(cx, cy, radius, paint)
         }
         // Radial bars visualize input volume, not a fabricated frequency spectrum.
@@ -103,7 +105,7 @@ class RecordingButtonView @JvmOverloads constructor(
         for (index in 0 until 72) {
             val angle = index * Math.PI * 2 / 72
             val shape = (sin(index * 1.8 + time * 2).toFloat() + 1) / 2
-            val length = if (active) 4 + shownLevel * (6 + shape * 17) else 3f
+            val length = if (active && motionAllowed) 4 + shownLevel * (6 + shape * 17) else 3f
             val inner = (147 - length / 2) * unit
             val outer = (147 + length / 2) * unit
             paint.color = primary
@@ -143,7 +145,7 @@ class RecordingButtonView @JvmOverloads constructor(
             paint.color = primary
             canvas.drawCircle(cx, cy, 103 * unit, paint)
         }
-        if (active && isShown) postInvalidateDelayed(33)
+        if (active && motionAllowed && isShown && hasWindowFocus()) postInvalidateDelayed(33)
     }
 
     override fun drawableStateChanged() { super.drawableStateChanged(); invalidate() }

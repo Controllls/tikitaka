@@ -1,0 +1,332 @@
+const imgFrame = "https://www.figma.com/api/mcp/asset/4836faf6-3905-4b04-a03e-958bf13079d7.svg";
+const imgFrame1 = "https://www.figma.com/api/mcp/asset/88cc91c9-33be-4597-88a0-bff011475e06.svg";
+const imgTikiTakaCurrentLineIconHome = "https://www.figma.com/api/mcp/asset/4c34420f-8fd0-4bfd-b4cd-16940687c896.svg";
+const imgTikiTakaHomeLatestVerticalLogo = "https://www.figma.com/api/mcp/asset/a4c9db38-8ab8-4491-9b25-63f3fc1244fd.png";
+const imgTikiTakaCharacter3D01 = "https://www.figma.com/api/mcp/asset/03314485-a965-49e9-a4a7-d1bf602b12bb.png";
+const imgCharacterArtwork = "https://www.figma.com/api/mcp/asset/beea902a-6ed1-4342-a066-8b2708f69443.png";
+const imgCharacterArtwork1 = "https://www.figma.com/api/mcp/asset/a1f36ac9-71aa-4643-9da5-7c959aedb64e.png";
+const imgCharacterArtwork2 = "https://www.figma.com/api/mcp/asset/de65c3a8-b021-4715-8325-f935bc116f94.png";
+const imgCharacterArtwork3 = "https://www.figma.com/api/mcp/asset/62c3753b-1af2-4a49-a166-b4f7c0e10081.png";
+const imgCharacterArtwork4 = "https://www.figma.com/api/mcp/asset/447f4ab9-5199-4147-bfc7-85dc6a51834d.png";
+const imgCharacterArtwork5 = "https://www.figma.com/api/mcp/asset/74f17ea2-51bc-461a-b8a5-9155e2690b8c.png";
+const imgCharacterArtwork6 = "https://www.figma.com/api/mcp/asset/e935ecd6-157c-443b-9dad-7a63457c6f16.png";
+const imgFrame2 = "https://www.figma.com/api/mcp/asset/79149bee-5d0a-4b8d-8a74-d1c4204fda21.svg";
+const img = "https://www.figma.com/api/mcp/asset/bb6963c0-d812-4d96-ab52-918319b33dec.svg";
+const imgFrame3 = "https://www.figma.com/api/mcp/asset/6866f1c9-2ded-4609-b27b-de098a382291.svg";
+const imgFrame4 = "https://www.figma.com/api/mcp/asset/05113cc0-ce23-4d8b-8780-4960c10562c4.svg";
+const imgTikiTakaCurrentLineIconLibrary = "https://www.figma.com/api/mcp/asset/1a7e4500-5525-4e5e-8b8d-c2ca82274380.svg";
+
+function TikiTakaCurrentLineIconSettings({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[32px]"} data-node-id="948:1873" data-name="TikiTaka / Current / Line icon / settings">
+      <div className="absolute left-[1.28px] size-[29.44px] top-[1.28px]" data-node-id="948:1874" data-name="Frame">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame} />
+      </div>
+    </div>
+  );
+}
+
+function TikiTakaCurrentLineIconCharacter({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[32px]"} data-node-id="948:1869" data-name="TikiTaka / Current / Line icon / character">
+      <div className="absolute left-0 size-[32px] top-0" data-node-id="948:1870" data-name="Frame">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame1} />
+      </div>
+    </div>
+  );
+}
+
+function TikiTakaCurrentLineIconHome({ className }: { className?: string }) {
+  return (
+    <div className={className || "relative size-[32px]"} data-node-id="948:1863" data-name="TikiTaka / Current / Line icon / home">
+      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaCurrentLineIconHome} />
+    </div>
+  );
+}
+
+function TikiTakaHomeLatestVerticalLogo({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[60px] relative w-[58.8px]"} data-node-id="800:6328" data-name="TikiTaka / Home latest / Vertical logo">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none size-full" src={imgTikiTakaHomeLatestVerticalLogo} />
+    </div>
+  );
+}
+
+export default function C014() {
+  return (
+    <div className="bg-[#f7f8fa] border border-[#c9cacd] border-solid overflow-clip relative rounded-[40px] size-full" data-node-id="616:3254" data-name="C-01-4 / 내 캐릭터 선택">
+      <div className="absolute content-stretch flex h-[96px] items-center left-[178px] overflow-clip top-[47px] w-[1473px]" data-node-id="616:3255" data-name="상단 / 뒤로 · 제목">
+        <div className="[word-break:break-word] content-stretch flex flex-col gap-[8px] h-[118px] items-start overflow-clip relative shrink-0 w-[1200px] whitespace-nowrap" data-node-id="616:3257" data-name="화면 안내">
+          <p className="font-['Asta_Sans:SemiBold'] font-semibold leading-[48px] relative shrink-0 text-[36px] text-[color:var(--reference-pleos-dark-gray-1,#343434)]" data-node-id="616:3258">
+            내 캐릭터 선택
+          </p>
+          <p className="font-['Asta_Sans:Regular'] font-normal leading-[32px] relative shrink-0 text-[24px] text-[color:var(--reference-pleos-dark-gray-2,#5d5d5d)]" data-node-id="616:3259">
+            영상 속 나를 골라주세요.
+          </p>
+        </div>
+      </div>
+      <div className="absolute h-[820px] left-[-1px] overflow-clip top-[-1px] w-[1700px]" data-node-id="616:3260" data-name="캐릭터 회전 선택 / 8종 순환">
+        <a className="absolute bg-[var(--color\/character-card\/bear,#e5d2b5)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex flex-col gap-[var(--tikitaka-space-16,16px)] items-center justify-center left-[226.5px] pb-[16px] pt-[22px] rounded-[var(--radius-character-option,56px)] size-[190px] top-[600px]" data-node-id="616:3261" data-name="캐릭터 후보 / 01">
+          <div className="h-[148px] relative shrink-0 w-[136px]" data-node-id="I616:3261;585:4524" data-name="TikiTaka / Character 3D / 01 곰">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[110.21%] left-[-8.68%] max-w-none top-[-5.55%] w-[119.94%]" src={imgTikiTakaCharacter3D01} />
+            </div>
+          </div>
+        </a>
+        <a className="absolute bg-[var(--color\/character-card\/rabbit,#d99b7a)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex flex-col gap-[var(--tikitaka-space-16,16px)] items-center justify-center left-[371.7px] pb-[16px] pt-[22px] rounded-[var(--radius-character-option,56px)] size-[190px] top-[360px]" data-node-id="616:3262" data-name="캐릭터 후보 / 02">
+          <div className="h-[148px] relative shrink-0 w-[136px]" data-node-id="I616:3262;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[109.57%] left-[-9.05%] max-w-none top-[-6.36%] w-[119.24%]" src={imgCharacterArtwork} />
+            </div>
+          </div>
+        </a>
+        <a className="absolute bg-[var(--color\/character-card\/chick,#a3c5d9)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex flex-col gap-[var(--tikitaka-space-16,16px)] items-center justify-center left-[569.7px] pb-[16px] pt-[22px] rounded-[var(--radius-character-option,56px)] size-[190px] top-[210px]" data-node-id="616:3263" data-name="캐릭터 후보 / 03">
+          <div className="h-[148px] relative shrink-0 w-[136px]" data-node-id="I616:3263;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[120.03%] left-[-14.79%] max-w-none top-[-10.97%] w-[130.62%]" src={imgCharacterArtwork1} />
+            </div>
+          </div>
+        </a>
+        <div className="absolute bg-[var(--color\/character-card\/teal,#cfb3bf)] border-4 border-[#343434] border-solid content-stretch drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex flex-col gap-[var(--tikitaka-space-16,16px)] items-center justify-center left-[820.5px] pb-[16px] pt-[22px] rounded-[var(--radius-character-option,56px)] size-[190px] top-[170px]" data-node-id="616:3264" data-name="캐릭터 후보 / 04">
+          <div className="h-[148px] relative shrink-0 w-[136px]" data-node-id="I616:3264;585:4527" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[123.75%] left-[-17.01%] max-w-none top-[-12.66%] w-[134.67%]" src={imgCharacterArtwork2} />
+            </div>
+          </div>
+          <div className="absolute bg-[#343434] border-3 border-[var(--reference-pleos-white,white)] border-solid content-stretch flex items-center justify-center left-[132px] overflow-clip rounded-[23px] size-[46px] top-[4px]" data-node-id="I616:3264;585:4529" data-name="선택 체크">
+            <div className="relative shrink-0 size-[32px]" data-node-id="I616:3264;585:4530" data-name="FINAL / Icon / Check">
+              <div className="absolute left-0 size-[32px] top-0" data-node-id="I616:3264;585:4530;145:477" data-name="Frame">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame2} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <a className="absolute bg-[var(--color\/character-card\/seal,#dbbe80)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex flex-col gap-[var(--tikitaka-space-16,16px)] items-center justify-center left-[1071.3px] pb-[16px] pt-[22px] rounded-[var(--radius-character-option,56px)] size-[190px] top-[210px]" data-node-id="616:3265" data-name="캐릭터 후보 / 05">
+          <div className="h-[148px] relative shrink-0 w-[136px]" data-node-id="I616:3265;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[113.77%] left-[-11.51%] max-w-none top-[-10.24%] w-[123.81%]" src={imgCharacterArtwork3} />
+            </div>
+          </div>
+        </a>
+        <a className="absolute bg-[var(--color\/character-card\/fox,#bac88f)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex flex-col gap-[var(--tikitaka-space-16,16px)] items-center justify-center left-[1269.3px] pb-[16px] pt-[22px] rounded-[var(--radius-character-option,56px)] size-[190px] top-[360px]" data-node-id="616:3266" data-name="캐릭터 후보 / 06">
+          <div className="h-[148px] relative shrink-0 w-[136px]" data-node-id="I616:3266;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[115.28%] left-[-15.23%] max-w-none top-[-11.73%] w-[125.45%]" src={imgCharacterArtwork4} />
+            </div>
+          </div>
+        </a>
+        <a className="absolute bg-[var(--color\/character-card\/sheep,#ce9ca1)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex flex-col gap-[var(--tikitaka-space-16,16px)] items-center justify-center left-[1414.5px] pb-[16px] pt-[22px] rounded-[var(--radius-character-option,56px)] size-[190px] top-[600px]" data-node-id="616:3267" data-name="캐릭터 후보 / 07">
+          <div className="h-[148px] relative shrink-0 w-[136px]" data-node-id="I616:3267;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[110.65%] left-[-9.72%] max-w-none top-[-7.18%] w-[120.41%]" src={imgCharacterArtwork5} />
+            </div>
+          </div>
+        </a>
+        <div className="absolute bg-[var(--color\/character-card\/frog,#bbb1d5)] content-stretch drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex flex-col gap-[var(--tikitaka-space-16,16px)] items-center justify-center left-[820.5px] opacity-0 pb-[16px] pt-[22px] rounded-[var(--radius-character-option,56px)] size-[190px] top-[1500px]" data-node-id="616:3268" data-name="캐릭터 후보 / 08">
+          <div className="h-[148px] relative shrink-0 w-[136px]" data-node-id="I616:3268;585:4524" data-name="Character artwork">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[108.94%] left-[-8.9%] max-w-none top-[-7.68%] w-[118.55%]" src={imgCharacterArtwork6} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute h-[16px] left-[764.5px] top-[870px] w-[300px]" data-node-id="616:3269" data-name="캐릭터 발밑 / 약한 접지 그림자">
+        <div className="absolute inset-[-137.5%_-7.33%]">
+          <img alt="" className="block max-w-none size-full" src={img} />
+        </div>
+      </div>
+      <div className="absolute content-stretch flex flex-col gap-[44px] h-[702px] items-center left-[554.5px] overflow-clip top-[391px] w-[720px]" data-node-id="616:3270" data-name="선택한 캐릭터 · 확인">
+        <div className="relative shrink-0 size-[500px]" data-node-id="616:3271" data-name="현재 선택 / 캐릭터 04">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <img alt="" className="absolute left-[-11.58%] max-w-none size-[123.75%] top-[-12.66%]" src={imgCharacterArtwork2} />
+          </div>
+        </div>
+        <button className="bg-[var(--tikitaka-action,#343434)] content-stretch cursor-pointer flex gap-[var(--tikitaka-space-12,12px)] h-[88px] items-center justify-center p-[var(--tikitaka-space-16,16px)] relative rounded-[44px] shrink-0 w-[480px]" data-node-id="616:3273" data-name="캐릭터 선택 확정">
+          <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[32px] relative shrink-0 text-[24px] text-[color:var(--tikitaka-on-action,white)] text-left whitespace-nowrap" data-node-id="I616:3273;529:4299">
+            이 캐릭터로 선택
+          </p>
+        </button>
+      </div>
+      <div className="absolute content-stretch flex gap-[42px] items-center left-[550.5px] top-[605px]" data-node-id="616:3274" data-name="캐릭터 탐색">
+        <a className="bg-[var(--reference-pleos-white,white)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex items-center justify-center relative rounded-[36px] shrink-0 size-[72px]" data-node-id="616:3275" data-name="이전 캐릭터">
+          <div className="relative shrink-0 size-[24px]" data-node-id="I616:3275;529:4320" data-name="TikiTaka / Icon / Chevron left / Aligned 24">
+            <div className="absolute flex items-center justify-center left-0 size-[24px] top-0" data-node-id="I616:3275;529:4320;747:7153">
+              <div className="flex-none rotate-180">
+                <div className="relative size-[24px]" data-name="TikiTaka / Icon / Chevron">
+                  <div className="absolute left-0 size-[24px] top-0" data-node-id="I616:3275;529:4320;747:7153;529:4277" data-name="Frame">
+                    <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame3} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+        <div className="h-px relative shrink-0 w-[500px]" data-node-id="616:3276" data-name="선택 캐릭터 공간" />
+        <a className="bg-[var(--reference-pleos-white,white)] content-stretch cursor-pointer drop-shadow-[0px_10px_13px_rgba(0,0,0,0.06)] flex items-center justify-center relative rounded-[36px] shrink-0 size-[72px]" data-node-id="616:3277" data-name="다음 캐릭터">
+          <div className="relative shrink-0 size-[24px]" data-node-id="I616:3277;529:4320" data-name="TikiTaka / Icon / Chevron">
+            <div className="absolute left-0 size-[24px] top-0" data-node-id="I616:3277;529:4320;529:4277" data-name="Frame">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgFrame4} />
+            </div>
+          </div>
+        </a>
+      </div>
+      <div className="absolute bg-[#f7f8fa] content-stretch flex flex-col h-[1184px] items-center left-[-1px] overflow-clip pb-[26px] pl-[3.4px] pt-[51px] top-[-1px] w-[130px]" data-node-id="832:6743" data-name="전역 사이드바 / 홈 · 보관함 · 캐릭터 / 하단 설정">
+        <TikiTakaHomeLatestVerticalLogo className="h-[60px] relative shrink-0 w-[58.8px]" />
+        <div className="h-[245px] relative shrink-0 w-px" data-node-id="832:6745" data-name="여백" />
+        <div className="content-stretch flex flex-col gap-[110px] items-center overflow-clip relative shrink-0" data-node-id="832:6746" data-name="주요 메뉴">
+          <a className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="832:6747" data-name="Go|H-01|홈">
+            <TikiTakaCurrentLineIconHome className="relative shrink-0 size-[32px]" />
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[24px] relative shrink-0 text-[#595959] text-[16px] text-left whitespace-nowrap" data-node-id="I832:6747;828:1905">
+              홈
+            </p>
+          </a>
+          <button className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="832:6748" data-name="Go|L-01|보관함">
+            <div className="relative shrink-0 size-[32px]" data-node-id="I832:6748;828:1904" data-name="TikiTaka / Current / Line icon / library">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTikiTakaCurrentLineIconLibrary} />
+            </div>
+            <p className="[word-break:break-word] font-['Asta_Sans:Medium'] font-medium leading-[24px] relative shrink-0 text-[#595959] text-[16px] text-left whitespace-nowrap" data-node-id="I832:6748;828:1905">
+              보관함
+            </p>
+          </button>
+          <div className="content-stretch flex flex-col gap-[4px] h-[72px] items-center justify-center py-[6px] relative shrink-0 w-[80px]" data-node-id="832:6749" data-name="Go|C-01-saved|캐릭터">
+            <TikiTakaCurrentLineIconCharacter className="relative shrink-0 size-[32px]" />
+            <p className="[word-break:break-word] font-['Asta_Sans:SemiBold'] font-semibold leading-[24px] relative shrink-0 text-[#333] text-[16px] whitespace-nowrap" data-node-id="I832:6749;828:1911">
+              캐릭터
+            </p>
+          </div>
+        </div>
+        <div className="h-[294px] relative shrink-0 w-px" data-node-id="832:6750" data-name="여백" />
+        <a className="content-stretch cursor-pointer flex flex-col gap-[4px] h-[72px] items-center pb-[6px] pt-[8px] relative shrink-0 w-[80px]" data-node-id="832:6751" data-name="Go|S-01|설정">
+          <TikiTakaCurrentLineIconSettings className="relative shrink-0 size-[32px]" />
+        </a>
+      </div>
+      <div className="absolute bg-[#f7f8fa] h-[1184px] left-[129px] top-[-1px] w-px" data-node-id="832:6776" data-name="전역 사이드바 구분선" />
+    </div>
+  );
+}
+
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+
+These styles are contained in the design: TikiTaka / Home source / Page title: Font(family: "Asta Sans", style: SemiBold, size: 36, weight: 600, lineHeight: 48, letterSpacing: 0), TikiTaka / Home source / Body: Font(family: "Asta Sans", style: Regular, size: 24, weight: 400, lineHeight: 32, letterSpacing: 0), TikiTaka / Character / Soft card: Effect(type: DROP_SHADOW, color: #00000011, offset: (0, 10), radius: 26, spread: -3), TikiTaka / Home source / Action: Font(family: "Asta Sans", style: Medium, size: 24, weight: 500, lineHeight: 32, letterSpacing: 0), TikiTaka / Current / Navigation outline: #4D4D4D, TikiTaka / Home / Background / Surface: #F7F8FA.
+
+Component descriptions: The following components have usage descriptions or documentation links defined in Figma. These descriptions provide important context about the intended usage, best practices, and any constraints for each component. Follow these guidelines when implementing or using these components.
+
+## TikiTaka / Character option / Arc
+**Node ID:** 585:4533
+
+B 확정 아치형 선택 카드. Artwork 교체 · Number 텍스트 · Default/Selected 상태. 고정 8종만 사용.
+
+## TikiTaka / Character 3D / 01 곰
+**Node ID:** 632:4526
+
+고정 8종 정면 3D 에셋. 부드러운 확산광과 옅은 접지 그림자로 입체감을 유지합니다. 선택 후보·큰 미리보기·최초 설정·녹음 화면에 사용합니다. 홈 손인사 웜화이트 에셋은 별도입니다. 목소리 등록에 성공한 운전자와 저장된 내 캐릭터를 연결하는 기준으로 사용하며 실제 화자 매칭 정확도는 별도 검증합니다. 미등록·불확실 화자는 일반 화자로 자동 배정하여 녹음·제작을 계속할 수 있습니다.
+
+## TikiTaka / Character 3D / 02 토끼
+**Node ID:** 632:4529
+
+고정 8종 정면 3D 에셋. 부드러운 확산광과 옅은 접지 그림자로 입체감을 유지합니다. 선택 후보·큰 미리보기·최초 설정·녹음 화면에 사용합니다. 홈 손인사 웜화이트 에셋은 별도입니다. 목소리 등록에 성공한 운전자와 저장된 내 캐릭터를 연결하는 기준으로 사용하며 실제 화자 매칭 정확도는 별도 검증합니다. 미등록·불확실 화자는 일반 화자로 자동 배정하여 녹음·제작을 계속할 수 있습니다.
+
+## TikiTaka / Character 3D / 03 병아리
+**Node ID:** 632:4532
+
+고정 8종 정면 3D 에셋. 부드러운 확산광과 옅은 접지 그림자로 입체감을 유지합니다. 선택 후보·큰 미리보기·최초 설정·녹음 화면에 사용합니다. 홈 손인사 웜화이트 에셋은 별도입니다. 목소리 등록에 성공한 운전자와 저장된 내 캐릭터를 연결하는 기준으로 사용하며 실제 화자 매칭 정확도는 별도 검증합니다. 미등록·불확실 화자는 일반 화자로 자동 배정하여 녹음·제작을 계속할 수 있습니다.
+
+## TikiTaka / Character 3D / 04 청록
+**Node ID:** 632:4535
+
+고정 8종 정면 3D 에셋. 부드러운 확산광과 옅은 접지 그림자로 입체감을 유지합니다. 선택 후보·큰 미리보기·최초 설정·녹음 화면에 사용합니다. 홈 손인사 웜화이트 에셋은 별도입니다. 목소리 등록에 성공한 운전자와 저장된 내 캐릭터를 연결하는 기준으로 사용하며 실제 화자 매칭 정확도는 별도 검증합니다. 미등록·불확실 화자는 일반 화자로 자동 배정하여 녹음·제작을 계속할 수 있습니다.
+
+## FINAL / Icon / Check
+**Node ID:** 145:476
+
+Check · 32px, 1.8px stroke
+
+## TikiTaka / Character 3D / 05 물범
+**Node ID:** 632:4539
+
+고정 8종 정면 3D 에셋. 부드러운 확산광과 옅은 접지 그림자로 입체감을 유지합니다. 선택 후보·큰 미리보기·최초 설정·녹음 화면에 사용합니다. 홈 손인사 웜화이트 에셋은 별도입니다. 목소리 등록에 성공한 운전자와 저장된 내 캐릭터를 연결하는 기준으로 사용하며 실제 화자 매칭 정확도는 별도 검증합니다. 미등록·불확실 화자는 일반 화자로 자동 배정하여 녹음·제작을 계속할 수 있습니다.
+
+## TikiTaka / Character 3D / 06 여우
+**Node ID:** 632:4542
+
+고정 8종 정면 3D 에셋. 부드러운 확산광과 옅은 접지 그림자로 입체감을 유지합니다. 선택 후보·큰 미리보기·최초 설정·녹음 화면에 사용합니다. 홈 손인사 웜화이트 에셋은 별도입니다. 목소리 등록에 성공한 운전자와 저장된 내 캐릭터를 연결하는 기준으로 사용하며 실제 화자 매칭 정확도는 별도 검증합니다. 미등록·불확실 화자는 일반 화자로 자동 배정하여 녹음·제작을 계속할 수 있습니다.
+
+## TikiTaka / Character 3D / 07 양
+**Node ID:** 632:4545
+
+고정 8종 정면 3D 에셋. 부드러운 확산광과 옅은 접지 그림자로 입체감을 유지합니다. 선택 후보·큰 미리보기·최초 설정·녹음 화면에 사용합니다. 홈 손인사 웜화이트 에셋은 별도입니다. 목소리 등록에 성공한 운전자와 저장된 내 캐릭터를 연결하는 기준으로 사용하며 실제 화자 매칭 정확도는 별도 검증합니다. 미등록·불확실 화자는 일반 화자로 자동 배정하여 녹음·제작을 계속할 수 있습니다.
+
+## TikiTaka / Character 3D / 08 개구리
+**Node ID:** 632:4548
+
+고정 8종 정면 3D 에셋. 부드러운 확산광과 옅은 접지 그림자로 입체감을 유지합니다. 선택 후보·큰 미리보기·최초 설정·녹음 화면에 사용합니다. 홈 손인사 웜화이트 에셋은 별도입니다. 목소리 등록에 성공한 운전자와 저장된 내 캐릭터를 연결하는 기준으로 사용하며 실제 화자 매칭 정확도는 별도 검증합니다. 미등록·불확실 화자는 일반 화자로 자동 배정하여 녹음·제작을 계속할 수 있습니다.
+
+## TikiTaka / Button
+**Node ID:** 529:4294
+
+Home v1 · 연결된 색상·간격·글자 스타일 사용
+
+## TikiTaka / IconButton
+**Node ID:** 529:4319
+
+Home v1 · 연결된 색상·간격·글자 스타일 사용
+
+## TikiTaka / Icon / Chevron left / Aligned 24
+**Node ID:** 747:7152
+
+기존 24px Chevron을 반전한 좌향 아이콘. 선택 화면의 뒤로·이전 버튼 중심을 24px로 통일합니다.
+
+## TikiTaka / Icon / Chevron
+**Node ID:** 529:4276
+
+24×24 고정 그리드 · 2px 선 · 색상은 역할 토큰을 사용
+
+## TikiTaka / Home latest / Vertical logo
+**Node ID:** 800:6328
+
+최신 첨부의 수직 2단 브랜드 로고
+
+## State=Default
+**Node ID:** 828:1903
+
+홈 원본 80×72 비례. 아이콘28, 라벨16/24, 활성 탭만 작은 차콜 표시.
+
+## TikiTaka / Current / Navigation item
+**Node ID:** 828:1915
+
+전역 홈/보관함/캐릭터와 하단 설정. 사용자 원본의 선형 아이콘: 32px 슬롯, 2.4px 선. 캐릭터는 사람형. 선택 표시와 이동 반응 유지.
+
+## TikiTaka / Current / Line icon / home
+**Node ID:** 948:1863
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## TikiTaka / Current / Line icon / library
+**Node ID:** 948:1866
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## State=Selected
+**Node ID:** 828:1909
+
+홈 원본 80×72 비례. 아이콘28, 라벨16/24, 활성 탭만 작은 차콜 표시.
+
+## TikiTaka / Current / Line icon / character
+**Node ID:** 948:1869
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+## TikiTaka / Current / Line icon / settings
+**Node ID:** 948:1873
+
+사용자 홈 원본 기준 선형 아이콘. 32px 슬롯, 2.4px 선, 캐릭터는 사람형. 전역 메뉴 공통.
+
+The generated code contains image and SVG URL constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These URLs are temporary download sources and expire after 7 days. Download each asset into the project with curl -L, then replace its URL in the generated code with a reference to the downloaded asset. Never use the temporary URLs as runtime image sources.

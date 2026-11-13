@@ -1,0 +1,12 @@
+.gradle
+.kotlin
+.git
+app
+build
+captures
+node_modules
+server/data
+server/.venv
+**/__pycache__
+**/.env
+**/.pytest_cache

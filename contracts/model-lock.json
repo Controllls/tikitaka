@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "pipeline_version": "momo-server-v1",
+  "revisions": {
+    "nemotron": "353b6f8ad2cac3580e982d7fbdf0a010786b0406",
+    "whisper": "536b0662742c02347bc0e980a01041f333bce120",
+    "yamnet": "19f287775ae950e22a9b5fb82727e72cff2e3664",
+    "silero": "5.1.2"
+  },
+  "licenses": {
+    "nemotron": "Open Model, Data, and Weights License 1.1 (openmdw-1.1)",
+    "whisper": "MIT",
+    "yamnet": "Apache-2.0",
+    "silero": "MIT"
+  },
+  "files": [
+    {
+      "path": "nemotron/onnx/model.onnx",
+      "url": "https://huggingface.co/onnx-community/Nemotron-3-Diarization-ONNX/resolve/353b6f8ad2cac3580e982d7fbdf0a010786b0406/onnx/model.onnx",
+      "sha256": "12a7c98fc1ee6ec98ea728c7ffd9fcf6b245f3c9c1ea9f7c2a7cc47c023e3f9d",
+      "bytes": 303466
+    },
+    {
+      "path": "nemotron/onnx/model.onnx_data",
+      "url": "https://huggingface.co/onnx-community/Nemotron-3-Diarization-ONNX/resolve/353b6f8ad2cac3580e982d7fbdf0a010786b0406/onnx/model.onnx_data",
+      "sha256": "c293d9b5930eb9f6172f095ced052c0d1bbdbeb2594a115497583ca209b1dbd6",
+      "bytes": 398184448
+    },
+    {
+      "path": "nemotron/config.json",
+      "url": "https://huggingface.co/onnx-community/Nemotron-3-Diarization-ONNX/resolve/353b6f8ad2cac3580e982d7fbdf0a010786b0406/config.json",
+      "sha256": "a758bf59867e27a7d92cf7a9149cae6dfc212b408b2ba74bfb87994708a803c5",
+      "bytes": 1623
+    },
+    {
+      "path": "nemotron/processor_config.json",
+      "url": "https://huggingface.co/onnx-community/Nemotron-3-Diarization-ONNX/resolve/353b6f8ad2cac3580e982d7fbdf0a010786b0406/processor_config.json",
+      "sha256": "91726746788a024a2f0f2f699a6c3667f0d74e6a0e9288fc44fe3018e23af68e",
+      "bytes": 623
+    },
+    {
+      "path": "whisper/model.bin",
+      "url": "https://huggingface.co/Systran/faster-whisper-small/resolve/536b0662742c02347bc0e980a01041f333bce120/model.bin",
+      "sha256": "3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671",
+      "bytes": 483546902
+    },
+    {
+      "path": "whisper/config.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-small/resolve/536b0662742c02347bc0e980a01041f333bce120/config.json",
+      "sha256": "b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828",
+      "bytes": 2370
+    },
+    {
+      "path": "whisper/tokenizer.json",
+      "url": "https://huggingface.co/Systran/faster-whisper-small/resolve/536b0662742c02347bc0e980a01041f333bce120/tokenizer.json",
+      "sha256": "fb7b63191e9bb045082c79fd742a3106a12c99513ab30df4a0d47fa6cb6fd0ab",
+      "bytes": 2203239
+    },
+    {
+      "path": "whisper/vocabulary.txt",
+      "url": "https://huggingface.co/Systran/faster-whisper-small/resolve/536b0662742c02347bc0e980a01041f333bce120/vocabulary.txt",
+      "sha256": "34ce3fe1c5041027b3f8d42912270993f986dbc4bb34cf27f951e34a1e453913",
+      "bytes": 459861
+    },
+    {
+      "path": "yamnet/params.py",
+      "url": "https://raw.githubusercontent.com/tensorflow/models/19f287775ae950e22a9b5fb82727e72cff2e3664/research/audioset/yamnet/params.py",
+      "sha256": "925bb1e62461016031f98aea09aeac28975dd516f5747513767de5d1b06b6145",
+      "bytes": 1847
+    },
+    {
+      "path": "yamnet/features.py",
+      "url": "https://raw.githubusercontent.com/tensorflow/models/19f287775ae950e22a9b5fb82727e72cff2e3664/research/audioset/yamnet/features.py",
+      "sha256": "e6cd53f81d072c7c43be4c7fff2b9dd0c5ccc7d64f2fbcfc85b44013d6d2ed5e",
+      "bytes": 7490
+    },
+    {
+      "path": "yamnet/yamnet.py",
+      "url": "https://raw.githubusercontent.com/tensorflow/models/19f287775ae950e22a9b5fb82727e72cff2e3664/research/audioset/yamnet/yamnet.py",
+      "sha256": "7ef3df32b7ecb782490b5a04d7581a23cfcf701dbf476bc4d03deefe22cdb040",
+      "bytes": 5541
+    },
+    {
+      "path": "yamnet/yamnet_class_map.csv",
+      "url": "https://raw.githubusercontent.com/tensorflow/models/19f287775ae950e22a9b5fb82727e72cff2e3664/research/audioset/yamnet/yamnet_class_map.csv",
+      "sha256": "cdf24d193e196d9e95912a2667051ae203e92a2ba09449218ccb40ef787c6df2",
+      "bytes": 14096
+    },
+    {
+      "path": "yamnet/yamnet.h5",
+      "url": "https://storage.googleapis.com/audioset/yamnet.h5",
+      "sha256": "13c3308955bbfaef262f175ac9c40e47b134573a93984f009220dd7cc12a1744",
+      "bytes": 15296092
+    },
+    {
+      "path": "silero/silero-v5.1.2.onnx",
+      "url": "local:v13/vendor/vad",
+      "sha256": "2623a2953f6ff3d2c1e61740c6cdb7168133479b267dfef114a4a3cc5bdd788f",
+      "bytes": 2327524
+    }
+  ]
+}

@@ -1,0 +1,231 @@
+{
+  "version": 1,
+  "source_label": "현대_공모전/source",
+  "source_files": {
+    "backgrounds/city-road-loop.mp4": "6c113116b9bd985f905538560d87c3954fb289610c34eae787f3ac2b2257e3ca",
+    "backgrounds/coastal-road-loop.mp4": "fc38b93b38057c1e1c86df46c811e7d80fcffdb7bb2cc8de5eca8c74aaeae320",
+    "backgrounds/highway-road-loop.mp4": "77602709704a73c8f1d9f7416a868c741b600b0319f217ccbc1d44c804834cee",
+    "character-sheets/01-bear.png": "e90b45cbca21839ebeb0917c1bac2ba89711bd47f164d802ad8cafc6a874f1d0",
+    "character-sheets/02-rabbit.png": "9c84e16437900c87d2ba67d5ef316d0c67e1b34f6a623e8034870ad90c68a2e8",
+    "character-sheets/03-chick.png": "3711a37118b696e60ef0d99bfe38b02f347ce976f71f781288533ccd8fcce6f7",
+    "character-sheets/04-teal.png": "f4e4e162b590dee5d6e10dab70512214183a06654861fccf5a3cb2fcfa88453e",
+    "character-sheets/05-seal.png": "be80a75069ee25cea1c89113c6544a0e1dc87850eee50dcb12848a2f78696074",
+    "character-sheets/06-fox.png": "33367e3157b090d9ee7ddadbaf9a5fcc6c9a1f029340551a54e9d8881c4f3f8f",
+    "character-sheets/07-sheep.png": "b8d9808eeb32098a8a15fd2cdbdc4d3ff8872e1e8cfeded6b7bba73a863ae9d6",
+    "character-sheets/08-frog.png": "f82a5c1685d9358b734c1f155e99a30251afeb9bb772d8e233137ddb0f6671f5",
+    "vehicles/01-frame-and-mirror.png": "aa036e98711bf77a82508859c5d0fe21a0648930037a77b0b203ce8f2b530e74",
+    "vehicles/02-front-seat-belts.png": "70c58ac8387c7403b21413cae920ade642f8bde71ee4c8b45dab5552b8ebff6f",
+    "vehicles/03-rear-seat.png": "f27d5e33ee22bf18d34c5ac8eccdd493fc745dd544e66ca9ef464802be90562e",
+    "vehicles/04-bottom-interior-panel.png": "674ece94bc08954bbbb59f928e7371dd7c046fdb8cb49ca1564021415837f1b5",
+    "vehicles/05-front-seats.png": "8045c3140ff9a3ce8b29aaa146df5cf32460b53a67f240e9da09fab6cfefe7cb",
+    "vehicles/06-steering-wheel.png": "9164900c3bc554a098ace2cd5a65e6e7cfe331e62a2314e1db3635e6ee69b3ec"
+  },
+  "assets": [
+    {
+      "id": "source-background-city-road-loop",
+      "kind": "background",
+      "name": "city-road-loop · 공모전 기본",
+      "path": "backgrounds/city-road-loop.mp4"
+    },
+    {
+      "id": "source-background-coastal-road-loop",
+      "kind": "background",
+      "name": "coastal-road-loop · 공모전 기본",
+      "path": "backgrounds/coastal-road-loop.mp4"
+    },
+    {
+      "id": "source-background-highway-road-loop",
+      "kind": "background",
+      "name": "highway-road-loop · 공모전 기본",
+      "path": "backgrounds/highway-road-loop.mp4"
+    },
+    {
+      "kind": "character",
+      "name": "01-bear · 공모전 기본",
+      "path": "characters/01-bear/manifest.json",
+      "format": "sprite-sheet",
+      "poses": [
+        "front",
+        "left",
+        "right"
+      ],
+      "id": "source-character-01-bear"
+    },
+    {
+      "kind": "character",
+      "name": "02-rabbit · 공모전 기본",
+      "path": "characters/02-rabbit/manifest.json",
+      "format": "sprite-sheet",
+      "poses": [
+        "front",
+        "left",
+        "right"
+      ],
+      "id": "source-character-02-rabbit"
+    },
+    {
+      "kind": "character",
+      "name": "03-chick · 공모전 기본",
+      "path": "characters/03-chick/manifest.json",
+      "format": "sprite-sheet",
+      "poses": [
+        "front",
+        "left",
+        "right"
+      ],
+      "id": "source-character-03-chick"
+    },
+    {
+      "kind": "character",
+      "name": "04-teal · 공모전 기본",
+      "path": "characters/04-teal/manifest.json",
+      "format": "sprite-sheet",
+      "poses": [
+        "front",
+        "left",
+        "right"
+      ],
+      "id": "source-character-04-teal"
+    },
+    {
+      "kind": "character",
+      "name": "05-seal · 공모전 기본",
+      "path": "characters/05-seal/manifest.json",
+      "format": "sprite-sheet",
+      "poses": [
+        "front",
+        "left",
+        "right"
+      ],
+      "id": "source-character-05-seal"
+    },
+    {
+      "kind": "character",
+      "name": "06-fox · 공모전 기본",
+      "path": "characters/06-fox/manifest.json",
+      "format": "sprite-sheet",
+      "poses": [
+        "front",
+        "left",
+        "right"
+      ],
+      "id": "source-character-06-fox"
+    },
+    {
+      "kind": "character",
+      "name": "07-sheep · 공모전 기본",
+      "path": "characters/07-sheep/manifest.json",
+      "format": "sprite-sheet",
+      "poses": [
+        "front",
+        "left",
+        "right"
+      ],
+      "id": "source-character-07-sheep"
+    },
+    {
+      "kind": "character",
+      "name": "08-frog · 공모전 기본",
+      "path": "characters/08-frog/manifest.json",
+      "format": "sprite-sheet",
+      "poses": [
+        "front",
+        "left",
+        "right"
+      ],
+      "id": "source-character-08-frog"
+    },
+    {
+      "kind": "vehicle",
+      "name": "차량 · 6레이어 소스 · 공모전 기본",
+      "path": "vehicles/01-frame-and-mirror.png",
+      "format": "layered-vehicle",
+      "layers": {
+        "frame": "vehicles/01-frame-and-mirror.png",
+        "rear_seat": "vehicles/03-rear-seat.png",
+        "front_seats": "vehicles/05-front-seats.png",
+        "bottom": "vehicles/04-bottom-interior-panel.png"
+      },
+      "suggested_layout": {
+        "car_left": 0,
+        "car_top": 260,
+        "car_width": 540,
+        "front_height": 800,
+        "rear_height": 500,
+        "front_root_y": 980,
+        "rear_root_y": 760
+      },
+      "seat_centers": {
+        "driver": 1530,
+        "front_passenger": 378,
+        "rear_left": 1242,
+        "rear_right": 648
+      },
+      "id": "source-vehicle"
+    },
+    {
+      "kind": "seatbelts",
+      "name": "02 · 앞좌석 안전벨트 · 공모전 기본",
+      "path": "vehicles/02-front-seat-belts.png",
+      "id": "source-seatbelts"
+    },
+    {
+      "kind": "steering_wheel",
+      "name": "06 · 운전대 · 공모전 기본",
+      "path": "vehicles/06-steering-wheel.png",
+      "id": "source-steering_wheel"
+    }
+  ],
+  "defaults": {
+    "auto_gaze": true,
+    "laughter_debug": false,
+    "title": "함께 달린 오늘의 이야기",
+    "background": "source-background-city-road-loop",
+    "vehicle": "source-vehicle",
+    "seatbelts": "source-seatbelts",
+    "steering_wheel": "source-steering_wheel",
+    "people": [
+      {
+        "person_id": "P1",
+        "name": "첫 번째 목소리",
+        "seat": "driver",
+        "character": "source-character-01-bear",
+        "pose": "front",
+        "speaker": "S1"
+      },
+      {
+        "person_id": "P2",
+        "name": "두 번째 목소리",
+        "seat": "front_passenger",
+        "character": "source-character-02-rabbit",
+        "pose": "front",
+        "speaker": "S2"
+      }
+    ],
+    "layout": {
+      "car_left": 0,
+      "car_top": 260,
+      "car_width": 540,
+      "front_height": 800,
+      "rear_height": 500,
+      "front_root_y": 980,
+      "rear_root_y": 760
+    },
+    "output": "full"
+  },
+  "default_characters": [
+    "source-character-01-bear",
+    "source-character-02-rabbit",
+    "source-character-03-chick",
+    "source-character-04-teal",
+    "source-character-05-seal",
+    "source-character-06-fox",
+    "source-character-07-sheep",
+    "source-character-08-frog"
+  ],
+  "counts": {
+    "background": 3,
+    "character": 8,
+    "vehicle_layers": 6
+  }
+}

@@ -1,0 +1,364 @@
+{
+  "$defs": {
+    "CabinLayout": {
+      "additionalProperties": false,
+      "properties": {
+        "car_left": {
+          "default": -120,
+          "title": "Car Left",
+          "type": "number"
+        },
+        "car_top": {
+          "default": 220,
+          "title": "Car Top",
+          "type": "number"
+        },
+        "car_width": {
+          "default": 780,
+          "title": "Car Width",
+          "type": "number"
+        },
+        "front_height": {
+          "default": 900,
+          "title": "Front Height",
+          "type": "number"
+        },
+        "rear_height": {
+          "default": 620,
+          "title": "Rear Height",
+          "type": "number"
+        },
+        "front_root_y": {
+          "default": 1000,
+          "title": "Front Root Y",
+          "type": "number"
+        },
+        "rear_root_y": {
+          "default": 730,
+          "title": "Rear Root Y",
+          "type": "number"
+        }
+      },
+      "title": "CabinLayout",
+      "type": "object"
+    },
+    "CaptionOverride": {
+      "additionalProperties": false,
+      "properties": {
+        "caption_id": {
+          "title": "Caption Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "caption_id",
+        "text"
+      ],
+      "title": "CaptionOverride",
+      "type": "object"
+    },
+    "EventOverride": {
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "person_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Ids"
+        },
+        "kind_override": {
+          "anyOf": [
+            {
+              "enum": [
+                "speech",
+                "laughter",
+                "environment",
+                "silence"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind Override"
+        },
+        "acknowledged": {
+          "default": false,
+          "title": "Acknowledged",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "EventOverride",
+      "type": "object"
+    },
+    "Person": {
+      "additionalProperties": false,
+      "properties": {
+        "person_id": {
+          "pattern": "^P[1-4]$",
+          "title": "Person Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "seat": {
+          "enum": [
+            "driver",
+            "front_passenger",
+            "rear_left",
+            "rear_right"
+          ],
+          "title": "Seat",
+          "type": "string"
+        },
+        "asset_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Ref"
+        },
+        "parts": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Parts",
+          "type": "object"
+        },
+        "manifest_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manifest Ref"
+        },
+        "pose": {
+          "default": "front",
+          "enum": [
+            "front",
+            "left",
+            "right",
+            "down"
+          ],
+          "title": "Pose",
+          "type": "string"
+        }
+      },
+      "required": [
+        "person_id",
+        "name",
+        "seat"
+      ],
+      "title": "Person",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Local Android document only; no API accepts or uploads character assets.",
+  "properties": {
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "audio_local_ref": {
+      "title": "Audio Local Ref",
+      "type": "string"
+    },
+    "source_audio_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Source Audio Sha256",
+      "type": "string"
+    },
+    "duration_us": {
+      "maximum": 600000000,
+      "minimum": 100000,
+      "title": "Duration Us",
+      "type": "integer"
+    },
+    "analysis_job_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Analysis Job Id"
+    },
+    "people": {
+      "items": {
+        "$ref": "#/$defs/Person"
+      },
+      "maxItems": 4,
+      "minItems": 1,
+      "title": "People",
+      "type": "array"
+    },
+    "speaker_mapping": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Speaker Mapping",
+      "type": "object"
+    },
+    "event_overrides": {
+      "items": {
+        "$ref": "#/$defs/EventOverride"
+      },
+      "title": "Event Overrides",
+      "type": "array"
+    },
+    "caption_overrides": {
+      "items": {
+        "$ref": "#/$defs/CaptionOverride"
+      },
+      "title": "Caption Overrides",
+      "type": "array"
+    },
+    "sample_visuals": {
+      "default": false,
+      "title": "Sample Visuals",
+      "type": "boolean"
+    },
+    "background_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Background Ref"
+    },
+    "background_is_video": {
+      "default": false,
+      "title": "Background Is Video",
+      "type": "boolean"
+    },
+    "vehicle_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Vehicle Ref"
+    },
+    "renderer_version": {
+      "const": "momo-android-motion-v1",
+      "default": "momo-android-motion-v1",
+      "title": "Renderer Version",
+      "type": "string"
+    },
+    "width": {
+      "const": 540,
+      "default": 540,
+      "title": "Width",
+      "type": "integer"
+    },
+    "height": {
+      "const": 960,
+      "default": 960,
+      "title": "Height",
+      "type": "integer"
+    },
+    "fps": {
+      "const": 30,
+      "default": 30,
+      "title": "Fps",
+      "type": "integer"
+    },
+    "seed": {
+      "default": 1,
+      "title": "Seed",
+      "type": "integer"
+    },
+    "preset_fingerprint": {
+      "default": "",
+      "title": "Preset Fingerprint",
+      "type": "string"
+    },
+    "seatbelts_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Seatbelts Ref"
+    },
+    "steering_wheel_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Steering Wheel Ref"
+    },
+    "layout": {
+      "$ref": "#/$defs/CabinLayout"
+    }
+  },
+  "required": [
+    "project_id",
+    "title",
+    "audio_local_ref",
+    "source_audio_sha256",
+    "duration_us",
+    "people"
+  ],
+  "title": "SceneProject",
+  "type": "object"
+}

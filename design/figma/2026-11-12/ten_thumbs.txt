@@ -1,0 +1,171 @@
+const imgTikiTakaEpisodeThumbnail105 = "https://www.figma.com/api/mcp/asset/e1040aff-3eb7-46a5-a210-1c368bfed2f2.png";
+const imgTikiTakaEpisodeThumbnail093 = "https://www.figma.com/api/mcp/asset/bed06783-6591-420b-be97-00aca7577a40.png";
+const imgTikiTakaEpisodeThumbnail084 = "https://www.figma.com/api/mcp/asset/9c7098e4-75ff-4ac0-9cda-7ca334cb3ae5.png";
+const imgTikiTakaEpisodeThumbnail073 = "https://www.figma.com/api/mcp/asset/60cfa534-558a-41c1-9e11-be66b0021b2b.png";
+const imgTikiTakaEpisodeThumbnail062 = "https://www.figma.com/api/mcp/asset/92bb13a6-4143-4471-8c74-ff4ffb3bfd52.png";
+const imgTikiTakaEpisodeThumbnail055 = "https://www.figma.com/api/mcp/asset/1519d4d0-6290-4c1d-bf37-f7fffd08bb13.png";
+const imgTikiTakaEpisodeThumbnail042 = "https://www.figma.com/api/mcp/asset/30354d6a-8e5b-4f79-a061-f2a221980e32.png";
+const imgTikiTakaEpisodeThumbnail034 = "https://www.figma.com/api/mcp/asset/01dc5e98-dde0-4768-b6eb-f0958a182db3.png";
+const imgTikiTakaEpisodeThumbnail023 = "https://www.figma.com/api/mcp/asset/9ea045ff-9f3e-489a-8e13-22a6f933f660.png";
+const imgTikiTakaEpisodeThumbnail012 = "https://www.figma.com/api/mcp/asset/759d3f6e-2fdb-43d7-80f6-057718b9596d.png";
+
+function TikiTakaEpisodeThumbnail105({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1747" data-name="TikiTaka / Episode thumbnail / 10 봄 소풍 · 5인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail105} />
+    </div>
+  );
+}
+
+function TikiTakaEpisodeThumbnail093({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1742" data-name="TikiTaka / Episode thumbnail / 09 별빛 캠핑 · 3인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail093} />
+    </div>
+  );
+}
+
+function TikiTakaEpisodeThumbnail084({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1737" data-name="TikiTaka / Episode thumbnail / 08 도시 나들이 · 4인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail084} />
+    </div>
+  );
+}
+
+function TikiTakaEpisodeThumbnail073({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1732" data-name="TikiTaka / Episode thumbnail / 07 초록숲길 · 3인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail073} />
+    </div>
+  );
+}
+
+function TikiTakaEpisodeThumbnail062({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1727" data-name="TikiTaka / Episode thumbnail / 06 노을다리 · 2인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail062} />
+    </div>
+  );
+}
+
+function TikiTakaEpisodeThumbnail055({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1720" data-name="TikiTaka / Episode thumbnail / 05 눈꽃여행 · 5인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail055} />
+    </div>
+  );
+}
+
+function TikiTakaEpisodeThumbnail042({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1715" data-name="TikiTaka / Episode thumbnail / 04 비 오는 밤 · 2인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail042} />
+    </div>
+  );
+}
+
+function TikiTakaEpisodeThumbnail034({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1710" data-name="TikiTaka / Episode thumbnail / 03 가을길 · 4인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail034} />
+    </div>
+  );
+}
+
+function TikiTakaEpisodeThumbnail023({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1705" data-name="TikiTaka / Episode thumbnail / 02 바닷길 · 3인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail023} />
+    </div>
+  );
+}
+
+function TikiTakaEpisodeThumbnail012({ className }: { className?: string }) {
+  return (
+    <div className={className || "h-[405px] overflow-clip relative rounded-[var(--tikitaka-radius-media,20px)] w-[720px]"} data-node-id="782:1700" data-name="TikiTaka / Episode thumbnail / 01 벚꽃길 · 2인">
+      <img alt="" className="absolute inset-0 max-w-none object-contain pointer-events-none rounded-[var(--tikitaka-radius-media,20px)] size-full" src={imgTikiTakaEpisodeThumbnail012} />
+    </div>
+  );
+}
+
+export default function TikiTakaEpisodeThumbnail10() {
+  return (
+    <div className="content-stretch flex flex-col gap-[var(--tikitaka-space-48,48px)] items-start relative size-full" data-node-id="782:1697" data-name="TikiTaka / Episode thumbnail / 10종 원본 컴포넌트">
+      <div className="content-stretch flex gap-[var(--tikitaka-space-48,48px)] items-start overflow-clip relative shrink-0 w-[3792px]" data-node-id="782:1698" data-name="원본 컴포넌트 1">
+        <TikiTakaEpisodeThumbnail012 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+        <TikiTakaEpisodeThumbnail023 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+        <TikiTakaEpisodeThumbnail034 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+        <TikiTakaEpisodeThumbnail042 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+        <TikiTakaEpisodeThumbnail055 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+      </div>
+      <div className="content-stretch flex gap-[var(--tikitaka-space-48,48px)] items-start overflow-clip relative shrink-0 w-[3792px]" data-node-id="782:1725" data-name="원본 컴포넌트 2">
+        <TikiTakaEpisodeThumbnail062 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+        <TikiTakaEpisodeThumbnail073 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+        <TikiTakaEpisodeThumbnail084 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+        <TikiTakaEpisodeThumbnail093 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+        <TikiTakaEpisodeThumbnail105 className="h-[405px] relative rounded-[var(--tikitaka-radius-media,20px)] shrink-0 w-[720px]" />
+      </div>
+    </div>
+  );
+}
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+Component descriptions: The following components have usage descriptions or documentation links defined in Figma. These descriptions provide important context about the intended usage, best practices, and any constraints for each component. Follow these guidelines when implementing or using these components.
+
+## TikiTaka / Episode thumbnail / 01 벚꽃길 · 2인
+**Node ID:** 782:1700
+
+사용자 제공 2D 썸네일. 벚꽃길 / 2인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+
+## TikiTaka / Episode thumbnail / 02 바닷길 · 3인
+**Node ID:** 782:1705
+
+사용자 제공 2D 썸네일. 바닷길 / 3인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+
+## TikiTaka / Episode thumbnail / 03 가을길 · 4인
+**Node ID:** 782:1710
+
+사용자 제공 2D 썸네일. 가을길 / 4인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+
+## TikiTaka / Episode thumbnail / 04 비 오는 밤 · 2인
+**Node ID:** 782:1715
+
+사용자 제공 2D 썸네일. 비 오는 밤 / 2인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+
+## TikiTaka / Episode thumbnail / 05 눈꽃여행 · 5인
+**Node ID:** 782:1720
+
+사용자 제공 2D 썸네일. 눈꽃여행 / 5인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+
+## TikiTaka / Episode thumbnail / 06 노을다리 · 2인
+**Node ID:** 782:1727
+
+사용자 제공 2D 썸네일. 노을다리 / 2인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+
+## TikiTaka / Episode thumbnail / 07 초록숲길 · 3인
+**Node ID:** 782:1732
+
+사용자 제공 2D 썸네일. 초록숲길 / 3인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+
+## TikiTaka / Episode thumbnail / 08 도시 나들이 · 4인
+**Node ID:** 782:1737
+
+사용자 제공 2D 썸네일. 도시 나들이 / 4인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+
+## TikiTaka / Episode thumbnail / 09 별빛 캠핑 · 3인
+**Node ID:** 782:1742
+
+사용자 제공 2D 썸네일. 별빛 캠핑 / 3인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+
+## TikiTaka / Episode thumbnail / 10 봄 소풍 · 5인
+**Node ID:** 782:1747
+
+사용자 제공 2D 썸네일. 봄 소풍 / 5인. 원본 1920×1080, 16:9. 동일 에피소드는 홈·보관함·재생 화면 모두 이 에셋을 유지.
+The generated code contains image and SVG URL constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These URLs are temporary download sources and expire after 7 days. Download each asset into the project with curl -L, then replace its URL in the generated code with a reference to the downloaded asset. Never use the temporary URLs as runtime image sources.

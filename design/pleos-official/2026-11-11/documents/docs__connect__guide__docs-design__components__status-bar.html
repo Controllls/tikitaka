@@ -1,0 +1,36 @@
+<article><nav aria-label="탐색 경로" class="theme-doc-breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><span class="breadcrumbs__link">Pleos Connect 개발자 가이드</span><li class="breadcrumbs__item"><span class="breadcrumbs__link">앱 기획·설계 가이드</span><li class="breadcrumbs__item"><span class="breadcrumbs__link">디자인 가이드</span><li class="breadcrumbs__item"><span class="breadcrumbs__link">Getting Started</span><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Status bar</span></li></li></li></li></li></ul></nav><div class="theme-doc-markdown markdown"><header><h1>Status bar</h1></header><h4 class="anchor anchorTargetStickyNavbar_Vzrq" id="status-bar는-차량-내-주행-및-주요-시스템-상태를-인지할-수-있는-영역입니다">Status bar는 차량 내 주행 및 주요 시스템 상태를 인지할 수 있는 영역입니다.<a aria-label="Status bar는 차량 내 주행 및 주요 시스템 상태를 인지할 수 있는 영역입니다.에 대한 직접 링크" class="hash-link" href="#status-bar는-차량-내-주행-및-주요-시스템-상태를-인지할-수-있는-영역입니다" title="Status bar는 차량 내 주행 및 주요 시스템 상태를 인지할 수 있는 영역입니다.에 대한 직접 링크" translate="no">​</a></h4>
+<p><img alt="statusbar_anatomy.svg" class="img_ev3q" decoding="async" height="322" loading="lazy" src="/assets/images/statusbar_anatomy-dcf8eb47b4d0999c45e9daba9cc31baa.svg" width="1872"/></p>
+<br/>
+<hr/>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="anatomy">Anatomy<a aria-label="Anatomy에 대한 직접 링크" class="hash-link" href="#anatomy" title="Anatomy에 대한 직접 링크" translate="no">​</a></h2>
+<p><img alt="driving_status.svg" class="img_ev3q" decoding="async" height="440" loading="lazy" src="/assets/images/statusbar_anatomy_1-be027b658e2d222fe2fb288d6816daff.svg" width="1872"/></p>
+<p><img alt="driving_status.svg" class="img_ev3q" decoding="async" height="1096" loading="lazy" src="/assets/images/statusbar_anatomy_2-8489c4605ea287fa12b4785c0fe17766.png" width="1872"/></p>
+<p><strong>1. SP0 Static</strong> : 우선순위가 높으며, 항상 보여야 하는 고정 버튼 또는 상태를 표시합니다. Door Lock, Search 상태가 표시됩니다. <br/>
+<strong>2. SP0 Dynamic</strong> : 우선순위가 높으며, 메뉴 중에 이벤트에 따라 발생하는 버튼 또는 상태를 표시합니다. Notification center, In-call status, privacy indicator가 표시됩니다. <br/>
+<strong>3. SP1 Dynamic</strong> : 우선순위가 낮으며, 메뉴 중에 이벤트에 따라 발생하는 버튼 또는 상태를 표시합니다. Download, Update, WPC, Hi-Pass, Sound 상태가 표시됩니다. <br/>
+<strong>3-1. SP1 Dynamic Hotspot 버튼</strong> : Hotspot 버튼은 네트워크 관련성이 높으므로 SP1 Static &gt; network 우측에 배치됩니다. <br/>
+<strong>4. SP1 Static</strong> : 우선순위가 낮으며, 항상 보여야 하는 고정 버튼 또는 상태를 표시합니다. Profile, bluetooth, network 상태가 표시됩니다. <br/>
+<strong>5. Time</strong> : 실시간 시간을 시스템 설정에 따라 24h 혹은 12h로 표시합니다. <br/>
+<strong>6. PAB</strong> : 보조석 에어백 활성 상태를 표시합니다. 단, 차량 하드웨어에 PAB 표시가 없을 때에만 IVI에 표시합니다. <br/>
+<strong>7. More Menu</strong> : 영역 내 표시할 수 없는 더 많은 icon을 표시합니다. <br/></p>
+<div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewbox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z" fill-rule="evenodd"></path></svg></span>정보</div><div class="admonitionContent_BuS1"><ul>
+<li class="">SP0과 SP1 영역의 시각적 구분을 위해, 40dp의 safe bounds를 right padding으로 포함합니다.</li>
+<li class="">SP1 dynamic indicator 표시 영역이 부족할 경우, more 메뉴로 이동합니다.</li>
+<li class="">SP0 dynamic indicator가 늘어날 경우, SP1 dynamic indicator 영역이 줄어듭니다.</li>
+</ul></div></div>
+<br/>
+<hr/>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="menu-states">Menu states<a aria-label="Menu states에 대한 직접 링크" class="hash-link" href="#menu-states" title="Menu states에 대한 직접 링크" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="static-icon">Static icon<a aria-label="Static icon에 대한 직접 링크" class="hash-link" href="#static-icon" title="Static icon에 대한 직접 링크" translate="no">​</a></h3>
+<table><thead><tr><th>State<th>Value<th>Default Value<th>Description<tbody><tr><td>Pressed<td>Boolean<td>False<td>터치로 클릭 중인 상태일 때 True로 전환<tr><td>Selected<td>Boolean<td>False<td>활성화 된 경우 True으로 전환</td></td></td></td></tr></td></td></td></td></tr></tbody></th></th></th></th></tr></thead></table>
+<p><img alt="static_menu_state.svg" class="img_ev3q" decoding="async" height="480" loading="lazy" src="/assets/images/static_menu_state-ba1070db84fb75c4199e7e218a63d0b1.svg" width="1872"/></p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="dynamic-icon">Dynamic icon<a aria-label="Dynamic icon에 대한 직접 링크" class="hash-link" href="#dynamic-icon" title="Dynamic icon에 대한 직접 링크" translate="no">​</a></h3>
+<table><thead><tr><th>State<th>Value<th>Default Value<th>Description<tbody><tr><td>Activate<td>Boolean<td>False<td>Static indicator의 왼편에 발생 순서대로 표시됨</td></td></td></td></tr></tbody></th></th></th></th></tr></thead></table>
+<p><img alt="dynamic_menu_state.svg" class="img_ev3q" decoding="async" height="480" loading="lazy" src="/assets/images/dynamic_menu_state-54829b881d6b45c069de0fa8e38b9b05.svg" width="1872"/></p>
+<br/>
+<hr/>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="menu-panels">Menu panels<a aria-label="Menu panels에 대한 직접 링크" class="hash-link" href="#menu-panels" title="Menu panels에 대한 직접 링크" translate="no">​</a></h2>
+<p>상태 메뉴를 클릭하여 앱 서비스 제공에 필요한 부가 기능(장치 연결, 프로필 변경, 알림 등)을 제공할 수 있습니다.</p>
+<table><thead><tr><th>States<th>Value<th>Default Value<th>Description<tbody><tr><td>Pressed<td>Boolean<td>False<td>터치로 클릭 중인 상태일 때 True로 전환<tr><td>Selected<td>Boolean<td>False<td>활성화 된 경우 True으로 전환</td></td></td></td></tr></td></td></td></td></tr></tbody></th></th></th></th></tr></thead></table>
+<p><img alt="menu_list_panel.svg" class="img_ev3q" decoding="async" height="1468" loading="lazy" src="/assets/images/menu_list_panel-fd1bc93bf97b19a29e908c6e1e95aa3e.svg" width="1872"/></p>
+<br/></div></article>

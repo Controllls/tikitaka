@@ -1,0 +1,47 @@
+[
+  {
+    "filename": "1-19111-A-24.wav",
+    "fold": "1",
+    "target": "24",
+    "category": "coughing",
+    "esc10": "False",
+    "src_file": "19111",
+    "take": "A"
+  },
+  {
+    "filename": "1-18631-A-23.wav",
+    "fold": "1",
+    "target": "23",
+    "category": "breathing",
+    "esc10": "False",
+    "src_file": "18631",
+    "take": "A"
+  },
+  {
+    "filename": "1-17367-A-10.wav",
+    "fold": "1",
+    "target": "10",
+    "category": "rain",
+    "esc10": "True",
+    "src_file": "17367",
+    "take": "A"
+  },
+  {
+    "filename": "1-18527-A-44.wav",
+    "fold": "1",
+    "target": "44",
+    "category": "engine",
+    "esc10": "False",
+    "src_file": "18527",
+    "take": "A"
+  },
+  {
+    "filename": "1-21934-A-38.wav",
+    "fold": "1",
+    "target": "38",
+    "category": "clock_tick",
+    "esc10": "True",
+    "src_file": "21934",
+    "take": "A"
+  }
+]

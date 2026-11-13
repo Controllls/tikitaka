@@ -1,0 +1,460 @@
+{
+  "$defs": {
+    "AudioInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "original_mime": {
+          "title": "Original Mime",
+          "type": "string"
+        },
+        "analysis_sample_rate": {
+          "const": 16000,
+          "default": 16000,
+          "title": "Analysis Sample Rate",
+          "type": "integer"
+        },
+        "analysis_channels": {
+          "const": 1,
+          "default": 1,
+          "title": "Analysis Channels",
+          "type": "integer"
+        },
+        "decoded_time_origin_us": {
+          "const": 0,
+          "default": 0,
+          "title": "Decoded Time Origin Us",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sha256",
+        "original_mime"
+      ],
+      "title": "AudioInfo",
+      "type": "object"
+    },
+    "Caption": {
+      "additionalProperties": false,
+      "properties": {
+        "start_us": {
+          "minimum": 0,
+          "title": "Start Us",
+          "type": "integer"
+        },
+        "end_us": {
+          "exclusiveMinimum": 0,
+          "title": "End Us",
+          "type": "integer"
+        },
+        "caption_id": {
+          "title": "Caption Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "speaker_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Speaker Ids",
+          "type": "array"
+        },
+        "requires_review": {
+          "default": false,
+          "title": "Requires Review",
+          "type": "boolean"
+        },
+        "words": {
+          "items": {
+            "$ref": "#/$defs/Word"
+          },
+          "title": "Words",
+          "type": "array"
+        }
+      },
+      "required": [
+        "start_us",
+        "end_us",
+        "caption_id",
+        "text"
+      ],
+      "title": "Caption",
+      "type": "object"
+    },
+    "Event": {
+      "additionalProperties": false,
+      "properties": {
+        "start_us": {
+          "minimum": 0,
+          "title": "Start Us",
+          "type": "integer"
+        },
+        "end_us": {
+          "exclusiveMinimum": 0,
+          "title": "End Us",
+          "type": "integer"
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "speech",
+            "laughter",
+            "environment",
+            "silence"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "active_speaker_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Active Speaker Ids",
+          "type": "array"
+        },
+        "laughing_speaker_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Laughing Speaker Ids",
+          "type": "array"
+        },
+        "score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "requires_review": {
+          "default": false,
+          "title": "Requires Review",
+          "type": "boolean"
+        },
+        "review_reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Review Reasons",
+          "type": "array"
+        },
+        "energy_reference": {
+          "default": 0.0002,
+          "minimum": 0.0002,
+          "title": "Energy Reference",
+          "type": "number"
+        }
+      },
+      "required": [
+        "start_us",
+        "end_us",
+        "event_id",
+        "kind",
+        "score"
+      ],
+      "title": "Event",
+      "type": "object"
+    },
+    "Interval": {
+      "additionalProperties": false,
+      "properties": {
+        "start_us": {
+          "minimum": 0,
+          "title": "Start Us",
+          "type": "integer"
+        },
+        "end_us": {
+          "exclusiveMinimum": 0,
+          "title": "End Us",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_us",
+        "end_us"
+      ],
+      "title": "Interval",
+      "type": "object"
+    },
+    "ModelInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "revision": {
+          "title": "Revision",
+          "type": "string"
+        },
+        "runtime": {
+          "title": "Runtime",
+          "type": "string"
+        },
+        "precision": {
+          "title": "Precision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "revision",
+        "runtime",
+        "precision"
+      ],
+      "title": "ModelInfo",
+      "type": "object"
+    },
+    "Speaker": {
+      "additionalProperties": false,
+      "properties": {
+        "speaker_id": {
+          "pattern": "^S[1-8]$",
+          "title": "Speaker Id",
+          "type": "string"
+        },
+        "first_seen_us": {
+          "minimum": 0,
+          "title": "First Seen Us",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "speaker_id",
+        "first_seen_us"
+      ],
+      "title": "Speaker",
+      "type": "object"
+    },
+    "SpeakerSignature": {
+      "additionalProperties": false,
+      "properties": {
+        "speaker_id": {
+          "pattern": "^S[1-8]$",
+          "title": "Speaker Id",
+          "type": "string"
+        },
+        "embedding": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 192,
+          "minItems": 192,
+          "title": "Embedding",
+          "type": "array"
+        },
+        "speech_us": {
+          "maximum": 30000000,
+          "minimum": 3000000,
+          "title": "Speech Us",
+          "type": "integer"
+        },
+        "segments": {
+          "items": {
+            "$ref": "#/$defs/Interval"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Segments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "speaker_id",
+        "embedding",
+        "speech_us",
+        "segments"
+      ],
+      "title": "SpeakerSignature",
+      "type": "object"
+    },
+    "TrackRef": {
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": {
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "frame_step_us": {
+          "const": 20000,
+          "default": 20000,
+          "title": "Frame Step Us",
+          "type": "integer"
+        },
+        "frame_count": {
+          "exclusiveMinimum": 0,
+          "title": "Frame Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "endpoint",
+        "frame_count"
+      ],
+      "title": "TrackRef",
+      "type": "object"
+    },
+    "Warning": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "Warning",
+      "type": "object"
+    },
+    "Word": {
+      "additionalProperties": false,
+      "properties": {
+        "start_us": {
+          "minimum": 0,
+          "title": "Start Us",
+          "type": "integer"
+        },
+        "end_us": {
+          "exclusiveMinimum": 0,
+          "title": "End Us",
+          "type": "integer"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_us",
+        "end_us",
+        "text"
+      ],
+      "title": "Word",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "pipeline_version": {
+      "const": "momo-server-v1",
+      "default": "momo-server-v1",
+      "title": "Pipeline Version",
+      "type": "string"
+    },
+    "job_id": {
+      "title": "Job Id",
+      "type": "string"
+    },
+    "duration_us": {
+      "maximum": 600000000,
+      "minimum": 100000,
+      "title": "Duration Us",
+      "type": "integer"
+    },
+    "data_origin": {
+      "enum": [
+        "inference",
+        "fixture"
+      ],
+      "title": "Data Origin",
+      "type": "string"
+    },
+    "audio": {
+      "$ref": "#/$defs/AudioInfo"
+    },
+    "speakers": {
+      "items": {
+        "$ref": "#/$defs/Speaker"
+      },
+      "maxItems": 8,
+      "title": "Speakers",
+      "type": "array"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/Event"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "captions": {
+      "items": {
+        "$ref": "#/$defs/Caption"
+      },
+      "title": "Captions",
+      "type": "array"
+    },
+    "models": {
+      "items": {
+        "$ref": "#/$defs/ModelInfo"
+      },
+      "title": "Models",
+      "type": "array"
+    },
+    "tracks": {
+      "$ref": "#/$defs/TrackRef"
+    },
+    "warnings": {
+      "items": {
+        "$ref": "#/$defs/Warning"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "voice_model_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Voice Model Id"
+    },
+    "speaker_signatures": {
+      "items": {
+        "$ref": "#/$defs/SpeakerSignature"
+      },
+      "maxItems": 8,
+      "title": "Speaker Signatures",
+      "type": "array"
+    }
+  },
+  "required": [
+    "job_id",
+    "duration_us",
+    "data_origin",
+    "audio",
+    "speakers",
+    "events",
+    "captions",
+    "models",
+    "tracks"
+  ],
+  "title": "AnalysisResult",
+  "type": "object"
+}

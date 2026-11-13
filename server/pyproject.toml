@@ -1,0 +1,35 @@
+[project]
+name = "momo-server"
+version = "0.1.0"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "fastapi==0.115.12", "uvicorn[standard]==0.34.3", "pydantic-settings==2.9.1",
+  "python-multipart==0.0.20", "sqlalchemy==2.0.41", "psycopg[binary]==3.2.9",
+  "alembic==1.16.1", "celery[redis]==5.5.3", "redis==5.2.1",
+  "PyJWT==2.10.1", "pwdlib[argon2]==0.2.1", "boto3==1.38.32",
+  "numpy==2.0.2", "scipy==1.15.3", "httpx==0.28.1", "jsonschema==4.24.0", "psutil==7.0.0"
+]
+[project.optional-dependencies]
+inference = ["onnxruntime-gpu==1.22.0", "tensorflow-cpu==2.18.0", "tf-keras==2.18.0", "tensorflow-io-gcs-filesystem==0.31.0; sys_platform == 'win32'", "faster-whisper==1.1.1", "ctranslate2==4.6.0", "setuptools==80.9.0", "speechbrain==1.0.3", "torch==2.5.1", "torchaudio==2.5.1"]
+cuda = ["nvidia-cublas-cu12==12.6.4.1", "nvidia-cuda-runtime-cu12==12.6.77", "nvidia-cufft-cu12==11.3.0.4", "nvidia-cudnn-cu12==9.5.1.17"]
+[dependency-groups]
+dev = ["pytest==8.4.0", "pytest-cov==6.1.1", "ruff==0.11.13"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+[tool.ruff]
+line-length = 110
+[tool.ruff.lint.per-file-ignores]
+"tests/conftest.py" = ["E402"]
+[tool.uv]
+# faster-whisper declares the CPU distribution; GPU distribution provides the same import.
+override-dependencies = ["onnxruntime; python_version < '0'", "tensorflow; python_version < '0'"]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchaudio = { index = "pytorch-cpu" }
