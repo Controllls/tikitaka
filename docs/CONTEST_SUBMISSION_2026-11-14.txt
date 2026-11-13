@@ -1,0 +1,90 @@
+공모전 제출 준비 및 실행 안내
+작성: 2026-11-14. 제출 확정 전 작업 문서.
+
+사용자 확정 사항
+앱 이름: 티키타카.
+제출 저장소: https://github.com/Controllls/tikitaka
+공개 방식: 공개로 전환 (사용자 요청). 실제 전환은 아직 수행하지 않음.
+팀명·대표자 정보: 사용자 요청으로 후속 단계에 작성.
+서명: 사용자 요청으로 새 티키타카 전용 배포 키 생성 완료.
+APK: build/submission/tikitaka_release.apk (팀명 미정으로 임시 파일명).
+alias: tikitaka-release. RSA 3072-bit, SHA256withRSA, 유효기간 10000일.
+인증서 DN: CN=TikiTaka Release (실명 인증 또는 기관 승인을 뜻하지 않음).
+인증서 SHA256: 236430536cfdc91c4136c580ce4c373c9b07d0fdc75b047a647a830d4ecf1aea
+서명 검증: apksigner verify 성공, APK Signature Scheme v3.
+현재 APK SHA256: c96ad9328d8300901a8fd91976b1c971e962497b04ff54405a6957c0b7fb78dd
+현재 APK 크기: 302571117 bytes. zipalign -c -P 16 4 성공.
+초기 서명본은 실행 오류로 제외했고 release 최적화를 비활성화한 APK로 교체했다.
+현재 서명본은 별도 Pleos 에뮬레이터에서 설치·MainActivity 실행·프로세스 유지 확인.
+녹음부터 영상 제작까지의 최종 APK 전체 기능 검증은 미완료.
+재서명 도구: tools/sign-contest-apk.ps1 (-CreateKey 없이 기존 키 사용).
+키와 암호화된 비밀번호는 저장소 밖 사용자 비공개 폴더에 보관.
+GitHub API 읽기 확인: 저장소는 현재 private이며 관리자 권한 있음. 공개 전환은 미실행.
+원격 읽기 확인: HEAD 552e116f8b0317c8cb75b81c266601de7dd37382.
+비로그인 웹 접근은 404이나 로컬 git 인증으로 읽기 가능. 비공개 여부는 API 확인 필요.
+
+공식 기준
+https://appdevchallenge.auto-hmg.io/guide/submission
+공식 DOCX: https://appdevchallenge.auto-hmg.io/downloads/contest-application-consent.docx
+DOCX에 기재된 마감: 2026-11-15 23:59. 시간대는 양식에 별도 표기 없음.
+필수: 접수양식(기획서), 참가자 전원 개별 동의·서명·날짜.
+선택 개발 산출물: 시연 영상, 소스 코드, 실행 가능한 release APK.
+APK 이름: 팀명_앱이름_release.apk. 큰 파일은 GitHub Release로 제출 가능.
+메일에 저장소 주소 및 최종 커밋 해시 기재.
+비공개 저장소는 11/16까지 공개 전환 후 11/23까지 공개 유지.
+공개가 어려우면 소스·APK ZIP 다운로드 주소를 마감 전에 제출 가능.
+
+현재 앱 설명 (소스 및 기존 검증 기록 기준)
+녹음 → 기기 YAMNet·Pleos ON_DEVICE STT → 규칙 기반 하이라이트
+→ Qwen3 제목·장면 계획 → 화자 분석 및 Media3 캐릭터 영상 저장.
+현재 제작 경로에 자체 서버·회원가입·API 키가 필요하지 않음.
+server/는 과거 PC 실험 도구이며 현재 Android 앱 실행의 필수 단계가 아님.
+Qwen3 모델은 최초 HTTPS 다운로드, 약 1.3GB. APK에 모델을 포함하지 않음.
+모델 오류·메모리 부족·전사문 부재 시 기본 제목·구도로 처리하며 AI 성공으로 표시하지 않음.
+
+실행 안내 (최종 서명 APK에서 재확인 필요)
+1. Pleos Connect 에뮬레이터를 실행하고 제출 APK를 설치한다.
+2. 앱 실행 후 녹음 및 필요한 런타임 권한을 허용한다.
+3. 주차 상태에서 대화 녹음 화면을 열고 동의 후 녹음을 시작한다.
+4. 공개에 동의한 시연용 대화를 녹음하고 '녹음 마치기'를 선택한다.
+5. 자동 제작을 확인하려면 '이번에는 녹음만 보관'을 선택하지 않는다.
+6. 보관함에서 녹음 및 제작 상태를 확인하고 완료 후 영상을 재생한다.
+7. 최초 모델 준비에는 인터넷 연결과 저장 공간이 필요하다.
+8. 기기 내 모델 준비·추론으로 대기 시간이 길 수 있다. 실패 시 기본 연출 여부를 확인한다.
+
+빌드 환경
+Gradle Wrapper 9.6.0 / AGP 9.4.1 / Gradle daemon JDK 25.
+Java 소스 호환성 17 / minSdk 28 / compileSdk·targetSdk 37.
+Pleos Vehicle 2.3.2 / SpeechToText 3.3.1 / Media3 1.9.0.
+일반 빌드에는 app/src/main/jniLibs의 arm64-v8a·x86_64 사전 빌드 라이브러리가 필요하다.
+네이티브 라이브러리 재생성: tools/build-story-native.ps1 참조.
+서명 전 빌드: .\gradlew.bat :app:assembleRelease
+단위 테스트: .\gradlew.bat :app:testDebugUnitTest
+정적 검사: .\gradlew.bat :app:lintRelease
+release 서명은 별도 준비가 필요하며, 키·비밀번호는 공개 저장소에 포함하지 않는다.
+
+환경과 검증 범위
+연결 기기: Pleos Connect v2.1.0 (기존 기록), Android 14 API 34 (기존 기록).
+이번 읽기 확인: emulator-5554, 전체 디스플레이 2560x1440 px, density 160.
+전체 디스플레이 해상도는 앱 창 크기와 다르다. 제출용 앱 창 크기는 별도 측정 예정.
+기존 2026-11-14 검증: docs/DIALOGUE_STORY_AND_RELEASE_POWER_2026-11-14.txt.
+기존 기록의 기기 시험은 별도 검증 앱에서 수행됐으며 최종 서명 APK 검증과 구분한다.
+실차/ARM 성능, 실제 ignition OFF, 물리 전원 차단, 전체 화면 조합은 미검증.
+현재 에뮬레이터의 IGNITION_STATE 미지원은 정상 OFF 동작으로 간주하지 않는다.
+Figma 전체 일치 검증은 이번 제출 준비 범위에서 수행하지 않았다.
+
+제출 전 남은 작업
+- 팀명·대표자·최종 앱명·참가 부문·참가자 정보 확인.
+- 서명키 준비와 서명 APK 생성 및 서명 검증.
+- 기존 녹음이 있는 앱을 삭제하지 않고 별도 환경에서 최종 APK 설치 검증.
+- 공개 가능한 시연 영상 준비 (기존 개인 음성·영상 임의 사용 금지).
+- README 최신 안내 및 APK·영상 링크 확정.
+- 공개 대상 소스와 Git 이력의 비밀정보·개인정보 점검.
+- 저장소 목적지 확인 후 커밋·업로드 및 다운로드 검증.
+- 기획서 내용 확인, 참가자 전원 직접 동의·서명.
+- 최종 접수 메일과 첨부물 검토 및 발송, 접수 확인.
+
+자료 보존
+기존 녹음·영상·분석 파일과 사용자 변경은 삭제하지 않는다.
+개인정보를 포함하는 신청서·메일 초안은 git 무시 경로 build/submission/에 둔다.
+소스 공개 시 로컬 개인 자료를 포함하지 않으며 원본 자료는 그대로 보존한다.

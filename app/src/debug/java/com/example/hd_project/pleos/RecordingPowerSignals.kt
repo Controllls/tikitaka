@@ -17,8 +17,11 @@ object RecordingPowerSignals {
         .readTimeout(1, TimeUnit.SECONDS).callTimeout(2, TimeUnit.SECONDS)
         .followRedirects(false).followSslRedirects(false).build()
 
-    fun watch(sessionStartedAtMs: Long, onOff: () -> Unit): AutoCloseable {
-        if (Build.HARDWARE !in setOf("ranchu", "goldfish")) return AutoCloseable { }
+    fun watch(context: android.content.Context, sessionStartedAtMs: Long, onOff: () -> Unit): AutoCloseable {
+        val delivered = AtomicBoolean(false)
+        val dispatch = { if (delivered.compareAndSet(false, true)) onOff() }
+        val vehicle = VehicleIgnitionSignals.watch(context, dispatch)
+        if (Build.HARDWARE !in setOf("ranchu", "goldfish")) return vehicle
         val closed = AtomicBoolean(false)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         val main = Handler(Looper.getMainLooper())
@@ -42,12 +45,12 @@ object RecordingPowerSignals {
                 }
                 val actual = state?.optJSONObject("actual")?.optJSONObject("0")
                 if (gate.accept(available, actual?.optString("state"), actual?.optLong("timestamp_ms") ?: 0L)) {
-                    main.post { if (!closed.get()) onOff() }
+                    main.post { if (!closed.get()) dispatch() }
                     break
                 }
                 delay(1000)
             }
         }
-        return AutoCloseable { if (closed.compareAndSet(false, true)) scope.cancel() }
+        return AutoCloseable { if (closed.compareAndSet(false, true)) { scope.cancel(); vehicle.close() } }
     }
 }

@@ -23,13 +23,16 @@ android {
 
     buildTypes {
         debug {
+            // Isolated instrumentation installs preserve ongoing recordings in the user's app.
+            if (providers.gradleProperty("isolatedVerification").orNull == "true") applicationIdSuffix = ".verification"
             buildConfigField("String", "MOMO_API_URL", "\"${providers.gradleProperty("momoApiUrl").getOrElse("http://10.0.2.2:8765/")}\"")
         }
         release {
             buildConfigField("String", "MOMO_API_URL", "\"${providers.gradleProperty("momoApiUrl").getOrElse("")}\"")
             optimization {
-                enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
+                // Scoped optimization produced an IllegalAccessError in Kotlin text
+                // classes during WorkManager startup on Pleos Android 14.
+                enable = false
             }
         }
     }

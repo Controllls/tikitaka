@@ -1,7 +1,8 @@
 package com.example.hd_project.pleos
 
-/** Await the target vehicle's supported, approved power API; no localhost simulator in release builds. */
+/** Release listens directly to the public Automotive ignition property. */
 object RecordingPowerSignals {
     @Suppress("UNUSED_PARAMETER")
-    fun watch(sessionStartedAtMs: Long, onOff: () -> Unit): AutoCloseable = AutoCloseable { }
+    fun watch(context: android.content.Context, sessionStartedAtMs: Long, onOff: () -> Unit): AutoCloseable =
+        VehicleIgnitionSignals.watch(context, onOff)
 }

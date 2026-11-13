@@ -39,6 +39,8 @@ object PlaybackDiagnostics {
         .put("accepted",value.accepted).put("reason",value.reason)
         .put("normalized",value.normalized ?: JSONObject.NULL).put("gain",value.gain).put("family",value.family)
         .put("previousAccepted",value.previousAccepted)
+        .put("cough",value.cough).put("filteredCough",value.filteredCough).put("filteredNoise",value.filteredNoise)
+        .put("support",value.support).put("filteredSupport",value.filteredSupport).put("filteredFamily",value.filteredFamily)
 
     /** Backfill only laugh scores for the selected clip. Existing STT/events/plan remain unchanged. */
     fun laughter(context: Context,source: File,root: File,startMs: Long,endMs: Long,threshold: Double,cancelled: ()->Boolean): JSONArray {
@@ -46,7 +48,7 @@ object PlaybackDiagnostics {
         LocalLaughter(context).use { detector ->
             for(start in startMs/30000*30000 until endMs step 30000) {
                 check(!cancelled()) { "cancelled" }
-                val trace=File(root,"laugh-trace-v2-$start.json")
+                val trace=File(root,"laugh-trace-v3-$start.json")
                 val data=if(trace.isFile)JSONObject(trace.readText()) else {
                     val duration=RecordingJournal.duration(source)
                     LocalLaughBlock.read(context,source,root,start,minOf(start+30000,duration),duration,cancelled).use { block ->
@@ -157,6 +159,20 @@ object PlaybackDiagnostics {
             }
             return DetectionState(laugh,self,unknown,selfLabel,unknownLabel)
         }
+        private fun reason(frame: JSONObject?): String = when(frame?.optString("reason")) {
+            "accepted" -> "검출"
+            "band_rescue" -> "대역 보완 검출"
+            "gain_rescue" -> "음량 보완 검출"
+            "family_consensus" -> "복수 웃음 항목 일치"
+            "mixed_laughter" -> "다른 발성과 함께 웃음 검출"
+            "continuation" -> "주변 웃음 이어짐"
+            "inaudible" -> "음량 부족"
+            "noise" -> "환경음 우세"
+            "other_vocal" -> "다른 발성 우세"
+            "low_score" -> "점수 부족"
+            "duration_or_contrast" -> "지속·점수 대비 부족"
+            else -> "측정 없음"
+        }
         fun summary(positionMs: Long,audioTracks: Int): String {
             val ms=positionMs.coerceAtLeast(0);val state=detection(ms)
             val current=if(ms<data.getLong("durationMs"))at(frames,ms,"timeMs") else null
@@ -171,8 +187,9 @@ object PlaybackDiagnostics {
                 val unknown=active(ms).any { it.isNull("speaker") }
                 return (listOf(
                     "재생 ${n(ms/1000.0)}s · 원본 ${n((ms+data.getLong("sourceOffsetMs"))/1000.0)}s",
-                    "웃음 점수: ${laugh?.let { n(it.getDouble("raw")) } ?: "—"} · 필터 ${laugh?.let { n(it.getDouble("filtered")) } ?: "—"}",
-                    "최종 반영: ${current?.let { n(it.optDouble("laughterScore",0.0)) } ?: "—"} · 감도 ${n(data.getDouble("threshold"))}"
+                    "웃음 원점수: ${laugh?.let { n(it.getDouble("raw")) } ?: "—"} · 필터 ${laugh?.let { n(it.getDouble("filtered")) } ?: "—"}",
+                    "최종 반영: ${current?.let { n(it.optDouble("laughterScore",0.0)) } ?: "—"} · 감도 ${n(data.getDouble("threshold"))}",
+                    "분석 판정: ${reason(laugh)}"
                 )+speakerLines(ms)+listOf(
                     "화자 불분명: ${if(unknown)"● 감지됨 · 발화" else "대기"}",
                     "기기 내 화자 구분 · 웃음 주인 미확인",
@@ -181,8 +198,9 @@ object PlaybackDiagnostics {
             }
             return listOf(
                 "재생 ${n(ms/1000.0)}s · 원본 ${n((ms+data.getLong("sourceOffsetMs"))/1000.0)}s",
-                "웃음 점수: ${laugh?.let { n(it.getDouble("raw")) } ?: "—"} · 필터 ${laugh?.let { n(it.getDouble("filtered")) } ?: "—"}",
+                "웃음 원점수: ${laugh?.let { n(it.getDouble("raw")) } ?: "—"} · 필터 ${laugh?.let { n(it.getDouble("filtered")) } ?: "—"}",
                 "최종 반영: ${current?.let { n(it.optDouble("laughterScore",0.0)) } ?: "—"} · 감도 ${n(data.getDouble("threshold"))}",
+                "분석 판정: ${reason(laugh)}",
                 "화자 1: $self",
                 "화자 2: 구분 꺼짐",
                 "화자 불분명: ${if(state.unknown==true)"● ${state.unknownLabel}" else if(state.unknown==false)"대기" else "— 기록 없음"}",
@@ -200,12 +218,11 @@ object PlaybackDiagnostics {
             out.add(if(laugh==null)"다른 발성 — / 환경음 —" else "다른 발성 ${n(laugh.getDouble("vocal"))} / 환경음 ${n(laugh.getDouble("noise"))}")
             if(data.optString("detector")==LocalLaughter.VERSION)out.add("음량 보정 ${if(laugh!=null && !laugh.isNull("normalized"))n(laugh.getDouble("normalized")) else "—"} · ${n(laugh?.optDouble("gain",1.0) ?: 1.0)}배")
             out.add(if(data.optString("detector")==LocalLaughter.VERSION)
-                "기존 ${laugh?.let { n(it.optDouble("previousAccepted")) } ?: "—"} → 현재 ${laugh?.let { n(it.getDouble("accepted")) } ?: "—"} / 감도 ${n(data.getDouble("threshold"))}"
+                "초기 판정 ${laugh?.let { n(it.optDouble("previousAccepted")) } ?: "—"} → 보완 ${laugh?.let { n(it.getDouble("accepted")) } ?: "—"} / 감도 ${n(data.getDouble("threshold"))}"
                 else "재측정 판정 ${laugh?.let { n(it.getDouble("accepted")) } ?: "—"} / 감도 ${n(data.getDouble("threshold"))}")
-            val reason=when(laugh?.optString("reason")) { "accepted"->"검출";"band_rescue"->"대역 보완 검출";"gain_rescue"->"음량 보완 검출";"family_consensus"->"복수 웃음 항목 일치";"continuation"->"주변 웃음 이어짐";"inaudible"->"음량 부족";"noise"->"환경음 우세";"other_vocal"->"다른 발성 우세";"low_score"->"점수 부족";"duration_or_contrast"->"지속·점수 대비 부족";else->"측정 없음" }
             val score=current?.optDouble("laughterScore")
             out.add("최종 웃음 구간: ${if((score ?: 0.0)>0)"감지됨" else "없음"}")
-            out.add("현재 분석 창의 판정 이유: $reason")
+            out.add("현재 분석 창의 판정 이유: ${reason(laugh)}")
             out.add("음성 에너지 ${current?.let { String.format(Locale.US,"%.5f",it.getDouble("energy")) } ?: "—"} · 100ms 갱신")
             val who=when(check?.optString("reason")) { "not_enrolled"->"등록 없음";"model_mismatch"->"등록 모델 다름";"too_short"->"3초 미만";"matched"->"내 목소리 일치";"below_threshold"->"일치 미확인";"inference_error"->"추론 실패";else->"대사 없음" }
             out.add(if(diarization==null)"화자: $who · 자동 다중 분리 꺼짐" else

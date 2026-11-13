@@ -15,9 +15,11 @@ class DrivingRestrictionsTest {
         assertTrue(parked.videoAllowed)
         assertTrue(parked.animationAllowed)
     }
-    @Test fun noVideoFlagBlocksPlaybackButUnrelatedFlagsDoNotInventRestrictions() {
+    @Test fun appPolicyBlocksEveryDrivingOptimizationStateAndEveryNoVideoFlag() {
         assertFalse(State(true, true, CarUxRestrictions.UX_RESTRICTIONS_NO_VIDEO).videoAllowed)
-        assertTrue(State(true, true, CarUxRestrictions.UX_RESTRICTIONS_NO_KEYBOARD).videoAllowed)
+        assertFalse(State(true, true, CarUxRestrictions.UX_RESTRICTIONS_NO_KEYBOARD).videoAllowed)
+        assertFalse(State(true, true, 0).videoAllowed)
+        assertFalse(State(true, false, CarUxRestrictions.UX_RESTRICTIONS_NO_VIDEO).videoAllowed)
         assertFalse(State(true, true, 0).animationAllowed)
     }
     @Test fun transitionsRequireFreshPlatformState() {

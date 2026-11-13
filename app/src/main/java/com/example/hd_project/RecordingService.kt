@@ -6,6 +6,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.media.AudioManager
 import android.media.AudioRecordingConfiguration
@@ -49,6 +52,18 @@ class RecordingService : Service() {
     private val segments = mutableListOf<File>()
     private var powerSignals: AutoCloseable? = null
     private var stopTrigger = "manual"
+    private var shutdownRegistered = false
+    private val shutdownReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == Intent.ACTION_SHUTDOWN && acceptedStart && !stopping && !finished) {
+                val pending = goAsync()
+                stopTrigger = "system_shutdown"
+                requestStop()
+                // Serialized after file finalization; the OS still controls the shutdown deadline.
+                worker.execute { pending.finish() }
+            }
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -84,8 +99,11 @@ class RecordingService : Service() {
                 startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE)
             } else startForeground(NOTIFICATION_ID, notification)
             val sessionStartedAtMs = System.currentTimeMillis()
+            androidx.core.content.ContextCompat.registerReceiver(this, shutdownReceiver,
+                IntentFilter(Intent.ACTION_SHUTDOWN), androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED)
+            shutdownRegistered = true
             worker.execute { beginRecording() }
-            powerSignals = RecordingPowerSignals.watch(sessionStartedAtMs) {
+            powerSignals = RecordingPowerSignals.watch(this, sessionStartedAtMs) {
                 if (acceptedStart && !stopping && !finished) {
                     stopTrigger = "ignition_off"
                     Log.i(TAG, "Ignition Off: finalize and validate recording")
@@ -312,6 +330,7 @@ class RecordingService : Service() {
 
     override fun onDestroy() {
         powerSignals?.close()
+        if (shutdownRegistered) { unregisterReceiver(shutdownReceiver); shutdownRegistered = false }
         main.removeCallbacksAndMessages(null)
         samples?.cancel(false)
         if (acceptedStart) worker.execute { finishRecording(R.string.recording_interrupted, stopService = false) }

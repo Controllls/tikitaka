@@ -5,12 +5,11 @@ import android.util.AtomicFile
 import com.example.hd_project.*
 import com.example.hd_project.momo.*
 import com.example.hd_project.momo.model.*
-import com.example.hd_project.momo.network.ApiClient
 import com.example.hd_project.momo.render.VideoComposer
 import com.example.hd_project.momo.storage.sha256
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.encodeToString
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -21,11 +20,10 @@ object MetadataEpisodes {
     const val ENGINE="local-metadata-v1"
     private const val BLOCK=30_000L
     private val analysisLock=kotlinx.coroutines.sync.Mutex()
-    fun threshold(context: Context)=context.getSharedPreferences("local-analysis",0).getFloat("laughterThreshold",.01f).toDouble().let {
-        when { it<.03 -> .01;it<.075 -> .05;it>.15 -> .2;else -> .1 }
-    }
+    fun threshold(context: Context)=LaughterSensitivity.fromStored(context.getSharedPreferences("local-analysis",0)
+        .getFloat("laughterThreshold",LaughterSensitivity.DEFAULT.toFloat()).toDouble())
     fun threshold(context: Context, value: Double) {
-        require(value in listOf(.01,.05,.1,.2))
+        require(value in LaughterSensitivity.values)
         check(context.getSharedPreferences("local-analysis",0).edit().putFloat("laughterThreshold",value.toFloat()).commit())
     }
     internal fun write(file: File, value: JSONObject) {
@@ -51,8 +49,8 @@ object MetadataEpisodes {
             it.put("engine",ENGINE).put("audioSha256",hash)
         }.getDouble("laughterThreshold")
         val attempt=EpisodeWork.status(context,source.name)?.optInt("localAttempt") ?: 0
-        val legacyRoot=File(context.noBackupFilesDir,"metadata-episodes/$hash/$threshold-v2-$attempt")
-        val root=File(context.noBackupFilesDir,"metadata-episodes/$hash/$threshold-v3-$attempt").apply { mkdirs() }
+        val legacyRoots=listOf(3,2).map { File(context.noBackupFilesDir,"metadata-episodes/$hash/$threshold-v$it-$attempt") }
+        val root=File(context.noBackupFilesDir,"metadata-episodes/$hash/$threshold-v4-$attempt").apply { mkdirs() }
         val captions=JSONArray();val laughter=mutableListOf<LocalLaugh>();val warnings=mutableSetOf<String>()
         var complete=0;var blocks=0
         var unavailable: String?=null
@@ -67,10 +65,10 @@ object MetadataEpisodes {
                         EpisodeWork.update(context,source.name,"running","기기에서 웃음·대사를 분석해요 · ${start*100/duration}%")
                         LocalLaughBlock.read(context,source,root,start,end,duration) { !job.isActive }.use { block ->
                             val analysis=block.trim(detector.analyze(block.pcm,threshold) { !job.isActive })
-                            write(File(root,"laugh-trace-v2-$start.json"),JSONObject().put("source",LocalLaughter.VERSION)
+                            write(File(root,"laugh-trace-v3-$start.json"),JSONObject().put("source",LocalLaughter.VERSION)
                                 .put("frames",JSONArray(analysis.frames.map { PlaybackDiagnostics.frame(it) })))
                             // Upgrade laughter independently. Explicit reanalysis advances localAttempt, so it bypasses this cache.
-                            val previous=File(legacyRoot,"block-$start.json").takeIf { it.isFile }?.let(::read)
+                            val previous=legacyRoots.map { File(it,"block-$start.json") }.firstOrNull { it.isFile }?.let(::read)
                             val transcript=if(previous!=null)LocalTranscript(emptyList(),previous.getBoolean("complete"),previous.optString("stt_error").takeIf { it.isNotEmpty() })
                                 else unavailable?.let { LocalTranscript(emptyList(),false,it) } ?: block.speechPcm().let { pcm ->
                                     try { PleosLocalStt.recognize(context,pcm) } finally { pcm.fill(0f) }
@@ -114,33 +112,61 @@ object MetadataEpisodes {
         // Retain the existing 40-second plan and analysis checkpoints when only staging changes.
         val planFile=File(root,if(clipSeconds==40)"plan.json" else "plan-$clipSeconds.json")
         val plan=if(planFile.isFile) withContext(Dispatchers.IO) { read(planFile) } else {
-            EpisodeWork.update(context,source.name,"running","전사문·웃음 구간을 보내 하이라이트를 구성해요.")
-            val api=ApiClient(context,BuildConfig.MOMO_API_URL)
-            api.ensureAuthenticated()
-            JSONObject(api.api.planMetadata(MomoJson.parseToJsonElement(request.toString()).jsonObject).toString()).also {
+            EpisodeWork.update(context,source.name,"running","기기에서 대사·웃음 구간으로 하이라이트를 구성해요.")
+            withContext(Dispatchers.Default) { JSONObject(LocalHighlightPlanner.plan(request.toString())) }.also {
                 validatePlan(it,hash,duration);withContext(Dispatchers.IO) { write(planFile,it) }
             }
         }
         validatePlan(plan,hash,duration)
         val clips=plan.getJSONArray("clips")
         val savedClips=mutableListOf<SavedHighlight>()
+        var basicStoryCount=0
         if(clips.length()==0) { EpisodeWork.update(context,source.name,"empty","대사·웃음 하이라이트를 찾지 못했어요. 원음은 보관했어요.");return }
         for(i in 0 until clips.length()) {
             job.ensureActive()
             val clip=clips.getJSONObject(i)
-            val key="${EpisodeWork.id(source.name)}-local-${plan.getString("plan_id").take(12)}-${i+1}-wide7-${settings.optInt("renderGeneration") }"
+            val key="${EpisodeWork.id(source.name)}-local-${plan.getString("plan_id").take(12)}-${i+1}-story8-${settings.optInt("renderGeneration") }"
             val input=File(root,"$key.m4a");val output=AnimationFiles.output(context,input)
             val range=withContext(Dispatchers.IO) {
                 AudioClipper.export(source,input,HighlightRange(clip.getLong("start_ms"),clip.getLong("end_ms"),clip.getDouble("score").toFloat())) { !job.isActive }
             }
-            savedClips.add(SavedHighlight(input,clip.getString("title"),range.startMs,range.endMs,clip.getDouble("score")))
+            val clipDuration=withContext(Dispatchers.IO) { RecordingJournal.duration(input) }*1000
+            val storyFile=File(root,"$key-story.json")
+            val cachedStory=withContext(Dispatchers.IO) { runCatching {
+                DialogueStoryRules.json.decodeFromString<DialogueStory>(read(storyFile).toString())
+            }.getOrNull()?.takeIf { it.version==DialogueStoryRules.VERSION && it.model==LocalStoryModel.MODEL && it.status=="generated" } }
+            val story=cachedStory ?: run {
+                val rows=clip.getJSONArray("captions")
+                val lines=(0 until rows.length()).mapNotNull { row -> val c=rows.getJSONObject(row)
+                    val a=((c.getLong("start_ms")-range.startMs)*1000).coerceIn(0,clipDuration)
+                    val b=((c.getLong("end_ms")-range.startMs)*1000).coerceIn(0,clipDuration)
+                    if(b>a)StoryLine(a,b,c.getString("text")) else null
+                }
+                if(DialogueStoryRules.scenes(lines).isEmpty())DialogueStoryRules.fallback(clip.getString("title"),"no_transcript")
+                else try {
+                    LocalStoryModel.plan(context,lines,clipDuration) { EpisodeWork.update(context,source.name,"running",it) }
+                } catch(e: CancellationException) { throw e }
+                catch(e: Exception) {
+                    android.util.Log.w("MetadataEpisodes","Dialogue staging unavailable: ${e.javaClass.simpleName}")
+                    EpisodeWork.patch(context,source.name) { it.put("storyStatus","failed").put("storyModel",LocalStoryModel.MODEL) }
+                    throw IllegalStateException("대화 제목·장면을 아직 만들지 못했어요. ${e.message ?: "모델 준비 상태를 확인한 뒤 다시 시도해 주세요."} 원음과 분석은 보관되어 있어요.",e)
+                } catch(e: LinkageError) {
+                    throw IllegalStateException("대화 분석 모델을 실행하지 못했어요. 앱 업데이트 후 다시 시도해 주세요. 원음과 분석은 보관되어 있어요.",e)
+                }
+            }
+            withContext(Dispatchers.IO) { write(storyFile,JSONObject(DialogueStoryRules.json.encodeToString(story))) }
+            if(story.status!="generated")basicStoryCount++
+            EpisodeWork.patch(context,source.name) { it.put("storyStatus",story.status).put("storyModel",story.model)
+                .put("storyElapsedMs",story.elapsedMs).put("basicStoryCount",basicStoryCount) }
+            savedClips.add(SavedHighlight(input,story.title,range.startMs,range.endMs,clip.getDouble("score")))
             val sidecar=File(output.path+".json")
             if(output.isFile && sidecar.isFile && PlaybackDiagnostics.file(output).isFile && File(output.path+".captions.json").isFile &&
-                withContext(Dispatchers.IO) { runCatching { read(sidecar).getString("video")==sha256(output) }.getOrDefault(false) }) {
+                withContext(Dispatchers.IO) { runCatching { val saved=read(sidecar)
+                    saved.getString("video")==sha256(output) && saved.optJSONObject("story")?.toString()==JSONObject(DialogueStoryRules.json.encodeToString(story)).toString()
+                }.getOrDefault(false) }) {
                 withContext(Dispatchers.IO) { poster(output) }
                 EpisodeWork.update(context,source.name,"running","저장된 영상을 확인했어요.",output);continue
             }
-            val clipDuration=withContext(Dispatchers.IO) { RecordingJournal.duration(input) }*1000
             val audioHash=withContext(Dispatchers.IO) { sha256(input) }
             val pcm=FloatArray((clipDuration*16000/1_000_000+16000).toInt());var pcmCount=0
             val energy=withContext(Dispatchers.IO) {
@@ -165,10 +191,13 @@ object MetadataEpisodes {
                 }
             } finally { pcm.fill(0f) }
             job.ensureActive()
-            // Cast setting is a minimum; each supported detected voice gets a distinct actor (maximum four).
-            val renderCount=maxOf(castCount,diarization.speakerCount)
+            val automatic=settings.optString("castMode")==ProductionSettings.AUTO_CAST
+            val renderCount=ProductionSettings.renderCount(diarization.speakerCount,castCount,automatic)
+            val castAssignment=if(automatic && diarization.speakerCount==0)"unknown-voice-fallback" else "detected-speaker-turns"
+            EpisodeWork.patch(context,source.name) { it.put("detectedSpeakerCount",diarization.speakerCount)
+                .put("renderCastCount",renderCount).put("castAssignment",castAssignment) }
             val bundle=bundle(clip,key,range.startMs,clipDuration,audioHash,renderCount,energy,diarization=diarization)
-            val base=SceneProject(key,clip.getString("title"),input.path,audioHash,clipDuration)
+            val base=SceneProject(key,story.title,input.path,audioHash,clipDuration,storyBeats=story.beats,mentionedPlace=story.mentionedPlace)
             val scene=withContext(Dispatchers.IO) {
                 val staged=TikiScene.buildPerformance(context,base,profile,renderCount)
                 staged.copy(people=staged.people.mapIndexed { index,person ->
@@ -176,7 +205,9 @@ object MetadataEpisodes {
                     val character=when { self==null -> person.manifestRef;index==self -> staged.people[0].manifestRef
                         index==0 -> staged.people[self].manifestRef;else -> person.manifestRef }
                     person.copy(name=when { index==self -> "화자 ${index+1} · ${profile.name}"
-                        index<diarization.speakerCount -> "화자 ${index+1}";else -> "대기 캐릭터 ${index+1}" },manifestRef=character)
+                        index<diarization.speakerCount -> "화자 ${index+1}"
+                        automatic && diarization.speakerCount==0 -> "화자 미확정 · 캐릭터 ${index+1}"
+                        else -> "대기 캐릭터 ${index+1}" },manifestRef=character)
                 })
             }
             EpisodeWork.update(context,source.name,"running","웃음·화자 진단 수치를 준비해요.")
@@ -203,8 +234,10 @@ object MetadataEpisodes {
                         write(PlaybackDiagnostics.file(output),diagnostics)
                         write(sidecar,JSONObject().put("title",base.title).put("source",source.name).put("audio",hash).put("video",sha256(output))
                             .put("renderer",scene.rendererVersion).put("width",scene.width).put("height",scene.height).put("planId",plan.getString("plan_id")).put("speakerIdentity","local-diarization").put("diarization",diarization.json()).put("sttStatus",status)
-                            .put("castCount",renderCount).put("speakerCount",diarization.speakerCount).put("castAssignment","detected-speaker-turns").put("voiceModel",profile.voice?.modelId ?: "none")
-                            .put("captionTiming","approximate-within-sdk-segment").put("castNames",JSONArray(scene.people.map { it.name })).put("diagnostics",PlaybackDiagnostics.VERSION))
+                            .put("castCount",renderCount).put("speakerCount",diarization.speakerCount).put("castAssignment",castAssignment)
+                            .put("castMode",if(automatic)ProductionSettings.AUTO_CAST else "legacy-staging").put("voiceModel",profile.voice?.modelId ?: "none")
+                            .put("captionTiming","approximate-within-sdk-segment").put("castNames",JSONArray(scene.people.map { it.name })).put("diagnostics",PlaybackDiagnostics.VERSION)
+                            .put("story",JSONObject(DialogueStoryRules.json.encodeToString(story))))
                         poster(output)
                         EpisodeWork.episodeNumber(context,output)
                     }
@@ -213,7 +246,11 @@ object MetadataEpisodes {
             }
         }
         withContext(Dispatchers.IO) { HighlightStore.saveLocal(context,source.name,plan.getString("plan_id"),savedClips) }
-        EpisodeWork.update(context,source.name,"completed",if(status=="complete")"영상이 준비됐어요." else "영상이 준비됐어요. 기기 음성 인식이 제한되어 자막이 일부 없을 수 있어요.")
+        EpisodeWork.update(context,source.name,"completed",when {
+            basicStoryCount>0 -> "영상이 준비됐어요. $basicStoryCount 개는 대화 연출을 사용할 수 없어 기본 제목·구도로 만들었어요."
+            status=="complete" -> "대화에 맞춘 제목과 장면으로 영상이 준비됐어요."
+            else -> "영상이 준비됐어요. 기기 음성 인식이 제한되어 자막이 일부 없을 수 있어요."
+        })
     }
 
     private fun poster(movie: File) {

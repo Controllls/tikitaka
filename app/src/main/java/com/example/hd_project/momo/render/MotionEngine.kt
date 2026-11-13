@@ -11,10 +11,11 @@ class MotionEngine(private val project: SceneProject, private val analysis: Anal
     private val tracks = analysis.tracks.speakerTracks.associateBy { it.speakerId }
     private val overrides = project.eventOverrides.associateBy { it.eventId }
     fun gazeAt(personId: String,timeUs: Long): String? {
-        if(project.rendererVersion !in listOf("tikitaka-local-cast-v2","tikitaka-local-voice-v3","tikitaka-local-diagnostic-v4","tikitaka-local-laugh-v5","tikitaka-local-diarization-v6","tikitaka-local-wide-v7") || project.people.size<2)return null
-        val caption=analysis.result.captions.firstOrNull { timeUs>=it.startUs && timeUs<it.endUs } ?: return null
-        if(!Regex("[?？]|왜|어떻게|어디|누구|무슨|언제|뭐|니$|나요$|까요$").containsMatchIn(caption.text))return null
-        val speaker=caption.speakerIds.singleOrNull()?.let(project.speakerMapping::get) ?: return null
+        if(project.rendererVersion !in listOf("tikitaka-local-cast-v2","tikitaka-local-voice-v3","tikitaka-local-diagnostic-v4","tikitaka-local-laugh-v5","tikitaka-local-diarization-v6","tikitaka-local-wide-v7","tikitaka-local-story-v8") || project.people.size<2)return null
+        val directed=StoryDirection.frame(project,analysis,timeUs).exchangeSpeaker
+        val caption=analysis.result.captions.firstOrNull { timeUs>=it.startUs && timeUs<it.endUs }
+        if(directed==null && (caption==null || !Regex("[?？]|왜|어떻게|어디|누구|무슨|언제|뭐|니$|나요$|까요$").containsMatchIn(caption.text)))return null
+        val speaker=directed ?: caption?.speakerIds?.singleOrNull()?.let(project.speakerMapping::get) ?: return null
         val target=if(personId==speaker)project.people.firstOrNull { it.personId!=speaker } else project.people.firstOrNull { it.personId==speaker }
         val person=project.people.firstOrNull { it.personId==personId } ?: return null
         fun x(seat: String)=when(seat) { "driver"->1530;"front_passenger"->378;"rear_left"->1242;else->648 }

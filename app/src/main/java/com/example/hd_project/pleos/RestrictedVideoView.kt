@@ -12,4 +12,10 @@ class RestrictedVideoView @JvmOverloads constructor(context: Context, attrs: Att
     override fun start() {
         if (playbackAllowed && canStart()) super.start() else pause()
     }
+    override fun seekTo(msec: Int) {
+        if (playbackAllowed && canStart()) super.seekTo(msec)
+    }
+    override fun resume() {
+        if (playbackAllowed && canStart()) super.resume() else pause()
+    }
 }

@@ -9,17 +9,19 @@ import kotlin.math.*
 
 data class LocalLaugh(val startMs: Long, val endMs: Long, val score: Double)
 data class LaughFrame(val startMs: Long,val endMs: Long,val raw: Double,val filtered: Double,val vocal: Double,val noise: Double,val accepted: Double,val reason: String,
-    val normalized: Double?=null,val gain: Double=1.0,val family: Double=0.0,val previousAccepted: Double=0.0)
+    val normalized: Double?=null,val gain: Double=1.0,val family: Double=0.0,val previousAccepted: Double=0.0,
+    val cough: Double=0.0,val filteredCough: Double=0.0,val filteredNoise: Double=0.0,
+    val support: Int=0,val filteredSupport: Int=0,val filteredFamily: Double=0.0)
 data class LocalLaughAnalysis(val events: List<LocalLaugh>,val frames: List<LaughFrame>)
 internal data class AcousticScore(val laugh: Double, val vocal: Double, val noise: Double,
     val family: Double= laugh,val support: Int=if(laugh>=.01)1 else 0,val cough: Double=0.0)
 internal data class LaughVerdict(val values: DoubleArray,val reasons: List<String>)
 
-/** Same score contrasts as the web detector; model/runtime outputs can differ. */
+/** Multi-label evidence: other vocal sounds can coexist with laughter. */
 internal object LaughDecision {
     /** Regression reference for previously saved V1 analyses. */
     fun accepted(raw: List<AcousticScore>, band: List<AcousticScore>, threshold: Double): DoubleArray {
-        require(raw.size == band.size && threshold in .01..1.0)
+        require(raw.size == band.size && threshold in LaughterSensitivity.MIN..1.0)
         val scale = threshold / .1
         val result = DoubleArray(raw.size)
         fun groups(predicate: (Int) -> Boolean, accept: (List<Int>) -> Boolean, score: (Int) -> Double) {
@@ -78,6 +80,31 @@ internal object LaughDecision {
                 for(i in first until last)if(result[i]==0.0) { result[i]=max(raw[i].laugh,band[i].laugh);reasons[i]="family_consensus" }
             first=last
         }
+        // Do not require laughter to outrank every simultaneous vocal label. For mixed sounds,
+        // require sustained agreement across original/band-filtered views and gain confirmation.
+        // A fixed evidence floor prevents a very low sensitivity setting from promoting noise.
+        val mixedFloor=max(.012,threshold*.25)
+        fun mixedView(s: AcousticScore): Boolean {
+            // Snorting/chuckling can also score as cough-like sounds. A single laugh label is
+            // insufficient to relax that veto; multiple related labels must corroborate it.
+            val coughCompatible=s.cough<max(.02,s.laugh*1.25) ||
+                (s.support>=2 && s.family>=s.laugh*1.5 && s.cough<=s.family*2.5)
+            return s.laugh>=mixedFloor && coughCompatible && s.noise<=max(.16,s.laugh*4)
+        }
+        val mixed=raw.indices.map { i ->
+            rms[i]>.0006 && mixedView(raw[i]) && mixedView(band[i]) &&
+                (normalized[i].laugh>=max(.006,raw[i].laugh*.4) || normalizedBand[i].laugh>=max(.006,band[i].laugh*.4))
+        }
+        first=0
+        while(first<raw.size) {
+            if(!mixed[first]) { first++;continue }
+            var last=first+1;while(last<raw.size && mixed[last])last++
+            if(last-first>=3 && (first until last).maxOf { min(raw[it].laugh,band[it].laugh) }>=max(.025,threshold*.6))
+                for(i in first until last)if(result[i]==0.0) {
+                    result[i]=max(raw[i].laugh,band[i].laugh);reasons[i]="mixed_laughter"
+                }
+            first=last
+        }
         val seeds=result.indices.filter { result[it]>0 }.toList()
         fun continuation(i: Int): Boolean { val r=raw[i];val b=band[i]
             return rms[i]>.0006 && r.laugh>=.006*scale && max(r.laugh,b.laugh)>=.02*scale && clean(r) && clean(b)
@@ -93,7 +120,7 @@ internal object LaughDecision {
 }
 
 class LocalLaughter(context: Context): Closeable {
-    companion object { const val VERSION="yamnet-local-v2";const val WINDOW=15600;const val HOP=2560 }
+    companion object { const val VERSION="yamnet-local-v3";const val WINDOW=15600;const val HOP=2560 }
     private val interpreter: Interpreter
     private val input = ByteBuffer.allocateDirect(15600*4).order(ByteOrder.nativeOrder())
     private val output = ByteBuffer.allocateDirect(521*4).order(ByteOrder.nativeOrder())
@@ -106,6 +133,7 @@ class LocalLaughter(context: Context): Closeable {
     }
     fun detect(pcm: FloatArray, threshold: Double=.1, cancelled: ()->Boolean={false}) = analyze(pcm,threshold,cancelled).events
     fun analyze(pcm: FloatArray, threshold: Double=.1, cancelled: ()->Boolean={false}): LocalLaughAnalysis {
+        require(threshold in LaughterSensitivity.MIN..1.0)
         require(pcm.size<=16_000*33) { "Analyze in bounded chunks" }
         val band=FloatArray(pcm.size)
         var previous=0.0;var high=0.0;var low=0.0
@@ -162,7 +190,8 @@ class LocalLaughter(context: Context): Closeable {
             val start=if(i==0)0L else (offsets[i]/16L+407).coerceAtMost(pcm.size/16L)
             val end=if(i==offsets.lastIndex)pcm.size/16L else minOf(offsets[i]/16L+567,pcm.size/16L)
             if(end<=start)null else LaughFrame(start,end,raw[i].laugh,filtered[i].laugh,raw[i].vocal,raw[i].noise,accepted[i],
-                verdict.reasons[i],normalizedPeak[i],gains[i],raw[i].family,previousAccepted[i])
+                verdict.reasons[i],normalizedPeak[i],gains[i],raw[i].family,previousAccepted[i],
+                raw[i].cough,filtered[i].cough,filtered[i].noise,raw[i].support,filtered[i].support,filtered[i].family)
         }
         return LocalLaughAnalysis(result.filter { it.endMs-it.startMs>=80 },frames)
     }

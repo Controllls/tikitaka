@@ -1,0 +1,299 @@
+티키타카 전체 기능의 공모전 SDK·API 적합성 검토
+검토일: 2026-11-13 / 기준 커밋: 552e116f8b0317c8cb75b81c266601de7dd37382
+범위: 현재 Android 앱의 사용자 기능, 백그라운드 작업, 연결 서버 및 남아 있는 웹 실험 경로
+방법: 코드·병합 매니페스트 검토, 현재 공식 웹 문서 확인, 사용자 제공 설명회 자막, 기존 실측 기록 대조
+이번 작업은 검토이며 제품 동작을 수정하지 않았다. Figma 전체 디자인 적합성 재심사는 아니다.
+
+결론
+외부 API·자체 서버·Android 기본 API를 사용한다는 사실만으로 위반이라고 볼 수 없다.
+그러나 설명회 발언만으로 현재 앱의 모든 기능이 허용되고 정상 동작한다고 확정할 수는 없다.
+핵심 미확정 사항은 차량 원음의 별도 녹음·보관이다. 구체적인 구현 문제는 STT 완료 오류, 동의 범위 재사용, 삭제·철회 기능 부족이다.
+휴대폰에 공유하는 완성 영상에는 실제 음성이 들어 있다. '원본 M4A 미전송'을 '음성 데이터가 절대 기기 밖으로 나가지 않음'으로 설명하면 안 된다.
+
+1. 적용할 근거와 해석
+
+[S1] 사용자 제공 2026-10-28 설명회 자막
+https://www.youtube.com/watch?v=na6tSJ44pWc
+28:16 Android API와 Vehicle SDK를 함께 설명한다.
+32:30 공모전 개발 단계의 Pleos SDK 권한은 사전 승인 없이 선언하여 시험할 수 있다고 설명한다.
+37:54 외부 API와 퍼블릭 네트워크 사용을 허용한다.
+이는 Android 런타임 마이크 권한 요청이나 서비스 유형 선언을 생략해도 된다는 뜻은 아니다.
+자막 마지막의 'Activity Distraction' 뒤는 발화가 불명확하다. 이 단어만으로 주행 규제 면제를 추론할 수 없다.
+이번 검토에서 영상 전체를 다시 시청한 것은 아니며, 시간별 발언은 제공받은 자막을 근거로 했다.
+
+[S2] 공모전 개발 범위 및 기술 문의 안내 — 현재 원문 HTTP 200으로 재확인
+https://appdevchallenge.auto-hmg.io/notice/c0a1a000-2026-4923-8000-000000000008
+공개 개발 문서의 지원 범위로 개발하고, 지원되지 않는 기능은 향후 계획으로 구분하도록 안내한다.
+차량 마이크를 외부 음성 인식 서비스에 보내는 경로는 사용할 수 없고 공식 STT를 쓰도록 명시한다.
+Gleo Interface는 공모전에서 별도 검토·승인 없이 사용 가능하다.
+공모전 심사와 App Market 입점 심사는 별개이며, 2차는 에뮬레이터 시연이다.
+해석: S1의 일반적 외부 API 허용과 S2의 특정 음성 전사 제한을 함께 적용한다. 모든 외부 API가 금지된 것도, 모든 차량 데이터 전송이 허용된 것도 아니다.
+
+[S3] GitHub 제출 및 접수 추가 안내 — 현재 원문 HTTP 200으로 재확인
+https://appdevchallenge.auto-hmg.io/notice/c0a1a000-2026-4923-8000-000000000007
+자체 서버 소스 제출은 필수가 아니며 비밀값을 제외할 수 있다고 설명한다. 자체 서버 사용 자체를 금지하는 안내로 해석할 수 없다.
+
+[S4] SDK API 정책
+https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/pleos-connect-sdk-api
+동일·유사 기능의 AAOS 표준 API가 있으면 표준을 우선하고 Pleos SDK가 중복 제공하지 않는 정책을 설명한다.
+따라서 'Pleos 이름이 없는 API/라이브러리를 전부 사용하면 안 된다'는 해석은 성립하지 않는다.
+
+[S5] 하드웨어 접근 정책
+https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/platform-api-architecture
+차량 하드웨어의 직접 접근 제한, 플랫폼 API 이용, 지원 여부 확인을 요구한다.
+이 일반 문구에는 현재 MediaRecorder 방식의 차량 대화 녹음·보관 허용 여부가 구체적으로 적혀 있지 않다.
+Android MediaRecorder를 쓴다는 사실만으로 차량 센서/드라이버 직접 접근이라고 단정하지도 않는다.
+
+[S6] 공식 STT의 파일 입력 및 권한
+https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/SpeechToText/sending-audio-data
+https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/SpeechToText/declaring-permissions
+앱이 가진 PCM을 ON_DEVICE sendAudio()로 보내고 completeAudioSend()로 끝내는 기능이 문서화되어 있다.
+STT_SERVICE 권한이 필요하다. 이 문서는 PCM 인식 API의 근거이며 차량 원음 녹음·보관 자체의 포괄적 허가 근거는 아니다.
+
+[S7] 주행 규제 및 오디오
+https://document.pleos.ai/docs/pleos-only/vehicle-app-developer-guide/driving-restriction-development-guide
+https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/driving-restiction-policy
+https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/driver-distraction-guideline
+https://document.pleos.ai/docs/pleos-only/vehicle-app-developer-guide/audio-focus-development-guide/audio-focus-development
+CarUxRestrictions에 따른 기능 제한, 영상 재생 제한, 포커스 요청/상실/duck 처리를 확인했다.
+DO 미선언 앱의 주행 중 화면 사용 제한도 설명한다. 백그라운드 녹음 지속과 주행 중 화면 사용 허용은 서로 다른 문제다.
+
+[S8] 개인정보 설계와 입점 심사
+https://document.pleos.ai/docs/pleos-only/vehicle-app-planning-guide/security-privacy
+https://document.pleos.ai/docs/pleos-only/distribute/app-review-guide/review-user-privacy-security
+데이터 목적·공유·보관의 고지와 동의, 안전한 토큰 저장, 취소·삭제를 요구한다.
+입점 심사 세부 항목을 공모전의 자동 탈락 기준으로 전용하지 않는다. 아래에서는 실제 앱의 사용자 고지 및 실서비스 준비 문제로 구분한다.
+
+[S9] Gleo 공개 인터페이스
+https://document.pleos.ai/docs/pleos-only/app-integration-guide/guide/core-concepts
+https://document.pleos.ai/docs/pleos-only/app-integration-guide/guide/examples
+https://document.pleos.ai/docs/pleos-only/app-integration-guide/guide/deliver-schema
+App Schema, Intent 수신, APP_ACTION_RESPONSE 응답은 공개 문서에 있다. 일반 문서의 승인 안내에 대해서는 공모전 특례 S2를 함께 적용한다.
+
+2. 기능별 판정
+판정에서 '금지 근거 없음'은 해당 방식 자체에 관한 판단이며, 전체 앱 승인 또는 모든 환경에서의 성공을 뜻하지 않는다.
+
+01. 이름·캐릭터 선택·화면·보관함
+    Android View/파일/환경설정 기반. 외부 API 사용에 따른 문제 근거 없음.
+    주행 중 프로필 저장은 차단하지만 이름 입력창 자체의 NO_KEYBOARD 대응은 별도 보완 필요.
+    근거: TikiActivity.kt:675,698 / TikiProfile.kt / TikiViews.kt
+
+02. 운전석 탑승 감지·녹음 안내
+    Vehicle 2.3.2 Seat API로 capability 확인 후 운전석 점유를 조회·구독한다. CAR_SEATS 선언.
+    공개 SDK를 사용하는 방향으로 적합. 점유 자체로 마이크 녹음을 자동 시작하지 않는다.
+    에뮬레이터 점유 boolean 반전 호환 코드가 있어 SDK/차량 버전 확대 시 재검증 필요.
+    근거: VehicleSeatMonitor.kt:33,66 / PleosSeatOccupancyCompat.kt / BoardingCoordinator.kt
+
+03. 탑승 대기·부팅 후 안내 복원·알림
+    사용자가 켠 대기 서비스와 Android 알림/부팅 수신을 사용한다. 부팅 수신기는 마이크 녹음을 시작하지 않는다.
+    기본 API 사용 금지 근거 없음. 실차 절전·재부팅·장시간 유지 및 specialUse의 입점 적합성은 별도 검증 대상.
+    근거: BoardingService.kt / BoardingBootReceiver.kt / AndroidManifest.xml:30
+
+04. 대화 녹음·원음 저장 / '이번에는 녹음만 보관'
+    MediaRecorder.MIC → AAC/M4A, 앱 내부 noBackupFilesDir. recordOnly이면 자동 제작하지 않는다.
+    에뮬레이터 녹음·저장 성공은 실측했다. 그러나 차량 원음의 별도 취득·장기 보관에 대한 공모전 허용은 현재 자료만으로 확정할 수 없다.
+    'Android 기본 API라서 금지' 또는 '에뮬레이터에서 되므로 허용 확정' 양쪽 모두 근거 부족.
+    근거: RecordingService.kt:79,119,270 / RecordingFiles.kt / 검증 보고서 [V1]
+
+05. 녹음 일시정지·재개·종료·복구
+    일시정지 시 recorder를 stop/release하고 구간을 보관한다. 종료 후 journal로 복구·자동 제작 상태를 관리한다.
+    구현 방식의 API 금지 근거 없음. 메인 화면의 '녹음 마치기'는 주행 제한 상태에서 차단한다.
+    다만 일시정지와 알림의 종료 경로는 존재하므로 '녹음을 전혀 중단할 수 없다'는 판정은 아니다. 종료 조작 UX는 개선 권고.
+    근거: RecordingService.kt:62,185,203,291 / TikiActivity.kt:386,390 / RecordingJournal.kt
+
+06. 시동 종료 시 녹음 저장
+    Debug는 에뮬레이터 내부 127.0.0.1:8088/vehicle/power-system을 1초 간격으로 조회한다.
+    Release의 watch()는 아무 신호도 보내지 않는 구현이다.
+    에뮬레이터 시험 보조 기능이며 정식 공개 Vehicle 전원 API를 구현한 기능으로 주장하면 안 된다.
+    이 개발 도구 연결 자체를 금지로 단정하지 않는다. 실제 SDK 전원 이벤트 구현 완료와 구분해야 한다.
+    근거: src/debug/.../pleos/RecordingPowerSignals.kt:30 / src/release/.../pleos/RecordingPowerSignals.kt:6
+
+07. 원음 다시 듣기
+    MediaPlayer + AudioAttributes + AudioFocusRequest 사용. 실제 앱 재생 및 출력 신호 확인.
+    재생 API 자체 금지 근거 없음. 원음 확보·보관 정책은 04번의 미확정 사항을 공유한다.
+    근거: TikiActivity.kt:799 / pleos/MediaPlaybackFocus.kt / [V1]
+
+08. 음성 인식·자막
+    공식 SpeechToText 3.3.1, ON_DEVICE, 파일 PCM sendAudio 경로. 외부 STT fallback 없음.
+    API 선택은 공식 안내와 일치한다. 다만 문장 종료 이벤트를 놓쳐 TIMEOUT으로 판정하는 실제 결함이 남아 있다.
+    자막 시간이 확정되지 않으면 블록 전체 대사로 합치는 근사 처리도 있어 정확한 문장별 시간 보장 불가.
+    근거: tiki/PleosLocalStt.kt:26,31,62 / [S6], [V1]
+
+09. 웃음 감지·감도 조절
+    YAMNet/LiteRT 기기 추론. 기본 0.01, 선택값 0.01/0.05/0.10/0.20. 외부 AI 호출 없음.
+    Android 기본 모델은 아니지만, 외부 모델/런타임 사용 사실만을 금지하는 근거는 확인하지 못했다.
+    원음 취득 조건은 04번과 연결된다. 모델 점수는 웃음의 정확한 확률이나 보장된 성능이 아니다.
+    근거: tiki/LocalLaughter.kt / MetadataEpisodes.kt:24 / TikiActivity.kt:657
+
+10. 화자 구분·캐릭터 배정
+    기기에서 pyannote segmentation + ERes2Net/sherpa-onnx로 구간/화자를 추정한다. 클립 내부 번호이며 실제 신원 인증이 아니다.
+    이 계산 자체의 금지 근거 없음. 짧은 발화·중첩·소음의 정확도와 전력·메모리 미검증이 남는다.
+    '화자 분리 기능이 없다'는 과거 설명은 현재 커밋에는 맞지 않는다.
+    근거: tiki/LocalDiarization.kt / DiarizedCaptions.kt / MetadataEpisodes.kt
+
+11. 내 목소리 등록·확인
+    AudioRecord 16 kHz PCM은 메모리에서 처리하고 CAM++ 특징을 Keystore AES-GCM으로 기기에 저장한다.
+    모델 사용 자체 금지 근거 없음. 마이크 취득 범위는 04번과 같은 확인 대상이다.
+    현재 UI의 '다시 확인'은 촬영/처리 상태 초기화이며 기존 특징과 작업별 프로필 사본의 일괄 삭제가 아니다.
+    근거: tiki/TikiVoiceModel.kt:34,69 / LocalVoice.kt / momo/people/PeopleRepository.kt / ProductionSettings.kt:19
+
+12. 자동 하이라이트 선택·자체 백엔드
+    자막 텍스트, 시간, 웃음 점수, 길이 설정, 파일 해시를 POST /v1/episodes/metadata에 전송한다.
+    서버는 규칙으로 구간을 선택한다. 해당 경로에서 GPT/Claude/Whisper 추론을 호출하거나 전사문을 작업 DB/파일에 저장하지 않는다.
+    외부 API/자체 서버 사용 자체는 S1·S3와 모순 없음. 전사문 전송 동의는 별도이며 3절의 결함이 있다.
+    근거: tiki/MetadataEpisodes.kt:107,118 / server/momo/episodes/metadata.py
+
+13. 기존 원음 업로드 API
+    오래된 submit/submitHighlights/submitEpisode 인터페이스와 서버 구현은 남아 있다.
+    현재 앱 공통 ApiClient가 POST /v1/analyses, /v1/highlights, /v1/episodes를 인증·전송 전에 차단한다.
+    따라서 파일/함수 존재만으로 현재 앱이 원음을 업로드한다고 판단하면 안 된다.
+    이 차단을 풀고 차량 마이크 녹음을 외부 전사에 넘기는 경우에는 S2의 명시 제한에 해당한다.
+    근거: momo/network/ApiClient.kt:77 / androidTest/.../tiki/LocalMetadataTest.kt:26
+
+14. 캐릭터·배경·차량을 합친 영상 제작
+    로컬 자막/화자/웃음 분석과 제공된 그림, 원음 클립을 기기 Media3/렌더러로 합성한다.
+    1~4명 및 최대 120초 설정, 16:9 영상, 고개/입/웃음 연출은 앱의 계산·표현 기능이다.
+    API 사용 금지 근거 없음. 문맥 연출은 GPT 판단이라고 설명하면 안 된다. 자산·모델 라이선스 최종 법률 검토는 이번 범위 밖이다.
+    근거: tiki/TikiScene.kt / ProductionSettings.kt / MetadataEpisodes.kt:190 / momo/render/VideoComposer.kt
+
+15. 영상 재생·자막·검출 수치 표시
+    CarUxRestrictions.NO_VIDEO, RestrictedVideoView.start(), 실제 재생 버튼 경로에서 제한한다. 백그라운드 진입 시 재생 중단.
+    공식 규제 대응이 구현되어 있다. 통화·긴급음·내비 등 전체 오디오 경합/모든 지역·폼팩터 통과를 뜻하지 않는다.
+    근거: pleos/DrivingRestrictions.kt:15 / RestrictedVideoView.kt / TikiActivity.kt:92,219,875 / [S7]
+
+16. 주행 중 입력·설정·앱 사용
+    목소리 등록·제작 설정·프로필 저장 등에 주행 검사가 있다. 이름 EditText 자체는 NO_KEYBOARD를 직접 적용하지 않는다.
+    웃음 감도 선택 대화상자와 휴대폰 승인 콜백 등 일부 경로는 열린 뒤 주행 상태가 바뀌는 경우 재검사 보완 필요.
+    최종 병합 manifest에 distractionOptimized 메타데이터가 없다. 플랫폼이 주행 중 화면을 막을 수 있으므로 주행 중 모든 화면을 사용할 수 있다고 주장하면 안 된다.
+    S7의 규제 상태별 실제 동작 시험이 필요하다. DO를 무조건 추가하는 것을 해결책으로 제시하지 않는다.
+
+17. 설치별 인증·토큰·통신
+    임의 설치 ID/비밀값과 서버 access/refresh token. VIN·차량 고유 ID를 가져오는 인증이 아니다.
+    Keystore 암호화 저장. Release는 HTTPS 요구, Debug만 localhost/10.0.2.2 HTTP 허용.
+    자체 인증 API 사용 자체 금지 근거 없음. 차량 사용자 교체 시 전체 정보 초기화 UX는 부족하다.
+    근거: momo/network/InstallationStore.kt / ApiClient.kt:69 / debug/res/xml/network_security_debug.xml
+
+18. 휴대폰 연결·보관함 동기화
+    차량 승인 후 기존·새 완성 MP4와 자막/썸네일을 자체 서버에 복사한다. 원본 M4A·목소리 특징 업로드와 구분해야 한다.
+    MP4에는 실제 대화 음성이 포함된다. 따라서 음성 포함 데이터의 차량 외부 전송 기능이다.
+    외부 STT로 보내지 않으므로 S2의 특정 전사 금지와 동일한 행위라고 단정할 수 없다. 공유/보관 동의와 녹음 데이터 정책 검토는 필요하다.
+    근거: tiki/PhoneSync.kt:46,61 / TikiActivity.kt:770 / server/momo/phone.py
+
+19. 휴대폰에서 공유·다운로드·개별 삭제
+    별도 휴대폰 웹에서 사용자 선택 후 Web Share 또는 다운로드. 서버 영상 개별 삭제 API는 존재한다.
+    차량 앱의 재생 규제와 휴대폰 웹 기능을 혼동하지 않는다. 동승자 목소리 공유 안내가 있다.
+    연결 해제는 접근 토큰 철회이며 영상 파일 삭제가 아니다. 서버 보관 사본을 일괄 지우는 철회 흐름은 부족하다.
+    근거: server/momo/phone_web/app.js:25 / server/momo/phone.py:159,171,258
+
+20. 삭제·보관·동의 철회
+    메인 TikiActivity에는 원음/완성 영상/목소리 특징을 개별·전체 삭제하는 조작이 없다.
+    옛 RecordingsActivity의 삭제와 휴대폰 웹의 서버 사본 삭제는 존재하지만 메인 화면의 전체 데이터 삭제 기능을 대체하지 않는다.
+    분석 체크포인트, 클립, 작업별 암호화 프로필 사본까지 삭제하는 기능도 없다. 앱 데이터 초기화는 가능하나 서버 사본은 별도다.
+    실제 제품 기능 부족이다. S8의 실서비스/입점 기준상 보완 대상이며 공모전 자동 탈락 조항이라고 단정하지 않는다.
+
+21. Gleo로 목록 조회·번호 재생
+    assets/schema.json + Intent action + 공식 callback 형식을 사용한다. 공모전 Gleo 승인 예외가 명시되어 있다.
+    이 통합 방식은 사용 가능. 현재 커밋의 자연어부터 최종 재생까지 전체 재시험은 하지 않았다.
+    근거: assets/schema.json / GleoContract.kt:16,54 / HighlightsActivity.kt / [S2], [S9]
+
+22. 앱의 'Gleo 부르기' 버튼
+    녹음을 일시정지·마이크 해제 후 특정 Gleo 패키지에 VOICE_ASSIST broadcast를 보낸다.
+    공개 App Schema 연동과 별개의 에뮬레이터 버전 호환 구현이다. 확인한 공개 가이드에서 이 패키지 지정 호출의 지원 계약은 찾지 못했다.
+    성공 콜백이 없으므로 broadcast 전송 성공을 Gleo가 실제 들었다는 증거로 삼을 수 없다.
+    근거: GleoLauncher.kt:10 / TikiActivity.kt:109,432
+
+23. 네트워크 끊김·장시간 작업·상태 복원
+    WorkManager, 30초 분석 체크포인트, 8분 실행 단위 이어가기, 실패 재시도 구현.
+    서버가 꺼지면 새 하이라이트 계획을 받지 못하므로 최초 제작이 완전 오프라인인 구조는 아니다.
+    설치 앱 주소는 http://10.0.2.2:8765/이며 심사 PC에서 서버 실행이 필요하다. 기본 Release URL은 빈 값으로 별도 설정 필요.
+    장시간 2~3시간 처리 속도·발열·메모리 및 실차 suspend/resume는 미검증.
+
+24. 웹 실험실과 미사용 SDK
+    저장소의 PC 웹 실험실에는 Whisper/OpenAI STT, Claude 문맥 보정 등이 존재하지만 현재 앱의 metadata 제작 경로에서는 호출하지 않는다.
+    차량 마이크 원음을 해당 외부 전사 경로로 연결하면 S2 제한에 걸린다. 웹 실험 결과를 현재 앱의 공식 SDK 실행 결과로 설명하면 안 된다.
+    현재 앱은 NaviHelper, FusedLocation, TextToSpeech, Pleos LLM SDK를 사용하지 않는다. 날씨 API 호출도 현재 경로에는 없다.
+    근거: server/momo/audio_lab/stages.py:179 / audio_lab/claude.py:18 / topic_lab.py:140 / 앱 import·호출 검색
+
+3. 우선 수정 또는 확인해야 할 구체적 사항
+
+I-01 [지원 범위 미확정] 차량 원음 별도 녹음·보관
+외부 API 일반 허용만으로 확정할 수 없는 핵심 전제. MediaRecorder/AudioRecord를 이용한 로컬 취득·보관과 완성 영상의 선택적 전송을 기능 단위로 구분해 판단해야 한다.
+에뮬레이터 재생 성공과 공모전 허용 여부는 서로 다른 결론이다.
+
+I-02 [실제 기능 결함] STT 완료 타임아웃
+28.096초 실제 마이크 입력 녹음에서 전사 결과를 받고도 39.039초 후 TIMEOUT.
+입력 도중 발생한 종료 콜백 6개를 전체 완료 대기에서 무시하고, completeAudioSend() 뒤 오지 않는 종료 콜백을 기다린다.
+공식 SDK 선택과 별개로 자막 품질·처리 지연에 영향을 주는 수정 대상이다. [V1]
+
+I-03 [동의 흐름 결함] 녹음만 보관 동의를 서버 전송 동의로 재사용
+코드상 재현 경로:
+  1) '이번에는 녹음만 보관' 선택 → 기기에만 보관한다는 동의문 확인.
+  2) consentVersion=tikitaka-local-v2 저장.
+  3) 다음 녹음에서 해당 체크를 해제해 영상 제작 선택.
+  4) 같은 consentVersion을 확인하여 전사문 전송 동의 팝업을 건너뜀.
+  5) 정상 녹음 종료 시 metadata 제작·전송 작업 예약.
+근거: TikiRecordingConsent.kt:84 / TikiActivity.kt:397,404,415 / RecordingService.kt:270
+이번에는 실제 녹음/전송을 발생시키지 않고 분기와 문구를 대조했다. 두 목적의 동의를 별도로 기록하거나 목적 변경 시 재동의해야 한다.
+
+I-04 [데이터 관리 기능 부족] 삭제·철회와 실제 보관 범위의 차이
+메인 앱에 삭제 UI 없음. '다시 확인'은 저장 목소리 삭제가 아님. 작업별 특징 사본·분석 캐시는 자동 삭제되지 않음.
+휴대폰 연결 해제도 서버 파일을 지우지 않는다. 현재 고지에는 보관 설명이 있으나 사용자가 제공 철회/전체 삭제를 완료하는 기능은 부족하다.
+S8의 입점 규칙을 공모전 자동 탈락 사유로 확정하지 않는다.
+
+I-05 [지원 범위·완성도 표시] 시동 종료와 Gleo 실행 보조
+시동 종료는 Debug의 가상 콘솔 조회뿐이고 Release는 미구현. 'Gleo 부르기'는 공개 App Schema API와 구분되는 특정 패키지 호환 동작이다.
+심사 자료에는 확인한 에뮬레이터/SDK 버전과 구현 범위를 적어야 한다.
+
+I-06 [주행 대응 보완] 입력·설정의 상태 전환
+영상은 실제 시작 경로까지 차단하지만 모든 입력/설정에 동일한 보장이 있는 것은 아니다.
+입력창/열린 설정 창의 제한 상태 전환, 주행 중 녹음 종료 접근성, DO 미선언 플랫폼 동작을 함께 검증해야 한다.
+
+I-07 [제출 설명 오류] README와 현재 코드가 섞여 있음
+README.md:57의 과거 서버 원음 업로드 흐름, :89의 서버 분석 설명, :242의 STT SDK 미사용 설명은 현재 제작 경로와 맞지 않는다.
+오래된 세로 영상·삭제 UI·Gleo 승인 설명도 현재 화면/공모전 특례와 구분해야 한다.
+심사자가 실제보다 위험한 원음 업로드 앱 또는 미구현 앱으로 오해할 수 있으므로 제출 전에 현재 경로 기준으로 정리해야 한다.
+이 검토에서는 기존 문서 내용이나 제품 코드를 자동 수정하지 않았다.
+
+4. 실제 선언 권한과 라이브러리
+
+현재 Debug 병합 manifest의 uses-permission 14개:
+  android.permission.INTERNET
+  pleos.car.permission.CAR_SEATS
+  android.permission.RECORD_AUDIO
+  pleos.car.permission.STT_SERVICE
+  android.permission.FOREGROUND_SERVICE
+  android.permission.FOREGROUND_SERVICE_MICROPHONE
+  android.permission.FOREGROUND_SERVICE_DATA_SYNC
+  android.permission.FOREGROUND_SERVICE_SPECIAL_USE
+  android.permission.RECEIVE_BOOT_COMPLETED
+  android.permission.POST_NOTIFICATIONS
+  ai.pleos.playground.service.vehicle.VEHICLE_BINDING
+  android.permission.ACCESS_NETWORK_STATE
+  android.permission.WAKE_LOCK
+  com.example.hd_project.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+마지막 라이브러리/앱 수신기 관련 권한을 새 외부 서비스 사용으로 해석하지 않는다.
+공모전에서 Pleos SDK 사전 승인 생략과 Android 런타임 권한 허용은 별개다.
+
+주요 버전: Vehicle 2.3.2, SpeechToText 3.3.1, LiteRT 1.4.2, Media3 1.9.0, WorkManager 2.10.3.
+Android 기본 API, AndroidX 라이브러리, 외부 추론 라이브러리, Pleos SDK, 자체 HTTP API는 서로 다른 분류다.
+YAMNet/sherpa-onnx/ONNX Runtime을 Android 기본 SDK라고 설명하지 않는다.
+
+5. 검증 범위와 한계
+
+[V1] docs/RECORDING_STT_VERIFICATION_2026-11-13.txt
+Pleos Connect v2.1.0 / Android 14(API34) / x86_64 / 사용자 10.
+마이크 입력으로 합성 한국어 음성을 주입하여 저장·재생·공식 STT 인식 확인, 완료 실패 확인.
+직접 마이크를 MediaRecorder와 STT request()가 동시에 쓰면 두 시작 순서 모두 STT silenced=true였음.
+현재 제품은 파일 sendAudio 경로라 위 동시 마이크 경로와 구분한다.
+
+기준 커밋 작성 시 Android Debug 빌드·JVM 테스트 51개·서버 테스트 285개 통과 기록을 대조했다.
+이번 검토에서 같은 테스트를 다시 실행하거나 실제 사용자 데이터를 전송/삭제하지 않았다.
+네트워크 패킷 전수 캡처, 침투 시험, 모든 런타임 화면의 동적 재검증은 수행하지 않았다.
+현재 앱에 Figma의 모든 기능이 구현됐다는 보증, 실차 보증, 공모전 합격 보증을 하지 않는다.
+
+적용 규칙: API-01(실제 API/권한과 승인 범위 구분), DRIVE-01~05(주행 제약), STATE-01~04(상태/작업 복원), PERF-01 및 8.2(실측·미검증 구분).
+공모전 개발에서는 S1·S2의 사전 승인 예외가 적용되며 API-01의 마켓 승인 문구를 공모전 사전 승인 의무로 전용하지 않는다.
+서비스 지역은 한국 가정. 정식 앱 카테고리는 확정되지 않았다.
+화면 유형별 실제 FormFactorConsole 시험·실차·2~3시간 성능·공식 SDK 동시 마이크 단독 인식 전체 성공은 미검증이다.
+
+참고 원문 보관: build/reports/contest-api-audit/000000000008.html 및 .txt, 000000000007.html 및 .txt.

@@ -4,6 +4,62 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class LocalLaughterTest {
+    @Test fun shortMixedBurstSurvivesChangingDominantLabels() {
+        // Captured model scores at 14.647–15.127s; supporting labels vary across windows.
+        val raw=listOf(
+            AcousticScore(.01953125,.08203125,.05859375,.03515625,1,.015625),
+            AcousticScore(.03125,.19921875,.109375,.0703125,3,.109375),
+            AcousticScore(.03125,.1484375,.04296875,.07421875,4,.04296875))
+        val band=listOf(raw[0].copy(laugh=.03125,family=.0546875,support=2,cough=.04296875,noise=.08203125),
+            raw[1].copy(cough=.1484375,noise=.1484375),raw[2])
+        val gain=List(3){AcousticScore(.015625,.2,.1)}
+        val verdict=LaughDecision.enhanced(raw,band,gain,gain,List(3){.01},.001)
+        assertTrue(verdict.values.all { it>0 })
+        assertTrue(verdict.reasons.all { it=="mixed_laughter" })
+        assertTrue(LaughDecision.enhanced(raw,band,gain,gain,List(3){.01},.2).values.all { it==0.0 })
+    }
+
+    @Test fun sustainedMixedLaughterDoesNotHaveToOutrankOtherVocalSounds() {
+        val raw=List(4) { AcousticScore(.03125,.199,.109) }
+        val band=List(4) { AcousticScore(.03125,.15,.08) }
+        val normalized=List(4) { AcousticScore(.015625,.1,.07) }
+        assertTrue(LaughDecision.accepted(raw,band,.001).all { it==0.0 })
+        val result=LaughDecision.enhanced(raw,band,normalized,normalized,List(4){.01},.001)
+        assertTrue(result.values.all { it>0.0 })
+        assertTrue(result.reasons.all { it=="mixed_laughter" })
+        val strong=List(4) { AcousticScore(.3,.5,.4) }
+        assertTrue(LaughDecision.enhanced(strong,strong,strong,strong,List(4){.01},.1).values.all { it>0.0 })
+        val snorting=List(4) { AcousticScore(.03125,.199,.109,.0703,3,.109) }
+        val snortingBand=snorting.map { it.copy(cough=.148,noise=.148) }
+        assertTrue(LaughDecision.enhanced(snorting,snortingBand,normalized,normalized,List(4){.01},.001).values.all { it>0.0 })
+    }
+
+    @Test fun mixedRescueRejectsCoughNoiseSilenceAndUncorroboratedSpikes() {
+        val raw=List(4) { AcousticScore(.03125,.199,.109) }
+        fun verdict(a: List<AcousticScore>, b: List<AcousticScore> = a, level: Double = .01) =
+            LaughDecision.enhanced(a,b,a,b,List(a.size){level},.001).values
+        assertTrue(verdict(raw.map { it.copy(cough=.1) }).all { it==0.0 })
+        assertTrue(verdict(raw.map { it.copy(noise=.8) }).all { it==0.0 })
+        assertTrue(verdict(raw,level=.00001).all { it==0.0 })
+        assertTrue(verdict(raw.take(2)).all { it==0.0 })
+        assertTrue(verdict(raw,raw.map { it.copy(laugh=.001) }).all { it==0.0 })
+        assertTrue(verdict(raw.map { it.copy(laugh=.003) }).all { it==0.0 })
+        assertTrue(verdict(raw.map { it.copy(family=.07,support=3,cough=.7,noise=.7) }).all { it==0.0 })
+    }
+
+    @Test fun lowerThresholdAcceptsWeakLaughterButStillRejectsSilence() {
+        val weak=List(3) { AcousticScore(.003,0.0,0.0) }
+        assertTrue(LaughDecision.enhanced(weak,weak,weak,weak,List(3){.01},.01).values.all { it==0.0 })
+        assertTrue(LaughDecision.enhanced(weak,weak,weak,weak,List(3){.01},.001).values.all { it>0.0 })
+        assertTrue(LaughDecision.enhanced(weak,weak,weak,weak,List(3){.00001},.001).values.all { it==0.0 })
+        assertThrows(IllegalArgumentException::class.java) { LaughDecision.accepted(weak,weak,.0001) }
+    }
+
+    @Test fun sensitivityPresetsSurviveFloatPreferenceStorage() {
+        for(value in LaughterSensitivity.values)assertEquals(value,LaughterSensitivity.fromStored(value.toFloat().toDouble()),0.0)
+        assertEquals(.001,LaughterSensitivity.DEFAULT,0.0)
+    }
+
     @Test fun weakMultiLabelLaughterNeedsBothViewsAndConsecutiveEvidence() {
         val raw=List(2) { AcousticScore(.035,.003,.015,.08,2) }
         val band=List(2) { AcousticScore(.05,.003,.015,.1,2) }

@@ -12,8 +12,10 @@ import android.os.IBinder
 class DrivingRestrictions(context: Context, private val changed: (State) -> Unit) {
     data class State(val available: Boolean = false, val requiresOptimization: Boolean = true,
                      val activeRestrictions: Int = 0) {
-        val videoAllowed: Boolean get() = available && (!requiresOptimization ||
-            activeRestrictions and CarUxRestrictions.UX_RESTRICTIONS_NO_VIDEO == 0)
+        // App policy: viewing is available only after a fresh, unrestricted platform state.
+        // This is deliberately stricter than checking the platform's NO_VIDEO flag alone.
+        val videoAllowed: Boolean get() = available && !requiresOptimization &&
+            activeRestrictions and CarUxRestrictions.UX_RESTRICTIONS_NO_VIDEO == 0
         val animationAllowed: Boolean get() = available && !requiresOptimization
     }
 

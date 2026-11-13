@@ -38,7 +38,6 @@ class Settings(BaseSettings):
     lab_device: Literal["gpu", "cpu"] = "gpu"
     ffmpeg: str = "ffmpeg"
     ffprobe: str = "ffprobe"
-    phone_public_url: str = ""
 
     def validate_runtime(self):
         if len(self.jwt_secret) < 32:

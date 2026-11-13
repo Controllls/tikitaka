@@ -24,14 +24,22 @@ class PleosRuntimeTest {
         try {
             ActivityScenario.launch(MainActivity::class.java).use { scenario ->
                 scenario.onActivity { activity ->
-                    video=RestrictedVideoView(activity).apply { canStart={true};setOnPreparedListener { prepared.countDown() } }
+                    video=RestrictedVideoView(activity).apply {
+                        canStart={true};setAudioFocusRequest(android.media.AudioManager.AUDIOFOCUS_NONE)
+                        setOnPreparedListener { it.isLooping=true;it.setVolume(0f,0f);prepared.countDown() }
+                    }
                     activity.addContentView(video, FrameLayout.LayoutParams(320, 240))
                     video.setVideoPath(file.path)
                 }
                 assertTrue(prepared.await(8, TimeUnit.SECONDS))
                 scenario.onActivity { (video as MediaController.MediaPlayerControl).start();assertFalse(video.isPlaying) }
                 scenario.onActivity { video.playbackAllowed=true;video.start() }
-                SystemClock.sleep(400)
+                val deadline=SystemClock.elapsedRealtime()+5000
+                var advanced=false
+                while(!advanced && SystemClock.elapsedRealtime()<deadline) {
+                    scenario.onActivity { advanced=video.isPlaying && video.currentPosition>0 }
+                    if(!advanced)SystemClock.sleep(100)
+                }
                 var pausedAt=0
                 scenario.onActivity {
                     assertTrue(video.isPlaying);assertTrue(video.currentPosition>0)
@@ -39,6 +47,8 @@ class PleosRuntimeTest {
                     assertFalse(video.isPlaying)
                     pausedAt=video.currentPosition
                     (video as MediaController.MediaPlayerControl).start()
+                    (video as MediaController.MediaPlayerControl).seekTo(2400)
+                    video.resume()
                     assertFalse(video.isPlaying)
                 }
                 SystemClock.sleep(200)

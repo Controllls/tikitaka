@@ -34,7 +34,6 @@ class InstallationAuthenticationException(val statusCode: Int, message: String):
 }
 
 interface AnalysisApi {
-    @POST("v1/episodes/metadata") suspend fun planMetadata(@Body metadata: kotlinx.serialization.json.JsonObject): kotlinx.serialization.json.JsonObject
     @GET("v1/episodes/profile") suspend fun episodeProfile(): kotlinx.serialization.json.JsonObject
     @Multipart @POST("v1/episodes") suspend fun submitEpisode(@Header("Idempotency-Key") key: String,
         @Part audio: MultipartBody.Part, @Part("sha256") sha256: RequestBody, @Part("options") options: RequestBody): JobStatus
@@ -94,16 +93,7 @@ class ApiClient(context: Context, inputUrl: String) {
 
     suspend fun ensureAuthenticated() = withContext(Dispatchers.IO) { authenticate(); Unit }
 
-    suspend fun phone(path: String, method: String="GET", body: RequestBody?=null): org.json.JSONObject = withContext(Dispatchers.IO) {
-        require(path.matches(Regex("[a-zA-Z0-9/_-]+")))
-        val request=Request.Builder().url(baseUrl+"v1/phone/"+path).method(method,body ?: if(method in listOf("POST","PUT"))"{}".toRequestBody("application/json".toMediaType()) else null).build()
-        client.newCall(request).execute().use { response ->
-            if(!response.isSuccessful)throw IOException("휴대폰 연결 요청을 완료하지 못했어요. (${response.code})")
-            org.json.JSONObject(response.body!!.string())
-        }
-    }
-
-    private fun protectedPath(path: String) = path.contains("/v1/analyses") || path.contains("/v1/highlights") || path.contains("/v1/episodes") || path.contains("/v1/phone/")
+    private fun protectedPath(path: String) = path.contains("/v1/analyses") || path.contains("/v1/highlights") || path.contains("/v1/episodes")
 
     private fun authenticate(rejectedAuthorization: String? = null): Tokens = synchronized(installation.lock) {
         val state = installation.read()

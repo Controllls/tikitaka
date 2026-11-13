@@ -55,7 +55,6 @@ object EpisodeWork {
             data.put("movies", list)
         }
         check(preferences(context).edit().putString(source, data.toString()).commit())
-        if(state=="completed" || state=="failed" || state=="waiting")PhoneSync.enqueue(context)
         if(state=="completed")data.optJSONArray("movies")?.let { items ->
             repeat(items.length()) { EpisodeNotifications.completed(context,File(AnimationFiles.directory(context),items.getString(it))) }
         }
@@ -69,7 +68,8 @@ object EpisodeWork {
             if(previous == null) {
                 // Keep the chosen profile immutable for this recording's production.
                 PeopleRepository(context, "tikitaka-job-" + id(source.name)).save(TikiProfile.get(context))
-                patch(context,source.name) { it.put("engine",MetadataEpisodes.ENGINE).put("serverUrl",BuildConfig.MOMO_API_URL)
+                patch(context,source.name) { it.put("engine",MetadataEpisodes.ENGINE)
+                    .put("castMode",ProductionSettings.AUTO_CAST).put("castCount",ProductionSettings.UNKNOWN_CAST)
                     .put("laughterThreshold",MetadataEpisodes.threshold(context))
                     .put("state","queued").put("message","영상 제작을 기다리고 있어요.") }
             } else if(retry || recreate) {
@@ -77,12 +77,13 @@ object EpisodeWork {
                 if(previous.optString("engine")=="web-episodes-v1")patch(context,source.name) { it.put("retryRequested",true) }
                 if(reanalyze)patch(context,source.name) { it.put("localAttempt",it.optInt("localAttempt")+1).put("laughterThreshold",MetadataEpisodes.threshold(context)) }
                 if(recreate)patch(context,source.name) { it.put("renderGeneration",it.optInt("renderGeneration")+1)
-                    .put("castCount",ProductionSettings.count(context)).put("clipSeconds",ProductionSettings.seconds(context)) }
+                    .put("castMode",ProductionSettings.AUTO_CAST).put("castCount",ProductionSettings.UNKNOWN_CAST)
+                    .put("clipSeconds",ProductionSettings.seconds(context)) }
             }
             ProductionSettings.snapshot(context,source.name)
             if(recreate && refreshVoice) {
                 val saved=ProductionSettings.profile(context,source.name)
-                // Explicit new-version choice: retain the saved name/character and all previous movies.
+                // New versions use the current voice reference, retaining the saved name/character and old movies.
                 PeopleRepository(context,"tikitaka-job-"+id(source.name)).save(saved.copy(voice=TikiProfile.get(context).voice))
             }
             patch(context,source.name) {
@@ -97,6 +98,8 @@ object EpisodeWork {
             WorkManager.getInstance(context).enqueueUniqueWork("tikitaka-"+id(source.name), policy, work).result.get()
         }
     }
+    suspend fun createAutomatically(context: Context, source: File) =
+        enqueue(context,source,retry=true,recreate=true,reanalyze=true,refreshVoice=true)
     internal suspend fun continueWork(context: Context, source: String) = withContext(Dispatchers.IO) {
         val next=OneTimeWorkRequestBuilder<EpisodeWorker>().setInputData(workDataOf("source" to source))
             .setBackoffCriteria(BackoffPolicy.EXPONENTIAL,30,TimeUnit.SECONDS).build()
@@ -138,11 +141,9 @@ class EpisodeWorker(context: Context, parameters: WorkerParameters): CoroutineWo
             Result.success()
         } catch(error: CancellationException) { throw error }
         catch(error: Exception) {
-            val transient = error is java.io.IOException || (error is retrofit2.HttpException && error.code() >= 500)
-            val retry = transient && runAttemptCount < 24
-            EpisodeWork.update(context,name,if(retry) "waiting" else "failed",
-                if(retry) "서버 연결을 기다리고 있어요. 연결되면 이어서 처리해요." else error.message ?: "제작에 실패했어요. 원음은 보관되어 있어요.")
-            if(retry) Result.retry() else Result.failure()
+            // Storage/model/codec errors need attention, not an indefinite network retry loop.
+            EpisodeWork.update(context,name,"failed",error.message ?: "기기에서 제작하지 못했어요. 저장 공간과 분석 상태를 확인한 뒤 다시 시도해 주세요. 원음은 보관되어 있어요.")
+            Result.failure()
         }
     }
 }

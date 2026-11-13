@@ -22,9 +22,12 @@ object AutomaticHighlights {
     private fun lock(sourceId: String) = synchronized(locks) { locks.getOrPut(sourceId) { Mutex() } }
     private fun preferences(context: Context) = context.getSharedPreferences("automatic-highlights", Context.MODE_PRIVATE)
     fun latestSource(context: Context): String? = preferences(context).getString("latest", null)
-    fun message(context: Context, sourceId: String?): String? = sourceId?.let { preferences(context).getString("message:$it", null) }
+    fun message(context: Context, sourceId: String?): String? = sourceId?.let {
+        com.example.hd_project.tiki.EpisodeWork.status(context,it)?.optString("message") ?: preferences(context).getString("message:$it", null)
+    }
     fun isPending(context: Context, sourceId: String?): Boolean = sourceId != null &&
-        preferences(context).getString("state:$sourceId", "") in listOf("pending", "uploading", "running", "waiting")
+        (com.example.hd_project.tiki.EpisodeWork.status(context,sourceId)?.optString("state") ?:
+            preferences(context).getString("state:$sourceId", "")) in listOf("queued", "pending", "uploading", "running", "waiting")
 
     /** Called only after a new recording is finalized. Existing recordings are never bulk uploaded. */
     suspend fun recordingSaved(context: Context, file: File, endpoint: String = BuildConfig.MOMO_API_URL) = withContext(Dispatchers.IO) {
@@ -41,7 +44,23 @@ object AutomaticHighlights {
     }
 
     suspend fun resume(context: Context) = withContext(Dispatchers.IO) {
-        MomoDatabase.get(context).dao().pendingHighlights().forEach { schedule(context, it.sourceId) }
+        MomoDatabase.get(context).dao().pendingHighlights().forEach {
+            migrateToLocal(context, it.sourceId)
+            WorkManager.getInstance(context).cancelUniqueWork(workName(it.sourceId)).result.get()
+        }
+    }
+
+    /** Retire persisted pre-Tiki server work without polling or uploading to the old endpoint. */
+    suspend fun migrateToLocal(context: Context, sourceId: String) = withContext(Dispatchers.IO) {
+        lock(sourceId).withLock {
+            val request = MomoDatabase.get(context).dao().highlight(sourceId) ?: return@withLock
+            if(request.state in listOf("completed", "failed", "migrated")) return@withLock
+            val file = File(RecordingFiles.directory(context), sourceId).canonicalFile
+            if(file.parentFile == RecordingFiles.directory(context).canonicalFile && file.isFile) {
+                com.example.hd_project.tiki.EpisodeWork.enqueue(context, file)
+                status(context, request.copy(state="migrated", message="기기 안에서 하이라이트와 영상을 제작합니다."))
+            } else status(context, request.copy(state="failed", message="원본 녹음을 찾을 수 없어 제작을 중단했어요."))
+        }
     }
 
     /** An explicit retry creates a new failed server job only; an active job keeps its id. */
@@ -148,16 +167,11 @@ class AutomaticHighlightWorker(context: Context, params: WorkerParameters): Coro
     override suspend fun doWork(): Result {
         val source = inputData.getString("source_id") ?: return Result.failure()
         return try {
-            // Healthy server jobs poll promptly; exponential backoff is for connectivity failures.
-            // Yield before WorkManager's execution window expires, then resume the persisted job.
-            val deadline = android.os.SystemClock.elapsedRealtime() + TimeUnit.MINUTES.toMillis(8)
-            while (android.os.SystemClock.elapsedRealtime() < deadline) {
-                if (AutomaticHighlights.syncOnce(applicationContext, source)) return Result.success()
-                delay(5_000)
-            }
-            Result.retry()
+            AutomaticHighlights.migrateToLocal(applicationContext, source)
+            Result.success()
         } catch (e: Exception) {
-            if (AutomaticHighlights.failed(applicationContext, source, e, runAttemptCount)) Result.retry() else Result.failure()
+            if(e is CancellationException)throw e
+            Result.failure()
         }
     }
 }

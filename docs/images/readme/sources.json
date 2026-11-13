@@ -1,0 +1,45 @@
+{
+  "live_access": "2026-11-14 connector reported missing edit access; using preserved exports, not verified against latest Figma",
+  "images": [
+    {
+      "file": "docs/images/readme/home-wide.png",
+      "source": "design/figma/2026-11-12/screens/home-wide.png",
+      "fileKey": "Y5hqYUqZsj6gQu1QyixBYv",
+      "nodeId": "616:3028",
+      "captured": "2026-11-12",
+      "sha256": "973154d61b12a669a74f3ac835c4d02a6f146a22a1f64ec8581f1bab416b437a"
+    },
+    {
+      "file": "docs/images/readme/home-narrow.png",
+      "source": "design/figma/2026-11-12/screens/home-narrow.png",
+      "fileKey": "Y5hqYUqZsj6gQu1QyixBYv",
+      "nodeId": "987:33476",
+      "captured": "2026-11-12",
+      "sha256": "70f6f13059146ccdec9a358f327ac8d575037e8bb1bce8c626e71168660566cc"
+    },
+    {
+      "file": "docs/images/readme/character.png",
+      "source": "design/figma/2026-11-12/screens/character.png",
+      "fileKey": "Y5hqYUqZsj6gQu1QyixBYv",
+      "nodeId": "616:3254",
+      "captured": "2026-11-12",
+      "sha256": "3d0279615a618287e31963fdc1f2f175fc071524a8e55cc19f80627411e90232"
+    },
+    {
+      "file": "docs/images/readme/library.png",
+      "source": "design/figma/2026-11-12/screens/library.png",
+      "fileKey": "Y5hqYUqZsj6gQu1QyixBYv",
+      "nodeId": "617:4200",
+      "captured": "2026-11-12",
+      "sha256": "3f0ebac25d50be7f12aaa65b05eb0e05c0ea2a41d8abeecec0c3b1073cdaf13c"
+    },
+    {
+      "file": "docs/images/readme/record-ready.png",
+      "source": "design/figma/2026-11-12/screens/record-ready.png",
+      "fileKey": "Y5hqYUqZsj6gQu1QyixBYv",
+      "nodeId": "617:3351",
+      "captured": "2026-11-12",
+      "sha256": "e101f9d295403101162e65e9cd2a7e2a2aed851b845b3bb735105bbc152b0d46"
+    }
+  ]
+}

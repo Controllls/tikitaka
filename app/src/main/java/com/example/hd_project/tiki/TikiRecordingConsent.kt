@@ -83,7 +83,7 @@ class TikiRecordingConsent(
         // Keep the real storage/transfer disclosure when adapting the Figma copy.
         body.addView(art.text(if (recordOnly)
             "이번 녹음은 기기에만 보관해요.\n동승자의 동의를 확인한 뒤 시작해 주세요."
-        else "원음은 기기에 보관하고, 전사문·웃음 구간만 서버로 보내요.\n동승자의 동의를 확인한 뒤 시작해 주세요.", 24f, color = 0xff5d5d5d.toInt()).apply {
+        else "녹음·분석·영상 제작은 모두 기기 안에서 처리해요.\n동승자의 동의를 확인한 뒤 시작해 주세요.", 24f, color = 0xff5d5d5d.toInt()).apply {
             tag = "consent_message"
             gravity = Gravity.CENTER
             maxWidth = dp(1080f)

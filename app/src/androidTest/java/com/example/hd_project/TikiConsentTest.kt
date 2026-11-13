@@ -82,7 +82,9 @@ class TikiConsentTest {
         screen(scenario) { _, root -> root.findViewWithTag<CheckBox>("record_only").isChecked = false }
         click(scenario, "record_confirm")
         screen(scenario) { _, root ->
-            assertTrue(root.findViewWithTag<TextView>("consent_message").text.contains("전사문·웃음 구간만 서버"))
+            val message=root.findViewWithTag<TextView>("consent_message").text
+            assertTrue(message.contains("모두 기기 안에서 처리"))
+            assertFalse(message.contains("서버"))
             capture(root, "live-auto")
         }
         click(scenario, "nav_settings")

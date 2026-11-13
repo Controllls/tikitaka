@@ -1,0 +1,54 @@
+주행 중 영상 잠금 적용·검증 — 2026-11-14
+
+변경한 화면과 기능
+- 에피소드 플레이어: 주행 제한 시 영상 재생을 중단하고 오디오 포커스를 반환한다.
+- 영상·자막 위에 불투명 안내 화면을 덮고 재생 버튼, 빠른 재생, 탐색 막대, 진단/자막 설정을 비활성화한다.
+- '주행 중에는 영상을 볼 수 없어요. 주차 후 재생 버튼을 눌러 주세요.'를 표시한다.
+- 차량 상태 미확인/연결 끊김에는 상태 확인 안내를 표시하고 잠금을 유지한다.
+- RestrictedVideoView의 start/seekTo/resume을 모두 제한한다. 기존 별도 영상 화면에도 공통 적용된다.
+- 주차 상태로 돌아오면 조작을 허용하되 자동으로 재생하지 않는다.
+- 앱 화면을 나가면 영상 플레이어를 해제하고, 돌아오면 저장된 재생 위치와 새 차량 제한 상태로 다시 준비한다.
+- 원본 녹음 재생 기능과 녹음/영상 제작 파이프라인은 이번 변경 대상이 아니다.
+
+공식 요구와 프로젝트 정책 구분
+- 공식 요구: CarUxRestrictionsManager의 현재 상태와 변경 콜백을 사용해 기능별 제한을 반영한다.
+  Pleos의 영상 예시는 requiresDistractionOptimization과 UX_RESTRICTIONS_NO_VIDEO를 함께 확인한다.
+  근거: https://document.pleos.ai/docs/pleos-only/vehicle-app-developer-guide/driving-restriction-development-guide
+- 프로젝트 정책: 이번 요청에 따라 상태 확인 완료, requiresOptimization=false,
+  NO_VIDEO 플래그 없음의 세 조건을 모두 만족해야 영상 시청을 허용한다.
+  공식 예시보다 넓게 잠그는 앱 정책이며 Pleos의 모든 앱에 강제되는 규칙으로 설명하지 않는다.
+- 속도/기어 자체를 앱에서 임의 계산하는 대신 플랫폼이 판단한 제한 상태를 사용한다.
+- Virtual Console HTTP 요청은 기기 테스트의 입력을 바꾸는 용도다. 제품 코드의 제한 판단은 공개 AAOS API를 사용하며 새 권한이나 SDK를 추가하지 않았다.
+
+검증 환경 및 결과
+- 기존 사용자 자료가 있는 emulator-5554 / Pleos Connect v2.1.0 / Android API 34 / user 10.
+- 가로형 앱 창 1682 × 1210 dp. 다른 화면 프리셋은 이번에 재검증하지 않았다.
+- SDK: minSdk 28, compile/target 37, Vehicle 2.3.2. 차량 UX 제한은 Android Car 라이브러리.
+- 단위 테스트 72개 통과. 미확인/주행 최적화/NO_VIDEO/주차 상태 판정 포함.
+- 기기 테스트 2개 통과: 실제 VideoView 컨트롤러 우회 차단, 콘솔 입력부터 앱 UI/재생까지의 전환 시험.
+- Park에서 재생 → Drive/30km/h 입력 → 실제 CarUxRestrictions DO=true, flags=80(0x50) 수신.
+- 주행 입력 시작부터 앱 차단 확인까지 456ms. 단일 에뮬레이터 측정값이며 실차 성능 보장이 아니다.
+- 제한 중 직접 start/seekTo/resume 호출에도 재생/위치 변경이 차단됐다.
+- 백그라운드 왕복 및 Activity 재생성 후에도 잠금이 유지됐다.
+- Drive 상태에서 속도만 0으로 내리면 계속 잠겼다. Park로 바꾼 뒤 수동 재생이 가능했다.
+- 주차 전환 및 연결 복구 시 자동 재생하지 않음을 확인했다.
+- 재생 위치 복원과 플랫폼 구독 해제 시 잠금도 통과했다.
+- 테스트 종료 후 원래 콘솔 기어/속도를 복원하고 시험용 heartbeat 연결을 해제했다.
+- 기존 녹음/영상 관련 파일 157개 SHA-256 일치. 기존 파일 삭제/변경 없음.
+- debug/release 빌드 및 release 필수 Lint 통과. 기존 에뮬레이터에 수정 debug APK 설치 후 앱 실행.
+- 최초 시험의 재생 시작 대기/테스트 콘솔 값 복원 오류를 수정하고 재검증했다.
+  빌드 중 저장 공간 오류 후 여유 공간을 확인하고 Kotlin 전체 컴파일로 성공을 확인했다.
+
+적용 규칙 및 미검증
+- DRIVE-01/02/03, STATE-01/04, API-01 적용. 출력 영상 px와 앱 창 dp는 변경하지 않았다.
+- 앱 카테고리/지역: 한국어 차량 엔터테인먼트 및 현재 운전자 디스플레이를 기준으로 작업했다.
+- 실차 신호/반응 시간, 별도 동승자 디스플레이, 모든 12개 창 프리셋, 전체 앱 성능 및 마켓 권한 승인은 미검증.
+- 검증 로그/실측 JSON/차단 화면/원본 보존 결과: build/reports/driving-video-2026-11-14/.
+
+주요 변경 파일
+- app/src/main/java/com/example/hd_project/pleos/DrivingRestrictions.kt
+- app/src/main/java/com/example/hd_project/pleos/RestrictedVideoView.kt
+- app/src/main/java/com/example/hd_project/tiki/TikiActivity.kt
+- app/src/test/java/com/example/hd_project/DrivingRestrictionsTest.kt
+- app/src/androidTest/java/com/example/hd_project/PleosRuntimeTest.kt
+- app/src/androidTest/java/com/example/hd_project/tiki/DrivingVideoTest.kt

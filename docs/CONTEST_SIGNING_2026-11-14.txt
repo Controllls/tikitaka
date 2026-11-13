@@ -1,0 +1,53 @@
+티키타카 배포용 서명키
+
+사용자의 새 키 생성 요청에 따라 전용 키를 생성했다.
+alias: tikitaka-release
+인증서 subject: CN=TikiTaka Release
+RSA 3072-bit / SHA256withRSA / 유효기간 10000일
+인증서 SHA256:
+236430536cfdc91c4136c580ce4c373c9b07d0fdc75b047a647a830d4ecf1aea
+
+이 인증서는 자체 서명이며 실명 인증·공모전 승인·SDK 이용 승인을 의미하지 않는다.
+서명 검증용 인증서는 APK에 포함된다. 비밀키와 비밀번호를 심사자에게 전달하지 않는다.
+비밀키는 Git 저장소 밖 사용자 비공개 디렉터리에 보관했다.
+비밀번호는 Windows DPAPI로 암호화했고 디렉터리 ACL을 현재 사용자와 SYSTEM으로 제한했다.
+암호화 파일은 같은 Windows 사용자·컴퓨터에서만 복호화할 수 있다.
+Windows 재설치 또는 다른 PC 이전 전에 별도 비밀번호 관리자와 안전한 키 백업이 필요하다.
+
+다음 APK 서명:
+.\tools\sign-contest-apk.ps1
+기존 키가 있으므로 -CreateKey를 다시 지정하지 않는다.
+도구는 키·비밀번호가 있으면 덮어쓰지 않고 중단한다.
+
+초기 서명 APK는 서명 검증에는 통과했지만 실제 Pleos v2.1.0 / API34에서
+WorkManager 초기화 중 Kotlin 클래스 IllegalAccessError로 실행에 실패했다.
+실패 로그: build/submission/release-initial-startup-crash.txt.
+해당 APK는 제출하지 않으며 별도 로컬 진단 아카이브로 보존했다.
+app/build.gradle.kts의 release 부분 최적화를 비활성화해 재빌드한다.
+서명 성공, APK 설치 성공, 앱 실행 성공, 기능 검증은 각각 별도 항목이다.
+
+검증 환경은 TikiTaka_Submission이라는 별도 에뮬레이터이며 기존 앱을 삭제하지 않았다.
+공간 부족으로 테스트 AVD와 생성된 app/build 파일을 D:/CodexArtifacts/ 아래에 보관한다.
+app/build는 D 드라이브 빌드 디렉터리로 연결한 junction이며 Git 추적 대상이 아니다.
+원본 녹음·영상·분석 자료와 소스는 이 작업에서 삭제하지 않았다.
+
+수정 후 검증 결과
+release 최적화 비활성화 및 전체 재컴파일 후 빌드 성공 (3분 18초, 52 tasks 실행).
+Lint: 오류 0, 경고 86.
+최종 서명 APK: build/submission/tikitaka_release.apk, 302571117 bytes.
+SHA256: c96ad9328d8300901a8fd91976b1c971e962497b04ff54405a6957c0b7fb78dd
+apksigner verify 성공, 동일 인증서 유지, zipalign 16KB 검사 성공.
+emulator-5560 / Pleos Connect v2.1.0 / Android 14 API34 / user10에 설치 성공.
+공개 launcher com.example.hd_project/.MainActivity 실행 성공.
+adb am start: TotalTime 1959ms / WaitTime 2005ms (WARM 표시, 성능 벤치마크 아님).
+PID 1307 유지 및 dumpsys에서 resumed/visible/current focus 상태 확인.
+기존 초기 오류가 발생한 WorkManager 시작 경로를 통과했다.
+최종 APK의 녹음·모델 다운로드·분석·영상 저장 전체 흐름과 실차 동작은 미검증.
+기존 단위 테스트 72개 통과 기록은 앞선 빌드의 캐시 결과이며 이번 수정 후 재실행하지 않았다.
+
+검증 한계 추가:
+새 에뮬레이터에서 screencap이 응답하지 않아 캡처 프로세스를 종료했다.
+화면 파일 pull에서 I/O 오류가 발생해 시각 검증·스크린샷 획득은 완료하지 못했다.
+이후 user10을 명시해 재실행하고 새 PID 19077을 확인했다.
+새 환경의 시스템 서비스 오류도 관찰되어 장시간 UI 안정성은 통과로 표시하지 않는다.
+이번 결과는 서명·설치·앱 프로세스 실행 확인이며 전체 제품 검증을 의미하지 않는다.

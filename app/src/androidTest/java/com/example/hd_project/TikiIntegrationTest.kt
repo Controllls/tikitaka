@@ -211,7 +211,7 @@ class TikiIntegrationTest {
         val report=JSONArray();val folder=File(context.filesDir,"tikitaka-validation").apply { mkdirs() }
         try { ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             val filter=InstrumentationRegistry.getArguments().getString("layoutScreens")?.split(",")
-            for((preset,size) in presets)for(screen in listOf("home","character","library","recordings","settings","voice","voice-error","voice-success","voice-recording","profile","microphone","progress","saved","phone","name","privacy").filter { filter==null || it in filter }) {
+            for((preset,size) in presets)for(screen in listOf("home","character","library","recordings","settings","voice","voice-error","voice-success","voice-recording","profile","microphone","progress","saved","name","privacy").filter { filter==null || it in filter }) {
                 val actual=if(screen=="recordings")"library" else if(screen.startsWith("voice"))"voice" else screen
                 if(screen in listOf("home","character","library","recordings","settings")) {
                     click(scenario,"nav_${if(screen=="recordings")"library" else screen}")

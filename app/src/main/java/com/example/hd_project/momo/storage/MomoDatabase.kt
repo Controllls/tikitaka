@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao interface MomoDao {
     @Upsert suspend fun putHighlight(value: HighlightRequest)
     @Query("SELECT * FROM highlight_requests WHERE sourceId = :id") suspend fun highlight(id: String): HighlightRequest?
-    @Query("SELECT * FROM highlight_requests WHERE state NOT IN ('completed', 'failed')") suspend fun pendingHighlights(): List<HighlightRequest>
+    @Query("SELECT * FROM highlight_requests WHERE state NOT IN ('completed', 'failed', 'migrated')") suspend fun pendingHighlights(): List<HighlightRequest>
     @Query("DELETE FROM highlight_requests WHERE sourceId = :id") suspend fun deleteHighlight(id: String)
     @Query("SELECT * FROM projects ORDER BY updatedAt DESC") fun observeProjects(): Flow<List<ProjectEntity>>
     @Query("SELECT * FROM projects WHERE id = :id") suspend fun project(id: String): ProjectEntity?

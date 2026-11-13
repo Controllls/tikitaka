@@ -1,0 +1,44 @@
+Virtual Console 앱 연결 확인 — 2026-11-14
+
+변경한 기능 및 환경
+- PC http://127.0.0.1:8088/ 접속 실패 원인은 ADB 포트 포워딩이 사라진 상태였다.
+- emulator-5554의 tcp:8088을 PC tcp:8088에 연결했다.
+- 현재 소스의 debug APK를 기존 앱에 업데이트하고 앱 홈 화면을 다시 열었다.
+- README의 기본 콘솔 주소를 8088로 맞추고 재연결 방법을 기록했다.
+- 이번 작업에서 앱 기능 코드나 차량 SDK 권한을 추가하지 않았다.
+
+프로젝트 구현 구분
+- PC 브라우저 → ADB forward → 에뮬레이터 내부 Virtual Console 구조다.
+- 좌석 신호는 기존 Pleos Vehicle SDK로 수신한다.
+- debug 앱의 시동 OFF 감지는 에뮬레이터 내부 localhost:8088의 실제 전원 상태를 읽는다.
+- 이것은 개발용 콘솔 연동이다. 별도 분석 백엔드를 연결한 것이 아니다.
+- release는 기존 공개 Android Automotive 차량 속성 감지 코드를 사용한다.
+
+적용 규칙 및 환경
+- STATE-04: 앱 화면이 멈춘 상태에서도 녹음 서비스가 OFF를 처리하는지 확인했다.
+- API-01: 기존 SDK/권한 사용 경로를 유지했다. 실제 마켓 권한 승인 여부를 이번 시험으로 확인한 것은 아니다.
+- Pleos Connect v2.1.0, Android API 34, emulator-5554 / user 10.
+- 앱 1.1 (versionCode 2), debug, minSdk 28 / targetSdk·compileSdk 37.
+- Vehicle SDK 2.3.2, SpeechToText SDK 3.3.1, OkHttp 4.12.0.
+- 현재 가로형 앱 창 1682 × 1210 dp에서만 확인했다. 전체 디스플레이는 2560 × 1440 px, 160 dpi이며 공식 프리셋 전체를 검증한 결과가 아니다.
+
+검증 방법 및 결과
+- assembleDebug, assembleDebugAndroidTest 성공.
+- /vehicle/power-system: bridge_ready=true, emulator_active=true, actual.0.state=On 확인.
+- VehicleSeatMonitor: 운전석 비어 있음(false) 신호 수신 로그 확인.
+- RecordingPowerSignalsTest 2개 통과. UI가 멈춘 상태에서 녹음 중·일시정지 중 OFF 종료를 각각 검증했다.
+- 녹음 중 OFF → 저장 완료 1,033 ms, 저장 음원 4,017 ms.
+- 일시정지 중 OFF → 저장 완료 641 ms, 저장 음원 2,205 ms.
+- 반복 OFF에 중복 저장하지 않으며, ON만으로 녹음을 시작하지 않음을 확인했다.
+- 기존 녹음·영상·하이라이트·분석 파일 297개의 SHA-256 일치. 기존 파일 삭제/변경 없음.
+- 시험용 음원은 테스트가 정리했다. 새로 생성된 시험 세션 이력 JSON 2개는 남아 있다.
+- 시험 종료 후 시동 상태 On 복원, 앱 홈 화면 실행 확인.
+- 원본 검증 결과: build/reports/console-link-2026-11-14/.
+
+유지 방법 및 미검증
+- 콘솔 브라우저를 열어 둬야 브라우저 heartbeat로 차량 신호 연결이 유지된다.
+- 최종 확인에서는 browser.active=false, clients=0으로 바뀌어 bridge_ready/emulator_active=false였다. 포트 연결과 HTTP 접속은 유지되며 콘솔 페이지를 다시 열어야 실시간 차량 신호가 재개된다.
+- 브라우저 자동 열기 명령은 실행 도구의 정책 검토에서 차단됐다. 상세 사유는 반환되지 않았다.
+- 에뮬레이터/ADB 재시작으로 포워딩이 사라지면 README의 adb forward 명령을 다시 실행한다.
+- 현재 에뮬레이터는 공개 IGNITION_STATE 속성을 지원하지 않는다. 이번 통과는 debug 콘솔 경로의 결과다.
+- 실제 차량의 release 시동 OFF, 갑작스러운 전원 차단, 다른 화면 프리셋, 전체 앱 성능은 이번 작업에서 검증하지 않았다.

@@ -1,6 +1,7 @@
 package com.example.hd_project.tiki
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.core.app.ActivityScenario
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.hd_project.*
 import com.example.hd_project.momo.storage.sha256
@@ -92,10 +93,17 @@ class LocalMetadataTest {
             }
         } finally { MetadataEpisodes.write(File(context.cacheDir,"local-metadata-probe.json"),report);source.delete() }
     }
-    @Test fun metadataServerToLocalVideoPreservesAudio()= runBlocking<Unit> {
+    @Test fun offlineMetadataToLocalVideoPreservesAudio()= runBlocking<Unit> {
         check(!RecordingStore.state.busy)
+        // Explicit operator option, also used to apply the requested tuning on the installed app.
+        InstrumentationRegistry.getArguments().getString("productionThreshold")?.toDouble()?.let {
+            MetadataEpisodes.threshold(context,it)
+            assertEquals(it,MetadataEpisodes.threshold(context),0.0)
+        }
         val source=File(RecordingFiles.directory(context),"local-e2e-${UUID.randomUUID()}.m4a")
         val report=JSONObject()
+        val started=android.os.SystemClock.elapsedRealtime()
+        report.put("unreachableBackend",BuildConfig.MOMO_API_URL=="http://127.0.0.1:1/")
         try {
             instrumentation.context.assets.open("1-73123-A-26.m4a").use { input -> source.outputStream().use { input.copyTo(it) } }
             val hash=sha256(source)
@@ -103,6 +111,7 @@ class LocalMetadataTest {
             MetadataEpisodes.run(context,source)
             val state=EpisodeWork.status(context,source.name)!!
             report.put("state",state).put("sourceHashPreserved",hash==sha256(source))
+                .put("firstMovieElapsedMs",android.os.SystemClock.elapsedRealtime()-started)
             assertEquals(hash,sha256(source));assertEquals("completed",state.getString("state"))
             assertTrue(state.getInt("laughterCount")>0)
             assertFalse("A previous recognition session must not leak into the laughter file",
@@ -121,20 +130,38 @@ class LocalMetadataTest {
             MetadataEpisodes.run(context,source)
             assertEquals("Resuming must reuse the committed movie",movieHash,sha256(movie))
             assertTrue(HighlightStore.batches(context).any { it.sourceId==source.name && it.clips.isNotEmpty() })
-            // Exercise the real UI's queued new-version path, retaining analysis and old output.
-            EpisodeWork.enqueue(context,source,retry=true,recreate=true)
-            kotlinx.coroutines.withTimeout(120_000) {
-                while(EpisodeWork.status(context,source.name)?.optString("state")!="completed") {
-                    val current=EpisodeWork.status(context,source.name)!!
-                    check(current.optString("state")!="failed") { current.optString("message") }
-                    kotlinx.coroutines.delay(500)
+            // Clicking the real new-version button must enqueue without any confirmation dialog.
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+                scenario.onActivity { activity ->
+                    TikiActivity::class.java.getDeclaredField("source").apply { isAccessible=true }.set(activity,source.name)
+                    TikiActivity::class.java.getDeclaredMethod("go",String::class.java).apply { isAccessible=true }.invoke(activity,"audio")
+                    val button=activity.window.decorView.findViewWithTag<android.view.View>("audio_produce")
+                    assertNotNull(button);assertTrue(button.performClick())
+                    button.performClick() // Repeated taps while enqueueing must not create two versions.
+                }
+                kotlinx.coroutines.withTimeout(5000) {
+                    while(EpisodeWork.status(context,source.name)?.optInt("renderGeneration")!=1)kotlinx.coroutines.delay(50)
+                }
+                kotlinx.coroutines.withTimeout(120_000) {
+                    while(EpisodeWork.status(context,source.name)?.optString("state")!="completed") {
+                        val current=EpisodeWork.status(context,source.name)!!
+                        check(current.optString("state")!="failed") { current.optString("message") }
+                        kotlinx.coroutines.delay(500)
+                    }
                 }
             }
             val recreated=EpisodeWork.status(context,source.name)!!
-            assertEquals(1,recreated.getInt("renderGeneration"));assertEquals(0,recreated.optInt("localAttempt"))
+            assertEquals(1,recreated.getInt("renderGeneration"));assertEquals(1,recreated.optInt("localAttempt"))
+            assertEquals(ProductionSettings.AUTO_CAST,recreated.getString("castMode"))
+            assertEquals(MetadataEpisodes.threshold(context),recreated.getDouble("laughterThreshold"),0.0)
             assertEquals(2,recreated.getJSONArray("movies").length())
+            val newMovie=EpisodeWork.latestMovie(context,source.name)!!
+            val info=JSONObject(File(newMovie.path+".json").readText())
+            val detected=info.getInt("speakerCount")
+            assertEquals(if(detected==0)2 else detected,info.getInt("castCount"))
+            if(detected==0)assertEquals("unknown-voice-fallback",info.getString("castAssignment"))
             assertEquals(movieHash,sha256(movie));assertEquals(hash,sha256(source))
-            report.put("recreated",recreated)
+            report.put("recreated",recreated).put("recreatedInfo",info)
         } finally {
             MetadataEpisodes.write(File(context.cacheDir,"local-metadata-e2e.json"),report)
             EpisodeWork.status(context,source.name)?.optJSONArray("movies")?.let { rows -> repeat(rows.length()) {

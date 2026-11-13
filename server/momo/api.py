@@ -31,8 +31,6 @@ async def lifespan(app):
 
 
 app = FastAPI(title="MOMO Analysis API", version="1.0.0", lifespan=lifespan)
-from .phone import install as install_phone
-install_phone(app)
 
 
 class BodyLimit:
@@ -45,7 +43,7 @@ class BodyLimit:
         total = 0
         started = False
         metadata_only = scope.get("path") == "/v1/episodes/metadata"
-        maximum = 4_000_000 if metadata_only else 155_000_000 if scope.get("path") == "/v1/phone/episodes" else settings.episode_max_audio_bytes if scope.get("path") == "/v1/episodes" else settings.max_audio_bytes
+        maximum = 4_000_000 if metadata_only else settings.episode_max_audio_bytes if scope.get("path") == "/v1/episodes" else settings.max_audio_bytes
         if metadata_only:
             # Buffer only this small JSON route before FastAPI consumes it: exceptions
             # from receive() inside JSON parsing would otherwise become a generic 400.

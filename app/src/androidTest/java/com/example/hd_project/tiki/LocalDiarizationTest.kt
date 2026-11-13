@@ -25,6 +25,8 @@ class LocalDiarizationTest {
         try {
             val result=analyze(file)
             assertEquals(1,result.speakerCount)
+            assertEquals("Automatic mode must ignore an old four-character staging setting",1,
+                ProductionSettings.renderCount(result.speakerCount,4,true))
             assertTrue(result.turns.any { it.speaker==0 })
             assertEquals(0,LocalDiarization.analyze(context,FloatArray(16000*4)).speakerCount)
             MetadataEpisodes.write(File(context.cacheDir,"diarization-single-report.json"),result.json())
@@ -41,10 +43,12 @@ class LocalDiarizationTest {
         try {
             val two=LocalDiarization.analyze(context,pcm.copyOf(13600*16))
             assertEquals(2,two.speakerCount)
+            assertEquals(2,ProductionSettings.renderCount(two.speakerCount,4,true))
             assertEquals(0,two.active(5000).single().speaker)
             assertEquals(1,two.active(9000).single().speaker)
             val four=LocalDiarization.analyze(context,pcm)
             assertEquals(4,four.speakerCount)
+            assertEquals(4,ProductionSettings.renderCount(four.speakerCount,1,true))
             MetadataEpisodes.write(File(context.cacheDir,"diarization-native-report.json"),JSONObject().put("two",two.json()).put("four",four.json()))
         } finally { pcm.fill(0f) }
     }

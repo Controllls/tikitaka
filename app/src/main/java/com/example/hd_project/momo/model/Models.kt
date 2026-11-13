@@ -58,6 +58,7 @@ val SeatLabels = listOf("운전석", "조수석", "뒷좌석 왼쪽", "뒷좌석
 @Serializable data class EventOverride(val eventId: String, val personIds: List<String>? = null,
     val kindOverride: String? = null, val acknowledged: Boolean = false)
 @Serializable data class CaptionOverride(val captionId: String, val text: String)
+@Serializable data class StoryBeat(val startUs: Long, val endUs: Long, val shot: String)
 @Serializable data class SceneProject(val projectId: String, val title: String, val audioLocalRef: String,
     val sourceAudioSha256: String, val durationUs: Long, val analysisJobId: String? = null,
     val people: List<Person> = listOf(Person("P1", "나", "driver"), Person("P2", "동행", "front_passenger")),
@@ -68,7 +69,7 @@ val SeatLabels = listOf("운전석", "조수석", "뒷좌석 왼쪽", "뒷좌석
     val fps: Int = 30, val seed: Int = 1, val presetFingerprint: String = "", val seatbeltsRef: String? = null,
     val steeringWheelRef: String? = null, val layout: CabinLayout = CabinLayout(),
     val vehicleRearRef: String? = null, val vehicleFrontRef: String? = null, val vehicleBottomRef: String? = null,
-    val burnCaptions: Boolean = true)
+    val burnCaptions: Boolean = true, val storyBeats: List<StoryBeat> = emptyList(), val mentionedPlace: String = "")
 
 data class AnalysisBundle(val result: AnalysisResult, val tracks: MotionTracks) {
     fun validate() {
