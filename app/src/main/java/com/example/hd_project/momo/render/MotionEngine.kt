@@ -11,7 +11,7 @@ class MotionEngine(private val project: SceneProject, private val analysis: Anal
     private val tracks = analysis.tracks.speakerTracks.associateBy { it.speakerId }
     private val overrides = project.eventOverrides.associateBy { it.eventId }
     fun gazeAt(personId: String,timeUs: Long): String? {
-        if(project.rendererVersion !in listOf("tikitaka-local-cast-v2","tikitaka-local-voice-v3","tikitaka-local-diagnostic-v4","tikitaka-local-laugh-v5","tikitaka-local-diarization-v6","tikitaka-local-wide-v7","tikitaka-local-story-v8") || project.people.size<2)return null
+        if(project.rendererVersion !in listOf("tikitaka-local-cast-v2","tikitaka-local-voice-v3","tikitaka-local-diagnostic-v4","tikitaka-local-laugh-v5","tikitaka-local-diarization-v6","tikitaka-local-wide-v7","tikitaka-local-story-v8","tikitaka-local-story-v9","tikitaka-local-story-v10","tikitaka-local-story-v11") || project.people.size<2)return null
         val directed=StoryDirection.frame(project,analysis,timeUs).exchangeSpeaker
         val caption=analysis.result.captions.firstOrNull { timeUs>=it.startUs && timeUs<it.endUs }
         if(directed==null && (caption==null || !Regex("[?？]|왜|어떻게|어디|누구|무슨|언제|뭐|니$|나요$|까요$").containsMatchIn(caption.text)))return null

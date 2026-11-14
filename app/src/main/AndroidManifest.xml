@@ -52,6 +52,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <!-- Only this static notice is available while driving. The player and settings remain parked-only. -->
+        <activity android:name=".tiki.DrivingPauseActivity" android:exported="false"
+            android:taskAffinity="${applicationId}.drivingNotice" android:excludeFromRecents="true">
+            <meta-data android:name="distractionOptimized" android:value="true" />
+        </activity>
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

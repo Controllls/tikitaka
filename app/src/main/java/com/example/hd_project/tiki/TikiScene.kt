@@ -6,6 +6,28 @@ import com.example.hd_project.momo.people.*
 import java.io.File
 
 object TikiScene {
+    internal fun castCount(speakers: Int, configured: Int, selfSpeaker: Int?): Int =
+        maxOf(configured,speakers+if(selfSpeaker==null)1 else 0).coerceIn(1,4)
+
+    /** The driver's appearance is fixed, but only a verified voice may animate that character. */
+    internal fun assignSpeakers(scene: SceneProject, speakers: Int, selfSpeaker: Int?, selfName: String): SceneProject {
+        val self=selfSpeaker?.takeIf { it in 0 until speakers && it in scene.people.indices }
+        val people=placeSelfAtDriver(scene.people,self)
+        val mapping=if(self!=null) (0 until speakers).mapNotNull { index ->
+            people.getOrNull(index)?.let { "performance${index+1}" to it.personId }
+        }.toMap() else (0 until speakers).mapNotNull { index ->
+            people.getOrNull(index+1)?.let { "performance${index+1}" to it.personId }
+        }.toMap()
+        return scene.copy(speakerMapping=mapping,people=people.map { person ->
+            val index=mapping.entries.firstOrNull { it.value==person.personId }?.key?.removePrefix("performance")?.toIntOrNull()?.minus(1)
+            person.copy(name=when {
+                index!=null && index==self -> "화자 ${index+1} · $selfName"
+                index!=null -> "화자 ${index+1}"
+                person.seat=="driver" -> "$selfName · 목소리 미확인"
+                else -> "대기 캐릭터"
+            })
+        })
+    }
     internal fun placeSelfAtDriver(people: List<Person>, selfSpeaker: Int?): List<Person> {
         val self=selfSpeaker?.takeIf { it in people.indices } ?: return people
         return people.mapIndexed { index,person ->

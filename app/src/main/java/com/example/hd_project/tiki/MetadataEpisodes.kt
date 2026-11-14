@@ -125,7 +125,7 @@ object MetadataEpisodes {
         for(i in 0 until clips.length()) {
             job.ensureActive()
             val clip=clips.getJSONObject(i)
-            val key="${EpisodeWork.id(source.name)}-local-${plan.getString("plan_id").take(12)}-${i+1}-story8-${settings.optInt("renderGeneration") }"
+            val key="${EpisodeWork.id(source.name)}-local-${plan.getString("plan_id").take(12)}-${i+1}-text4-${settings.optInt("renderGeneration") }"
             val input=File(root,"$key.m4a");val output=AnimationFiles.output(context,input)
             val range=withContext(Dispatchers.IO) {
                 AudioClipper.export(source,input,HighlightRange(clip.getLong("start_ms"),clip.getLong("end_ms"),clip.getDouble("score").toFloat())) { !job.isActive }
@@ -134,7 +134,7 @@ object MetadataEpisodes {
             val storyFile=File(root,"$key-story.json")
             val cachedStory=withContext(Dispatchers.IO) { runCatching {
                 DialogueStoryRules.json.decodeFromString<DialogueStory>(read(storyFile).toString())
-            }.getOrNull()?.takeIf { it.version==DialogueStoryRules.VERSION && it.model==LocalStoryModel.MODEL && it.status=="generated" } }
+            }.getOrNull()?.takeIf { it.version==DialogueStoryRules.VERSION && it.model==DialogueStoryRules.MODEL && it.status in listOf("extracted","basic") } }
             val story=cachedStory ?: run {
                 val rows=clip.getJSONArray("captions")
                 val lines=(0 until rows.length()).mapNotNull { row -> val c=rows.getJSONObject(row)
@@ -142,20 +142,11 @@ object MetadataEpisodes {
                     val b=((c.getLong("end_ms")-range.startMs)*1000).coerceIn(0,clipDuration)
                     if(b>a)StoryLine(a,b,c.getString("text")) else null
                 }
-                if(DialogueStoryRules.scenes(lines).isEmpty())DialogueStoryRules.fallback(clip.getString("title"),"no_transcript")
-                else try {
-                    LocalStoryModel.plan(context,lines,clipDuration) { EpisodeWork.update(context,source.name,"running",it) }
-                } catch(e: CancellationException) { throw e }
-                catch(e: Exception) {
-                    android.util.Log.w("MetadataEpisodes","Dialogue staging unavailable: ${e.javaClass.simpleName}")
-                    EpisodeWork.patch(context,source.name) { it.put("storyStatus","failed").put("storyModel",LocalStoryModel.MODEL) }
-                    throw IllegalStateException("대화 제목·장면을 아직 만들지 못했어요. ${e.message ?: "모델 준비 상태를 확인한 뒤 다시 시도해 주세요."} 원음과 분석은 보관되어 있어요.",e)
-                } catch(e: LinkageError) {
-                    throw IllegalStateException("대화 분석 모델을 실행하지 못했어요. 앱 업데이트 후 다시 시도해 주세요. 원음과 분석은 보관되어 있어요.",e)
-                }
+                EpisodeWork.update(context,source.name,"running","대화에서 제목을 고르고 장면을 구성해요.")
+                withContext(Dispatchers.Default) { DialogueStoryRules.plan(lines,clipDuration,clip.getString("title")) }
             }
             withContext(Dispatchers.IO) { write(storyFile,JSONObject(DialogueStoryRules.json.encodeToString(story))) }
-            if(story.status!="generated")basicStoryCount++
+            if(story.status=="basic")basicStoryCount++
             EpisodeWork.patch(context,source.name) { it.put("storyStatus",story.status).put("storyModel",story.model)
                 .put("storyElapsedMs",story.elapsedMs).put("basicStoryCount",basicStoryCount) }
             savedClips.add(SavedHighlight(input,story.title,range.startMs,range.endMs,clip.getDouble("score")))
@@ -192,7 +183,8 @@ object MetadataEpisodes {
             } finally { pcm.fill(0f) }
             job.ensureActive()
             val automatic=settings.optString("castMode")==ProductionSettings.AUTO_CAST
-            val renderCount=ProductionSettings.renderCount(diarization.speakerCount,castCount,automatic)
+            val renderCount=TikiScene.castCount(diarization.speakerCount,
+                ProductionSettings.renderCount(diarization.speakerCount,castCount,automatic),diarization.selfSpeaker)
             val castAssignment=if(automatic && diarization.speakerCount==0)"unknown-voice-fallback" else "detected-speaker-turns"
             EpisodeWork.patch(context,source.name) { it.put("detectedSpeakerCount",diarization.speakerCount)
                 .put("renderCastCount",renderCount).put("castAssignment",castAssignment) }
@@ -200,13 +192,7 @@ object MetadataEpisodes {
             val base=SceneProject(key,story.title,input.path,audioHash,clipDuration,storyBeats=story.beats,mentionedPlace=story.mentionedPlace)
             val scene=withContext(Dispatchers.IO) {
                 val staged=TikiScene.buildPerformance(context,base,profile,renderCount)
-                staged.copy(people=TikiScene.placeSelfAtDriver(staged.people,diarization.selfSpeaker).mapIndexed { index,person ->
-                    val self=diarization.selfSpeaker
-                    person.copy(name=when { index==self -> "화자 ${index+1} · ${profile.name}"
-                        index<diarization.speakerCount -> "화자 ${index+1}"
-                        automatic && diarization.speakerCount==0 -> "화자 미확정 · 캐릭터 ${index+1}"
-                        else -> "대기 캐릭터 ${index+1}" })
-                })
+                TikiScene.assignSpeakers(staged,diarization.speakerCount,diarization.selfSpeaker,profile.name)
             }
             EpisodeWork.update(context,source.name,"running","웃음·화자 진단 수치를 준비해요.")
             val diagnostics=withContext(Dispatchers.IO) {
@@ -245,7 +231,7 @@ object MetadataEpisodes {
         }
         withContext(Dispatchers.IO) { HighlightStore.saveLocal(context,source.name,plan.getString("plan_id"),savedClips) }
         EpisodeWork.update(context,source.name,"completed",when {
-            basicStoryCount>0 -> "영상이 준비됐어요. $basicStoryCount 개는 대화 연출을 사용할 수 없어 기본 제목·구도로 만들었어요."
+            basicStoryCount>0 -> "영상이 준비됐어요. $basicStoryCount 개는 확인된 대사가 없어 기본 제목·구도로 만들었어요."
             status=="complete" -> "대화에 맞춘 제목과 장면으로 영상이 준비됐어요."
             else -> "영상이 준비됐어요. 기기 음성 인식이 제한되어 자막이 일부 없을 수 있어요."
         })

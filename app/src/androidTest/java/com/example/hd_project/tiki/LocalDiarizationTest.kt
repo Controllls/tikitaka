@@ -13,6 +13,25 @@ import java.io.File
 class LocalDiarizationTest {
     private val instrumentation=InstrumentationRegistry.getInstrumentation()
     private val context=instrumentation.targetContext
+    @Test fun onlyVerifiedSelfCanMoveDriverMouthRegardlessOfSpeakingOrder() {
+        for(speakers in 1..4) for(self in listOf<Int?>(null)+List(speakers) { it }) {
+            val duration=speakers*2_000_000L
+            val turns=List(speakers) { SpeakerTurn(it*2000L,(it+1)*2000L,it,.9) }
+            val diarization=DiarizationResult(turns,speakers,speakers,0,self)
+            val count=TikiScene.castCount(speakers,speakers,self)
+            val clip=JSONObject().put("captions",JSONArray()).put("laughter",JSONArray())
+            val bundle=MetadataEpisodes.bundle(clip,"driver-test",0,duration,"a".repeat(64),count,List((duration/20000).toInt()) { .1 },diarization=diarization)
+            val scene=TikiScene.assignSpeakers(TikiScene.buildPerformance(context,
+                SceneProject("driver-test","검증","unused","a".repeat(64),duration),count=count),speakers,self,"Me")
+            val driver=scene.people.single { it.seat=="driver" }
+            val motion=MotionEngine(scene,bundle)
+            repeat(speakers) { active ->
+                val time=active*2_000_000L+500_000
+                assertEquals("Driver speech for self=$self, active=$active",active==self,motion.motionAt(driver.personId,time).mouth>0)
+                assertEquals(if(self==null && active==3)0 else 1,scene.people.count { motion.motionAt(it.personId,time).mouth>0 })
+            }
+        }
+    }
     private fun analyze(file: File): DiarizationResult {
         val samples=ArrayList<Float>()
         LaughterAnalyzer(context).decode(file,{false},{},{}) { samples.add(it) }

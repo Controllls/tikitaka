@@ -23,11 +23,61 @@ data class DiarizationResult(val turns: List<SpeakerTurn>, val speakerCount: Int
 
 /** Pyannote segmentation + ERes2Net embeddings + automatic clustering. All PCM stays on this device. */
 object LocalDiarization {
-    const val VERSION = "pyannote3-eres2net-local-v1"
+    const val VERSION = "pyannote3-eres2net-local-v2"
     const val CLUSTER_THRESHOLD = .9f
     // Project heuristics, not Pleos requirements. Weak/brief clusters remain unknown, never forced into two people.
     private const val MIN_CLUSTER_MS = 2000L
     private const val MIN_SCORE = .35
+
+    /** Keep clean portions of a turn instead of discarding it because of a brief interruption. */
+    internal fun isolatedRanges(turns: List<SpeakerTurn>, speaker: Int, durationMs: Long): List<LongRange> {
+        val boundaries=turns.flatMap { listOf(it.startMs.coerceIn(0,durationMs),it.endMs.coerceIn(0,durationMs)) }.distinct().sorted()
+        val ranges=mutableListOf<LongRange>()
+        boundaries.zipWithNext().forEach { (a,b) ->
+            val active=turns.filter { it.startMs<b && it.endMs>a }
+            if(b>a && active.isNotEmpty() && active.all { it.speaker==speaker }) {
+                val previous=ranges.lastOrNull()
+                if(previous!=null && previous.last+1==a)ranges[ranges.lastIndex]=previous.first until b
+                else ranges.add(a until b)
+            }
+        }
+        return ranges
+    }
+
+    internal fun isolatedPcm(samples: FloatArray, turns: List<SpeakerTurn>, speaker: Int): FloatArray {
+        val ranges=isolatedRanges(turns,speaker,samples.size/16L)
+        val pcm=FloatArray(ranges.sumOf { ((it.last+1-it.first)*16).toInt() })
+        var used=0
+        ranges.forEach { range ->
+            val start=(range.first*16).toInt();val end=((range.last+1)*16).toInt()
+            samples.copyInto(pcm,used,start,end);used+=end-start
+        }
+        return pcm
+    }
+
+    /** Include below-threshold rivals in the margin check, too. */
+    internal fun selectSelf(checks: Map<Int,VoiceCheck>): Int? {
+        val ranked=checks.entries.filter { it.value.score?.isFinite()==true }.sortedByDescending { it.value.score }
+        val best=ranked.firstOrNull() ?: return null
+        if(!best.value.mine)return null
+        if(ranked.size>1 && best.value.score!!-ranked[1].value.score!!<LocalVoice.MIN_MARGIN)return null
+        return best.key
+    }
+
+    internal fun resolveChecks(checks: Map<Int,VoiceCheck>): Map<Int,VoiceCheck> {
+        val self=selectSelf(checks)
+        return checks.mapValues { (speaker,check) ->
+            if(check.mine && speaker!=self)check.copy(mine=false,reason=if(self==null)"ambiguous_speakers" else "other_speaker") else check
+        }
+    }
+
+    internal fun verifySpeakers(context: Context, samples: FloatArray, turns: List<SpeakerTurn>, speakerCount: Int,
+        reference: VoiceReference?, cancelled: () -> Boolean = { false }): Map<Int,VoiceCheck> =
+        (0 until speakerCount).associateWith { index ->
+            if(cancelled())throw kotlinx.coroutines.CancellationException("화자 분석 취소")
+            val pcm=isolatedPcm(samples,turns,index)
+            try { LocalVoice.verify(context,pcm,reference) } finally { pcm.fill(0f) }
+        }
 
     // The v2.0.1 JNI looks up invoke(IIJ)Ljava/lang/Integer; an indy lambda only has the erased bridge.
     @Keep
@@ -73,29 +123,17 @@ object LocalDiarization {
             val index=supported.indexOf(row.speaker).takeIf { it>=0 && (row.confidence==-2f || score!=null && score>=MIN_SCORE) }
             if(b<=a)null else SpeakerTurn(a,b,index,score,if(index!=null)"clustered" else "insufficient_evidence")
         }
+        val candidates=verifySpeakers(context,samples,turns,supported.size,reference,cancelled)
+        val self=selectSelf(candidates)
         val checks=JSONArray()
-        val matches=mutableMapOf<Int,Double>()
-        supported.indices.forEach { index ->
-            if(cancelled())throw kotlinx.coroutines.CancellationException("화자 분석 취소")
-            // Only isolated speech is allowed into optional self-verification; overlapping voices contaminate embeddings.
-            val ranges=turns.filter { it.speaker==index && turns.none { other -> other!==it && other.startMs<it.endMs && other.endMs>it.startMs } }
-            val count=minOf(240000,ranges.sumOf { ((it.endMs-it.startMs)*16).toInt() })
-            val pcm=FloatArray(count);var used=0
-            ranges.forEach { turn ->
-                val a=(turn.startMs*16).toInt().coerceIn(0,samples.size)
-                val n=minOf(count-used,(turn.endMs*16).toInt().coerceAtMost(samples.size)-a)
-                if(n>0) { samples.copyInto(pcm,used,a,a+n);used+=n }
-            }
-            val check=try { LocalVoice.verify(context,pcm,reference) } finally { pcm.fill(0f) }
-            if(check.mine && check.score!=null)matches[index]=check.score
+        resolveChecks(candidates).forEach { (index,check) ->
+            val cleanMs=isolatedRanges(turns,index,durationMs).sumOf { it.last+1-it.first }
             turns.filter { it.speaker==index }.forEach { turn ->
                 checks.put(JSONObject().put("startMs",turn.startMs).put("endMs",turn.endMs).put("speaker",index)
-                    .put("score",check.score ?: JSONObject.NULL).put("reason",check.reason).put("mine",check.mine))
+                    .put("score",check.score ?: JSONObject.NULL).put("reason",check.reason).put("mine",check.mine)
+                    .put("cleanSpeechMs",cleanMs).put("windowScores",JSONArray(check.windowScores)))
             }
         }
-        // Ambiguous matches do not establish identity. Numbered speakers still work without enrollment.
-        val best=matches.entries.sortedByDescending { it.value }
-        val self=best.firstOrNull()?.takeIf { best.size==1 || it.value-best[1].value>=.08 }?.key
         val sortedChecks=JSONArray((0 until checks.length()).map { checks.getJSONObject(it) }.sortedBy { it.getLong("startMs") })
         return DiarizationResult(turns,supported.size,valid.map { it.speaker }.distinct().size,
             SystemClock.elapsedRealtime()-started,self,sortedChecks)

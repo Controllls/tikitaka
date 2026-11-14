@@ -17,20 +17,18 @@ import java.io.File
 
 class DialogueStoryDeviceTest {
     private val context=InstrumentationRegistry.getInstrumentation().targetContext
-    @Test fun actualOfflineModelProducesTitleAndRendersItsShots(): Unit=runBlocking {
+    @Test fun offlineRulesSetTitleAndRenderShotsWithoutAModel(): Unit=runBlocking {
         check(context.packageName.endsWith(".verification")) { "Run in the isolated verification app" }
-        check(LocalStoryModel.file(context).isFile) { "Stage the checksum-verified model before this test" }
         val lines=listOf(StoryLine(0,1_000_000,"다이어트 한다더니 치킨은 왜 시켰어?"),
             StoryLine(1_000_000,2_000_000,"닭가슴살도 닭이잖아. 같은 다이어트야."),
             StoryLine(2_000_000,3_000_000,"그럼 치즈볼은 뭐야? 운동할 때 굴리는 공이야?"))
-        val story=LocalStoryModel.plan(context,lines,3_000_000) {}
-        assertEquals("generated",story.status);assertEquals(LocalStoryModel.MODEL,story.model)
-        assertFalse(lines.first().text.startsWith(story.title))
+        val story=DialogueStoryRules.plan(lines,3_000_000)
+        assertEquals("extracted",story.status);assertEquals("none",story.model)
         assertTrue("Title must relate to this dialogue: ${story.title}",listOf("다이어트","치킨","닭","치즈","살","식단").any { it in story.title })
         assertEquals(3,story.beats.size)
         assertTrue(story.beats.any { it.shot!="wide" })
         val folder=File(context.filesDir,"story-validation").apply { mkdirs() }
-        File(folder,"model-result.json").writeText(DialogueStoryRules.json.encodeToString(story))
+        File(folder,"text-title-result.json").writeText(DialogueStoryRules.json.encodeToString(story))
         val audio=File(folder,"fixture.m4a")
         InstrumentationRegistry.getInstrumentation().context.assets.open("tiki-synthetic-3.m4a").use { input -> audio.outputStream().use { input.copyTo(it) } }
         val rows=JSONArray();lines.forEach { rows.put(JSONObject().put("start_ms",it.startUs/1000).put("end_ms",it.endUs/1000).put("text",it.text)) }
@@ -43,23 +41,22 @@ class DialogueStoryDeviceTest {
         VideoComposer.exportFile(context,VideoComposer.prepare(context,scene,bundle),movie) {}
         VideoComposer.validateMp4(movie,1280,720)
         assertEquals("Rendering must preserve the source audio",hash,com.example.hd_project.momo.storage.sha256(audio))
-        // Verify the framing code visibly changes a rendered frame, independently of an LLM's choice.
+        // The current renderer keeps the cabin fixed even when saved plans request speaker focus.
         val wide=SceneRenderer(scene.copy(storyBeats=emptyList(),mentionedPlace=""),bundle)
         val focus=SceneRenderer(scene.copy(storyBeats=listOf(StoryBeat(0,3_000_000,"speaker")),mentionedPlace=""),bundle)
         val a=Bitmap.createBitmap(1280,720,Bitmap.Config.ARGB_8888);val b=Bitmap.createBitmap(1280,720,Bitmap.Config.ARGB_8888)
         try {
             wide.draw(Canvas(a),500_000);focus.draw(Canvas(b),500_000)
-            assertFalse("The planned shot must change actual rendered pixels",a.sameAs(b))
+            assertTrue("Speaker focus must preserve the fixed cabin framing",a.sameAs(b))
             File(folder,"wide.png").outputStream().use { a.compress(Bitmap.CompressFormat.PNG,100,it) }
             File(folder,"speaker.png").outputStream().use { b.compress(Bitmap.CompressFormat.PNG,100,it) }
         } finally { wide.close();focus.close();a.recycle();b.recycle() }
     }
 
-    @Test fun nativeInferenceHonorsCancellationWithoutReturningFakeOutput() {
+    @Test fun missingTranscriptStillProducesABasicPlanWithoutDownloads() {
         check(context.packageName.endsWith(".verification"))
-        val lines=listOf(StoryLine(0,1_000_000,"오늘은 치킨을 먹자"))
-        val error=runCatching { StoryNative.generate(LocalStoryModel.file(context).path.toByteArray(),
-            DialogueStoryRules.prompt(lines).toByteArray(),DialogueStoryRules.grammar(1).toByteArray(),StoryCancellation { true }) }.exceptionOrNull()
-        assertTrue(error is IllegalStateException)
+        val story=DialogueStoryRules.plan(emptyList(),1_000_000,"웃음이 담긴 순간")
+        assertEquals("basic",story.status);assertEquals("웃음이 담긴 순간",story.title)
+        assertEquals("none",story.model);assertTrue(story.beats.isEmpty())
     }
 }

@@ -6,17 +6,20 @@ import com.k2fsa.sherpa.onnx.SpeakerEmbeddingExtractor
 import com.k2fsa.sherpa.onnx.SpeakerEmbeddingExtractorConfig
 import kotlin.math.sqrt
 
-data class VoiceCheck(val score: Double?,val mine: Boolean,val reason: String)
+data class VoiceCheck(val score: Double?,val mine: Boolean,val reason: String, val windowScores: List<Double> = emptyList())
 
 /** Local CAM++ verification, not speech-to-text or biometric authentication. Thresholds need vehicle calibration. */
 object LocalVoice {
     const val MODEL="campplus-voxceleb-16k-357a834f-v1"
     const val THRESHOLD=.65
+    const val MIN_MARGIN=.08
     const val DIMENSIONS=512
     @Synchronized fun embedding(context: Context, pcm: FloatArray): List<Double> {
         require(pcm.size>=32000) { "문장을 조금 더 길게 읽어 주세요." }
         val extractor=SpeakerEmbeddingExtractor(context.assets,SpeakerEmbeddingExtractorConfig(model="voice/campplus.onnx",numThreads=2,debug=false,provider="cpu"))
-        try {
+        return try { embedding(extractor,pcm) } finally { extractor.release() }
+    }
+    private fun embedding(extractor: SpeakerEmbeddingExtractor, pcm: FloatArray): List<Double> {
             val stream=extractor.createStream()
             try {
                 stream.acceptWaveform(pcm,16000);stream.inputFinished();check(extractor.isReady(stream)) { "목소리가 충분히 들리지 않았어요." }
@@ -24,7 +27,6 @@ object LocalVoice {
                 check(vector.size==DIMENSIONS && norm>1e-9 && norm.isFinite()) { "목소리 특징을 확인하지 못했어요." }
                 return vector.map { it/norm }
             } finally { stream.release() }
-        } finally { extractor.release() }
     }
     fun cosine(a: List<Double>,b: List<Double>)=if(a.size==b.size)a.zip(b).sumOf { (x,y)->x*y } else -1.0
     fun enroll(context: Context, pcm: FloatArray): VoiceReference {
@@ -49,18 +51,23 @@ object LocalVoice {
             start until start+width
         }.distinct()
     }
-    fun verify(context: Context, pcm: FloatArray, reference: VoiceReference?): VoiceCheck {
+    /** Strict majority, using the lower median for even counts; one noisy window cannot veto several good ones. */
+    internal fun summarize(scores: List<Double>): VoiceCheck {
+        if(scores.isEmpty() || scores.any { !it.isFinite() })return VoiceCheck(null,false,"inference_error")
+        val score=scores.sorted()[(scores.size-1)/2]
+        return VoiceCheck(score,score>=THRESHOLD,if(score>=THRESHOLD)"matched" else "below_threshold",scores)
+    }
+    @Synchronized fun verify(context: Context, pcm: FloatArray, reference: VoiceReference?): VoiceCheck {
         if(reference==null)return VoiceCheck(null,false,"not_enrolled")
         if(reference.modelId!=MODEL)return VoiceCheck(null,false,"model_mismatch")
         val ranges=windows(pcm.size)
         if(ranges.isEmpty())return VoiceCheck(null,false,"too_short")
         return try {
-            val scores=ranges.map { range ->
+            val extractor=SpeakerEmbeddingExtractor(context.assets,SpeakerEmbeddingExtractorConfig(model="voice/campplus.onnx",numThreads=2,debug=false,provider="cpu"))
+            try { summarize(ranges.map { range ->
                 val window=pcm.copyOfRange(range.first,range.last+1)
-                try { cosine(embedding(context,window),reference.embedding).coerceIn(-1.0,1.0) } finally { window.fill(0f) }
-            }
-            val lowest=scores.min()
-            VoiceCheck(lowest,lowest>=THRESHOLD,if(lowest>=THRESHOLD)"matched" else "below_threshold")
+                try { cosine(embedding(extractor,window),reference.embedding).coerceIn(-1.0,1.0) } finally { window.fill(0f) }
+            }) } finally { extractor.release() }
         } catch(e: kotlinx.coroutines.CancellationException) { throw e }
         catch(_: Exception) { VoiceCheck(null,false,"inference_error") }
     }

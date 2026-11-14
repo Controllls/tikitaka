@@ -11,17 +11,3 @@ The model and vocabulary are distributed without modification.
 LiteRT Interpreter runtime, Google / TensorFlow authors, Apache License 2.0.
 https://github.com/google-ai-edge/LiteRT
 The application uses the CPU interpreter through com.google.ai.edge.litert:litert:1.4.2.
-
-llama.cpp native inference runtime, MIT License (LLAMA-CPP-MIT.txt).
-https://github.com/ggml-org/llama.cpp
-Pinned tag b12360, commit 2d8a32502909ca065c41c4cf5f2fb1c427c047fc.
-The application builds CPU-only arm64-v8a/x86_64 libraries and a JNI adapter.
-Source and rebuild instructions: app/src/main/cpp/story, tools/build-story-native.ps1.
-
-Qwen3-1.7B, Qwen Team / Alibaba Cloud, Apache License 2.0 (APACHE-2.0.txt).
-https://huggingface.co/Qwen/Qwen3-1.7B
-Quantized GGUF distributed by ggml-org: https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF
-Revision daeb8e2d528a760970442092f6bf1e55c3b659eb, Qwen3-1.7B-Q4_K_M.gguf.
-SHA-256: d2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5.
-Weights are downloaded separately, verified, and used locally without modification.
-No audio, transcript, generated title or scene plan is sent to the model host.

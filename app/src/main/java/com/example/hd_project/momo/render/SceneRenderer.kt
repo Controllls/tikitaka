@@ -88,13 +88,8 @@ class SceneRenderer(val project: SceneProject, private val analysis: AnalysisBun
         canvas.drawColor(Color.TRANSPARENT,PorterDuff.Mode.CLEAR)
         val wide=project.width*9==project.height*16
         canvas.save();canvas.scale(canvas.width/(if(wide)1920f else 540f),canvas.height/(if(wide)1080f else 960f))
-        val direction=StoryDirection.frame(project,analysis,timeUs)
         canvas.save()
-        if(wide)project.people.firstOrNull { it.personId==direction.focusPersonId }?.let { person ->
-            val focus=when(person.seat) { "driver"->1530f;"front_passenger"->378f;"rear_left"->1242f;else->648f }
-            // A restrained composition change; source artwork and acoustic animation remain intact.
-            canvas.scale(1.06f,1.06f,focus,540f)
-        }
+        // Keep the cabin framing fixed; only the characters animate.
         paint.color=Color.rgb(249,248,244);paint.style=Paint.Style.FILL
         canvas.save();if(project.backgroundIsVideo)canvas.clipOutPath(window);canvas.drawPaint(paint);canvas.restore()
         if(!project.backgroundIsVideo)project.backgroundRef?.let { canvas.save();canvas.clipPath(window);car(canvas,it);canvas.restore() }

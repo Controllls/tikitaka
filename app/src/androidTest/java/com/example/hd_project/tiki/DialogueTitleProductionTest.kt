@@ -16,7 +16,7 @@ import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.io.File
 
-/** Opt-in integration check: uses the app's downloader and worker, retaining the new video and all old ones. */
+/** Opt-in integration check: runs the worker with text rules, retaining the new video and all old ones. */
 class DialogueTitleProductionTest {
     @Test fun regenerateWithAnAnalyzedTitle(): Unit = runBlocking {
         val instrumentation=InstrumentationRegistry.getInstrumentation()
@@ -46,9 +46,10 @@ class DialogueTitleProductionTest {
         assertFalse("Must preserve old movies and add a new version",movie in existing)
         val sidecar=JSONObject(File(movie.path+".json").readText())
         val story=sidecar.getJSONObject("story")
-        assertEquals("generated",story.getString("status"))
+        assertEquals("extracted",story.getString("status"))
         assertEquals(DialogueStoryRules.VERSION,story.getString("version"))
-        assertEquals(LocalStoryModel.MODEL,story.getString("model"))
+        assertEquals(DialogueStoryRules.MODEL,story.getString("model"))
+        assertFalse(File(context.noBackupFilesDir,"story-models").listFiles().orEmpty().any { it.extension=="gguf" || it.extension=="download" })
         assertEquals(story.getString("title"),sidecar.getString("title"))
         VideoComposer.validateMp4(movie,sidecar.getInt("width"),sidecar.getInt("height"))
         assertEquals(audioHash,sha256(source))

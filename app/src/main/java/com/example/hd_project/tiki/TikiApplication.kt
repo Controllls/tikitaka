@@ -14,6 +14,8 @@ class TikiApplication : Application() {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             runCatching { LocalOnlyUpgrade.apply(this@TikiApplication) }
                 .onFailure { android.util.Log.w("LocalOnlyUpgrade", "Will retry retired work cleanup at next process start", it) }
+            runCatching { RetiredStoryModelCleanup.apply(this@TikiApplication) }
+                .onFailure { android.util.Log.w("StoryModelCleanup", "Will retry obsolete model cleanup at next process start", it) }
         }
     }
 }

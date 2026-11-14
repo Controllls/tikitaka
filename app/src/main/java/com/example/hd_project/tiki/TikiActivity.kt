@@ -53,7 +53,11 @@ open class TikiActivity : AppCompatActivity() {
     private var recoveryId: String?=null
     private var recoveryMissing=false
     private var videoPoster: ImageView?=null
-    private var videoBlocker: TextView?=null
+    private var videoBlocker: TikiDrivingPauseScreen?=null
+    private var videoContent: View?=null
+    private var videoResumeRequired=false
+    private var drivingNoticeLaunched=false
+    private var pendingVideoResume=false
     private var videoGateAllowed=false
     private var playbackKey=""
     private var pendingGleo=false
@@ -105,6 +109,7 @@ open class TikiActivity : AppCompatActivity() {
         if(state.busy)runCatching {
             if(video?.isPlaying==true || player?.isPlaying==true) { video?.pause();player?.pause();focus.release();play?.text="재생" }
         }
+        if(route=="video")applyVideoRestriction(restrictions.state)
         timer?.text=formatDuration(state.durationMs());wave?.level=state.level
         if(pendingGleo && state.phase==RecordingPhase.PAUSED) {
             pendingGleo=false;handler.postDelayed({ if(visible && !GleoLauncher.requestListening(this))toast("Gleo를 실행하지 못했어요.") },300)
@@ -137,9 +142,15 @@ open class TikiActivity : AppCompatActivity() {
             val file=File(AnimationFiles.directory(this),name).canonicalFile
             if(file.parentFile==AnimationFiles.directory(this).canonicalFile && file.isFile) { movie=file.name;route="video" }
         }
+        if(savedInstanceState==null) {
+            intent.getStringExtra("tikiDestination")?.takeIf { it in listOf("home","library","character","settings") }?.let { route=it }
+            pendingVideoResume=route=="video" && intent.getBooleanExtra("resumeSelectedVideo",false)
+        }
         recoveryId=savedInstanceState?.getString("recoveryId");recoveryMissing=savedInstanceState?.getBoolean("recoveryMissing") ?: false
         position=savedInstanceState?.getInt("position") ?: 0;seenFinish=savedInstanceState?.getLong("seenFinish") ?: prefs.getLong("seenFinish",0)
+        videoResumeRequired=savedInstanceState?.getBoolean("videoResumeRequired") ?: false
         playbackKey=if(route=="audio")"audio:$source" else if(route=="video")"video:$movie" else ""
+        if(savedInstanceState==null && playbackKey.isNotEmpty())position=prefs.getInt("position:$playbackKey",0).coerceAtLeast(0)
         savedInstanceState?.getBundle("scrolls")?.let { b->b.keySet().forEach { scrolls[it]=b.getInt(it) } }
         window.decorView.setBackgroundColor(TikiDesign.background)
         root=FrameLayout(this).apply { tag="tiki_root";background=TikiDesign.shape(TikiDesign.background,40f,0xffc9cacd.toInt(),this@TikiActivity);clipToOutline=true }
@@ -208,19 +219,24 @@ open class TikiActivity : AppCompatActivity() {
         BoardingCoordinator.initialize(this)
     }
     override fun onStart() {
-        super.onStart();visible=true;restrictions.start();RecordingStore.observe(observer);BoardingCoordinator.setScreenVisible(true)
+        super.onStart();visible=true;drivingNoticeLaunched=false;restrictions.start();RecordingStore.observe(observer);BoardingCoordinator.setScreenVisible(true)
         if(route=="video" && video==null)render()
     }
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent);setIntent(intent)
         intent.getStringExtra("episodeMovie")?.let { name ->
             val file=File(AnimationFiles.directory(this),name).canonicalFile
-            if(file.parentFile==AnimationFiles.directory(this).canonicalFile && file.isFile) { movie=file.name;go("video") }
+            if(file.parentFile==AnimationFiles.directory(this).canonicalFile && file.isFile) {
+                movie=file.name;go("video");pendingVideoResume=intent.getBooleanExtra("resumeSelectedVideo",false)
+            }
+        }
+        intent.getStringExtra("tikiDestination")?.takeIf { it in listOf("home","library","character","settings") }?.let {
+            if(it=="library" && intent.getBooleanExtra("resetLibrary",false))openLibrary() else go(it)
         }
     }
     override fun onResume() { super.onResume();if(pendingStart && ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)startRecording() }
     override fun onStop() {
-        visible=false;pendingGleo=false;RecordingStore.remove(observer);restrictions.stop();BoardingCoordinator.setScreenVisible(false)
+        visible=false;pendingGleo=false;pendingVideoResume=false;RecordingStore.remove(observer);restrictions.stop();BoardingCoordinator.setScreenVisible(false)
         capturePosition()
         if(video!=null)releasePlayback() else runCatching { player?.pause() }
         focus.release();play?.text="재생"
@@ -234,6 +250,7 @@ open class TikiActivity : AppCompatActivity() {
         out.putString("voiceOrigin",voiceOrigin);out.putString("characterOrigin",characterOrigin)
         out.putString("recoveryId",recoveryId);out.putBoolean("recoveryMissing",recoveryMissing)
         out.putString("source",source);out.putString("movie",movie);out.putInt("position",position);out.putLong("seenFinish",seenFinish)
+        out.putBoolean("videoResumeRequired",videoResumeRequired)
         out.putBundle("scrolls",Bundle().apply { scrolls.forEach { (k,v)->putInt(k,v) } });super.onSaveInstanceState(out)
     }
     private fun dp(value: Float)=TikiDesign.dp(this,value)
@@ -249,7 +266,14 @@ open class TikiActivity : AppCompatActivity() {
         art.button(value,primary,action).also { put(p,it,x,y,width,88f) }
     private fun divider(p: FrameLayout,y: Float,x: Float=0f,width: Float=w) { put(p,View(this).apply { setBackgroundColor(TikiDesign.line) },x,y,width,1f) }
     private fun rememberScroll() { scrollView?.let { scrolls["$route:$tab"]=it.scrollY } }
-    private fun go(next: String) { rememberScroll();releasePlayback();position=0
+    private fun openLibrary() {
+        rememberScroll()
+        // Detach the old scroll state before go/render can save it under the default tab.
+        scrollView=null
+        tab="episodes";scrolls.remove("library:episodes");scrolls.remove("library:recordings")
+        go("library")
+    }
+    private fun go(next: String) { rememberScroll();releasePlayback();position=0;videoResumeRequired=false;pendingVideoResume=false
         playbackKey=if(next=="audio")"audio:$source" else if(next=="video")"video:$movie" else ""
         if(playbackKey.isNotEmpty())position=prefs.getInt("position:$playbackKey",0)
         if(route=="voice" && next!="voice") { pendingVoice=false;voiceModel.stopCapture() }
@@ -259,7 +283,7 @@ open class TikiActivity : AppCompatActivity() {
         if(!::root.isInitialized || root.width==0)return
         val editing = root.findFocus()?.tag == "profile_name"
         rememberScroll();capturePosition();releasePlayback();timer=null;wave=null;seek=null;play=null;mediaStatus=null;captionView=null;captions=JSONArray();scrollView=null
-        diagnosticView=null;diagnosticDetails=null;diagnosticTimeline=null;diagnosticAudioTracks=-1;quickPlay=null;videoBlocker=null;videoGateAllowed=false
+        diagnosticView=null;diagnosticDetails=null;diagnosticTimeline=null;diagnosticAudioTracks=-1;quickPlay=null;videoBlocker=null;videoContent=null;videoGateAllowed=false
         root.removeAllViews()
         val width=(root.width-root.paddingLeft-root.paddingRight)/resources.displayMetrics.density
         h=(root.height-root.paddingTop-root.paddingBottom)/resources.displayMetrics.density
@@ -291,7 +315,10 @@ open class TikiActivity : AppCompatActivity() {
             .forEachIndexed { i,(destination,label,key)->
                 val item=FrameLayout(this).apply { contentDescription=label;isFocusable=true;tag="nav_$destination"
                     background=TikiDesign.press(this@TikiActivity,TikiDesign.background,16f)
-                    setOnClickListener { if(destination=="character") { characterOrigin="character";character=TikiProfile.characters.indexOf(profile.characterId).coerceAtLeast(0) };go(destination) } }
+                    setOnClickListener {
+                        if(destination=="character") { characterOrigin="character";character=TikiProfile.characters.indexOf(profile.characterId).coerceAtLeast(0) }
+                        if(destination=="library")openLibrary() else go(destination)
+                    } }
                 put(item,art.image("home-wide",key),24f,6f,32f,32f)
                 text(item,label,0f,42f,80f,24f,16f,if(route==destination || (route=="consent" && destination=="home"))600 else if(route=="consent")500 else 400,true,
                     if(route=="consent")if(destination=="home")0xff333333.toInt() else 0xff595959.toInt() else TikiDesign.ink)
@@ -815,7 +842,8 @@ open class TikiActivity : AppCompatActivity() {
         // Figma E-02: 1120x630; N/E-02: 645x362.813. The film stays 16:9 in both app orientations.
         val vw=min(1120f,w-if(w>=900)96f else 64f);val vh=vw*9f/16f
         val videoTop=180f+diagnosticHeight
-        val c=scroll(p,maxOf(h,videoTop+vh+440f))
+        val playback=FrameLayout(this).also { put(p,it,0f,0f,w,h);videoContent=it }
+        val c=scroll(playback,maxOf(h,videoTop+vh+440f))
         heading(c,"EP. ${EpisodeWork.episodeNumber(this,file).toString().padStart(2,'0')} · ${movieTitle(file)}",back=true)
         if(diagnosticsEnabled)put(c,art.button(if(show)"진단 켜짐" else "진단 꺼짐",false) {
             prefs.edit().putBoolean("playbackDiagnostics",!show).apply();render()
@@ -889,11 +917,14 @@ open class TikiActivity : AppCompatActivity() {
             else if(restrictions.state.videoAllowed && !RecordingStore.state.busy && player?.let { focus.acquire(it) }==true) { videoPoster?.visibility=View.GONE;view.start();play?.text="일시정지" }
             else toast("주차 상태와 재생 준비를 확인해 주세요.")
         }
-        videoBlocker=TextView(this).apply {
-            tag="video_driving_blocker";gravity=Gravity.CENTER;setTextColor(Color.WHITE);textSize=24f
-            setPadding(dp(24f),dp(16f),dp(24f),dp(16f));setBackgroundColor(0xff202a34.toInt())
-            isClickable=true;isFocusable=true;accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE
-        }.also { viewport.addView(it,FrameLayout.LayoutParams(-1,-1)) }
+        videoBlocker=TikiDrivingPauseScreen(this,art,movieTitle(file),
+            onBack={ go("library") },onHome={ go("home") },onResume={
+                if(visible && restrictions.state.videoAllowed && playbackPrepared && !RecordingStore.state.busy) {
+                    videoResumeRequired=false
+                    applyVideoRestriction(restrictions.state)
+                    play?.performClick()
+                }
+            }).also { put(p,it,0f,0f,w,h) }
         applyVideoRestriction(restrictions.state)
         val original=info?.optString("source")?.takeIf { it.isNotBlank() }?.let { File(RecordingFiles.directory(this),it).canonicalFile }
         if(diagnosticsEnabled && original!=null && original.parentFile==RecordingFiles.directory(this).canonicalFile && original.isFile)
@@ -913,6 +944,7 @@ open class TikiActivity : AppCompatActivity() {
         val view=video ?: return
         val allowed=visible && state.videoAllowed
         val wasAllowed=videoGateAllowed
+        if(visible && state.available && !state.videoAllowed) { videoResumeRequired=true;pendingVideoResume=false }
         if(!allowed) {
             capturePosition();view.playbackAllowed=false;focus.release()
             play?.text="재생";quickPlay?.text="재생";captionView?.visibility=View.INVISIBLE
@@ -925,17 +957,34 @@ open class TikiActivity : AppCompatActivity() {
         videoGateAllowed=allowed
         val message=if(!state.available)"차량 상태를 확인하고 있어요.\n확인될 때까지 영상이 잠겨 있어요."
             else "주행 중에는 영상을 볼 수 없어요.\n주차 후 재생 버튼을 눌러 주세요."
-        videoBlocker?.apply { text=message;visibility=if(allowed)View.GONE else View.VISIBLE }
+        val blocked=!allowed || videoResumeRequired
+        videoBlocker?.apply {
+            update(state.available,allowed,playbackPrepared,RecordingStore.state.busy)
+            visibility=if(blocked)View.VISIBLE else View.GONE
+        }
+        videoContent?.importantForAccessibility=if(blocked)View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS else View.IMPORTANT_FOR_ACCESSIBILITY_AUTO
         mediaStatus?.text=if(allowed)"주차 중이에요. 재생 버튼을 눌러 이어서 보세요." else message.replace('\n',' ')
-        val enabled=allowed && playbackPrepared
+        val enabled=allowed && playbackPrepared && !videoResumeRequired
         listOf(play,quickPlay,seek).forEach { it?.isEnabled=enabled }
         videoPoster?.apply { isEnabled=enabled;importantForAccessibility=if(allowed)View.IMPORTANT_FOR_ACCESSIBILITY_AUTO else View.IMPORTANT_FOR_ACCESSIBILITY_NO }
         view.importantForAccessibility=if(allowed)View.IMPORTANT_FOR_ACCESSIBILITY_AUTO else View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
         listOf(diagnosticView,diagnosticDetails).forEach { it?.visibility=if(allowed)View.VISIBLE else View.INVISIBLE }
         for(tag in listOf("diagnostics_toggle","diagnostics_details_toggle","captions_toggle"))
             root.findViewWithTag<View>(tag)?.isEnabled=allowed
+        if(visible && state.available && !state.videoAllowed && !drivingNoticeLaunched) {
+            capturePosition();drivingNoticeLaunched=true
+            startActivity(Intent(this,DrivingPauseActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP).putExtra("episodeMovie",movie))
+        }
+        if(pendingVideoResume && allowed && playbackPrepared && !RecordingStore.state.busy) {
+            pendingVideoResume=false;videoResumeRequired=false
+            applyVideoRestriction(state)
+            play?.performClick()
+        }
     }
-    private fun capturePosition() { runCatching { if(playbackPrepared && !playbackSeekPending)position=video?.currentPosition ?: player?.currentPosition ?: position
+    private fun capturePosition() { runCatching {
+        // Once gated, preserve the pause snapshot: a detached VideoView reports zero after its surface is destroyed.
+        if(playbackPrepared && !playbackSeekPending && (video==null || video?.playbackAllowed==true))
+            position=player?.currentPosition ?: video?.currentPosition ?: position
         if(playbackKey.isNotEmpty())prefs.edit().putInt("position:$playbackKey",position).apply()
     } }
     private fun releasePlayback() {

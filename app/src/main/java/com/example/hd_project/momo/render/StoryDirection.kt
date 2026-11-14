@@ -2,7 +2,7 @@ package com.example.hd_project.momo.render
 
 import com.example.hd_project.momo.model.*
 
-/** An LLM selects a shot; only acoustic speaker assignments choose its subject. */
+/** Text rules select framing; only acoustic speaker assignments choose its subject. */
 object StoryDirection {
     data class Frame(val focusPersonId: String? = null, val exchangeSpeaker: String? = null)
     fun frame(project: SceneProject, analysis: AnalysisBundle, timeUs: Long): Frame {
