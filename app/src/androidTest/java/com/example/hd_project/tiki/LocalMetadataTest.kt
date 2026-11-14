@@ -65,7 +65,8 @@ class LocalMetadataTest {
         assertEquals(4,scene.people.map { it.manifestRef }.distinct().size)
         val motion=MotionEngine(scene,bundle)
         scene.people.forEach { assertEquals(0.0,motion.motionAt(it.personId,250_000).mouth,0.0) }
-        assertEquals("left",motion.gazeAt("P1",250_000));assertEquals("right",motion.gazeAt("P2",250_000))
+        assertNull(motion.gazeAt("P1",250_000)) // The speaker remains front-facing even at zero energy.
+        assertNull(motion.gazeAt("P2",250_000)) // This short question fragment does not start a listening turn.
         val bitmap=android.graphics.Bitmap.createBitmap(scene.width,scene.height,android.graphics.Bitmap.Config.ARGB_8888)
         SceneRenderer(scene,bundle).draw(android.graphics.Canvas(bitmap),250_000)
         File(context.cacheDir,"cast-four.png").outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,it) };bitmap.recycle()

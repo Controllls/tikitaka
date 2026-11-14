@@ -23,6 +23,12 @@ import androidx.core.app.NotificationCompat
 import com.example.hd_project.tiki.RecordingJournal
 import com.example.hd_project.tiki.EpisodeWork
 import com.example.hd_project.pleos.RecordingPowerSignals
+import com.example.hd_project.pleos.RecordingNavigation
+import com.example.hd_project.tiki.RecordingRoadTimeline
+import com.example.hd_project.tiki.NavigationBackgroundPolicy
+import com.example.hd_project.tiki.RoadObservation
+import kotlinx.serialization.encodeToString
+import org.json.JSONObject
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -51,6 +57,9 @@ class RecordingService : Service() {
     private var sessionFile: File? = null
     private val segments = mutableListOf<File>()
     private var powerSignals: AutoCloseable? = null
+    private var navigation: RecordingNavigation? = null
+    private val roadTimeline = RecordingRoadTimeline()
+    private var navigationSession = ""
     private var stopTrigger = "manual"
     private var shutdownRegistered = false
     private val shutdownReceiver = object : BroadcastReceiver() {
@@ -76,7 +85,7 @@ class RecordingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_PAUSE || intent?.action == ACTION_RESUME) {
             if (acceptedStart && !stopping) worker.execute {
-                if (intent.action == ACTION_PAUSE) pauseRecording()
+                if (intent.action == ACTION_PAUSE) pauseRecording(intent.getBooleanExtra(EXTRA_FOR_GLEO, false))
                 else if (paused) { paused = false; beginRecording() }
             }
             return START_NOT_STICKY
@@ -102,6 +111,8 @@ class RecordingService : Service() {
             androidx.core.content.ContextCompat.registerReceiver(this, shutdownReceiver,
                 IntentFilter(Intent.ACTION_SHUTDOWN), androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED)
             shutdownRegistered = true
+            if(com.example.hd_project.tiki.JourneyPreferences.enabled(this))
+                navigation = RecordingNavigation(this).also { it.start() }
             worker.execute { beginRecording() }
             powerSignals = RecordingPowerSignals.watch(this, sessionStartedAtMs) {
                 if (acceptedStart && !stopping && !finished) {
@@ -134,6 +145,7 @@ class RecordingService : Service() {
             pendingFile = output
             if (sessionFile == null) sessionFile = output
             RecordingJournal.active(this, output, segments, recordOnly, accumulatedMs, "recording")
+            if (navigationSession.isEmpty()) navigationSession = RecordingJournal.read(this)?.optString("sessionId").orEmpty()
             val audio = if (Build.VERSION.SDK_INT >= 31) MediaRecorder(this) else MediaRecorder()
             recorder = audio
             audio.setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -165,11 +177,13 @@ class RecordingService : Service() {
             }
             audio.prepare()
             audio.start()
+            if (accumulatedMs > 0) navigation?.refreshAfterPause()
             recorderStarted = true
             segmentStart = SystemClock.elapsedRealtime()
             startedAt = segmentStart - accumulatedMs
             if (!stopping) {
-                RecordingStore.publish(RecordingState(RecordingPhase.RECORDING, startedAt))
+                RecordingStore.publish(RecordingState(RecordingPhase.RECORDING, startedAt,
+                    location=navigation?.location() ?: RecordingLocation.DISABLED))
                 main.post {
                     if (!stopping) getSystemService(NotificationManager::class.java)
                         .notify(NOTIFICATION_ID, notification(starting = false))
@@ -191,8 +205,10 @@ class RecordingService : Service() {
             // Perceptual response without generating a fake sound level.
             val level = sqrt(peak.coerceAtLeast(0) / 32767f).coerceIn(0f, 1f)
             RecordingStore.publish(RecordingState(RecordingPhase.RECORDING, startedAt,
-                SystemClock.elapsedRealtime() - startedAt, level))
-            if (++ticks % 100 == 0 && pendingFile?.parentFile?.usableSpace
+                SystemClock.elapsedRealtime() - startedAt, level, location=navigation?.location() ?: RecordingLocation.DISABLED))
+            roadTimeline.advanceTo(SystemClock.elapsedRealtime() - startedAt, navigation?.observation() ?: RoadObservation())
+            if (++ticks % 50 == 0) checkpointNavigation()
+            if (ticks % 100 == 0 && pendingFile?.parentFile?.usableSpace
                 ?.let { it < MIN_FREE_BYTES } == true) finishRecording(R.string.recording_storage_full)
         } catch (error: Exception) {
             Log.w(TAG, "Microphone polling failed", error)
@@ -208,6 +224,7 @@ class RecordingService : Service() {
             val file = checkNotNull(pendingFile)
             if (RecordingJournal.duration(file) >= 100) segments.add(file)
             accumulatedMs += length
+            roadTimeline.advanceTo(accumulatedMs, navigation?.observation() ?: RoadObservation())
         } finally {
             if (Build.VERSION.SDK_INT >= 29) audioCallback?.let { callback ->
                 runCatching { recorder?.unregisterAudioRecordingCallback(callback) }
@@ -217,14 +234,21 @@ class RecordingService : Service() {
         }
     }
 
-    private fun pauseRecording() {
-        if (paused || finished || !recorderStarted) return
+    private fun pauseRecording(forGleo: Boolean = false) {
+        if (paused) {
+            if (forGleo) RecordingStore.publish(RecordingStore.state.copy(pausedForGleo = true))
+            return
+        }
+        if (finished || !recorderStarted) return
         try {
             samples?.cancel(false)
             releaseSegment()
+            navigation?.pause()
             paused = true
             RecordingJournal.active(this, checkNotNull(pendingFile), segments, recordOnly, accumulatedMs, "paused")
-            RecordingStore.publish(RecordingState(RecordingPhase.PAUSED, elapsedMs = accumulatedMs))
+            checkpointNavigation()
+            RecordingStore.publish(RecordingState(RecordingPhase.PAUSED, elapsedMs = accumulatedMs, pausedForGleo = forGleo,
+                location=navigation?.location() ?: RecordingLocation.DISABLED))
             main.post { getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID,
                 notification(starting = false)) }
         } catch (error: Exception) {
@@ -241,6 +265,15 @@ class RecordingService : Service() {
         worker.execute { finishRecording(reason) }
     }
 
+    private fun checkpointNavigation() {
+        if (navigationSession.isEmpty()) return
+        runCatching {
+            RecordingJournal.navigation(this, navigationSession,
+                JSONObject(NavigationBackgroundPolicy.json.encodeToString(roadTimeline.snapshot())),
+                JSONObject(NavigationBackgroundPolicy.json.encodeToString(navigation?.journey() ?: com.example.hd_project.tiki.JourneySummary())))
+        }.onFailure { Log.w(TAG, "Could not save recording road environment", it) }
+    }
+
     /** All encoder/file operations are serialized on one worker. */
     private fun finishRecording(reason: Int? = null, stopService: Boolean = true) {
         if (finished) return
@@ -255,6 +288,8 @@ class RecordingService : Service() {
         try {
             releaseSegment()
             duration = accumulatedMs
+            checkpointNavigation()
+            navigation?.close()
             if (duration >= 800 && segments.isNotEmpty()) {
                 RecordingJournal.active(this, checkNotNull(pendingFile), segments, recordOnly, duration, "saving")
                 val joined = File(checkNotNull(sessionFile).path + ".joined")
@@ -303,7 +338,8 @@ class RecordingService : Service() {
 
     private fun notification(starting: Boolean): Notification {
         val open = PendingIntent.getActivity(this, 0,
-            Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            Intent(this, com.example.hd_project.tiki.RecordingActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val stop = PendingIntent.getService(this, 1,
             Intent(this, RecordingService::class.java).setAction(ACTION_STOP),
@@ -330,6 +366,7 @@ class RecordingService : Service() {
 
     override fun onDestroy() {
         powerSignals?.close()
+        navigation?.close()
         if (shutdownRegistered) { unregisterReceiver(shutdownReceiver); shutdownRegistered = false }
         main.removeCallbacksAndMessages(null)
         samples?.cancel(false)
@@ -344,6 +381,7 @@ class RecordingService : Service() {
         const val ACTION_START = "com.example.hd_project.START_RECORDING"
         const val ACTION_STOP = "com.example.hd_project.STOP_RECORDING"
         const val ACTION_PAUSE = "com.example.hd_project.PAUSE_RECORDING"
+        const val EXTRA_FOR_GLEO = "pause_for_gleo"
         const val ACTION_RESUME = "com.example.hd_project.RESUME_RECORDING"
         const val EXTRA_RECORD_ONLY = "record_only"
         private const val CHANNEL = "conversation_recording"

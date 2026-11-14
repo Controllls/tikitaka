@@ -18,6 +18,8 @@ data class BoardingState(
     val recording: Boolean = false,
     val startFailed: Boolean = false
 ) {
+    val shouldPrompt: Boolean get() = enabled && !recording &&
+        connection == SeatConnection.READY && occupied == true && awaitingResponse
     val shouldNotify: Boolean get() = enabled && serviceRunning && !screenVisible && !recording &&
         connection == SeatConnection.READY && occupied == true && awaitingResponse
 }

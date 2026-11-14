@@ -12,6 +12,18 @@ class BoardingNotificationPolicyTest {
         assertTrue(waiting.shouldNotify)
         assertFalse(waiting.copy(screenVisible = true).shouldNotify)
     }
+    @Test fun visibleScreenCanPromptWithoutBackgroundService() {
+        assertTrue(waiting.copy(screenVisible=true,serviceRunning=false).shouldPrompt)
+        assertFalse(waiting.copy(screenVisible=true).shouldNotify)
+    }
+    @Test fun promptRequiresEnabledFreshUnansweredBoardingWithoutRecording() {
+        assertFalse(waiting.copy(enabled=false).shouldPrompt)
+        assertFalse(waiting.copy(recording=true).shouldPrompt)
+        assertFalse(waiting.copy(occupied=false).shouldPrompt)
+        assertFalse(waiting.copy(occupied=null).shouldPrompt)
+        assertFalse(waiting.copy(connection=SeatConnection.UNAVAILABLE).shouldPrompt)
+        assertFalse(waiting.copy(awaitingResponse=false).shouldPrompt)
+    }
 
     @Test fun disabledOrStoppedStandbyCannotNotify() {
         assertFalse(waiting.copy(enabled = false).shouldNotify)

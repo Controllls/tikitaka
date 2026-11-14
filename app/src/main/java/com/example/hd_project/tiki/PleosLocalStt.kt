@@ -17,19 +17,41 @@ data class LocalTranscript(val captions: List<LocalCaption>,val complete: Boolea
 /** Only documented ON_DEVICE file-input APIs. No mic request and no network fallback. */
 object PleosLocalStt {
     suspend fun recognize(context: Context, pcm: FloatArray): LocalTranscript {
+        val captions = mutableListOf<LocalCaption>()
+        var complete = true
+        var error: String? = null
+        for (window in SpeechWindows.find(pcm)) {
+            currentCoroutineContext().ensureActive()
+            val samples = pcm.copyOfRange(window.start, window.end)
+            val result = try { recognizeWindow(context, samples) } finally { samples.fill(0f) }
+            val text = result.captions.joinToString(" ") { it.text }
+            if (text.isNotBlank()) captions.add(LocalCaption(window.start / 16L, window.end / 16L, text))
+            if (!result.complete) complete = false
+            if (result.error != null) error = result.error
+            if (result.error in listOf("ON_DEVICE_ENGINE_ERROR", "PERMISSION_DENIED", "NOT_SUPPORTED_API", "UNAVAILABLE_LANGUAGE")) break
+        }
+        return LocalTranscript(captions, complete, error)
+    }
+
+    private suspend fun recognizeWindow(context: Context, pcm: FloatArray): LocalTranscript {
         val ready=CompletableDeferred<Unit>();val ended=CompletableDeferred<Unit>();val stopped=CompletableDeferred<Unit>()
         val texts=mutableListOf<String>();val epds=mutableListOf<Pair<Long,Long>>()
         val lock=Any()
         var failure: String?=null
-        var inputFinished=false
+        var pendingText=false
+        var lastTextAt=0L
         var stopping=false
         val stt=withContext(Dispatchers.Main) { SpeechToText(context.applicationContext,Mode.ON_DEVICE) }
         val listener=object: ResultListener {
-            override fun onUpdated(stt: String,completed: Boolean) { if(completed && stt.isNotBlank()) synchronized(lock) { texts.add(stt.trim()) } }
+            override fun onUpdated(stt: String,completed: Boolean) { synchronized(lock) {
+                pendingText=!completed
+                lastTextAt=android.os.SystemClock.elapsedRealtime()
+                if(completed && stt.isNotBlank()) texts.add(stt.trim())
+            } }
             override fun onUpdatedEpdData(on: Long,off: Long) { if(off>on && on>=0) synchronized(lock) { epds.add(on/32 to off/32) } }
             override fun onStartedRecognition()=Unit
             override fun onEndedRecognition() { synchronized(lock) {
-                if(stopping)stopped.complete(Unit) else if(inputFinished)ended.complete(Unit)
+                if(stopping)stopped.complete(Unit) else ended.complete(Unit)
             } }
             override fun onReady()=Unit
             override fun onUpdatedRms(rms: Double)=Unit
@@ -59,10 +81,19 @@ object PleosLocalStt {
                     // writes asynchronously and can return a previous segment late.
                     delay(100)
                 }
-                synchronized(lock) { inputFinished=true }
                 withContext(Dispatchers.Main) { stt.completeAudioSend() }
-                withTimeout(8_000) { ended.await() }
-                delay(500) // Final text/EPD may arrive on a different Binder callback.
+                val sentAt=android.os.SystemClock.elapsedRealtime()
+                withTimeout(8_000) {
+                    while(true) {
+                        val now=android.os.SystemClock.elapsedRealtime()
+                        val settled=synchronized(lock) {
+                            failure!=null || (ended.isCompleted && !pendingText &&
+                                now-sentAt>=2_000 && now-lastTextAt>=1_000)
+                        }
+                        if(settled)break
+                        delay(100)
+                    }
+                }
                 complete=synchronized(lock) { failure==null }
             }
         } catch(e: TimeoutCancellationException) { failure="TIMEOUT" }
@@ -80,7 +111,8 @@ object PleosLocalStt {
             val timed=if(exactTiming) {
                 texts.mapIndexedNotNull { i,text -> val (a,b)=epds[i];if(a<duration && b>a) LocalCaption(a,b.coerceAtMost(duration),text) else null }
             } else if(texts.isNotEmpty()) listOf(LocalCaption(0,duration,texts.joinToString(" "))) else emptyList()
-            LocalTranscript(timed,complete,failure ?: if(texts.isNotEmpty() && !exactTiming) "APPROXIMATE_TIMING" else null)
+            // Window bounds above come from the source PCM, even when SDK offsets reset to zero.
+            LocalTranscript(timed,complete,failure)
         }
     }
 }

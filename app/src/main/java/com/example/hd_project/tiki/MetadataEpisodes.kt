@@ -49,8 +49,8 @@ object MetadataEpisodes {
             it.put("engine",ENGINE).put("audioSha256",hash)
         }.getDouble("laughterThreshold")
         val attempt=EpisodeWork.status(context,source.name)?.optInt("localAttempt") ?: 0
-        val legacyRoots=listOf(3,2).map { File(context.noBackupFilesDir,"metadata-episodes/$hash/$threshold-v$it-$attempt") }
-        val root=File(context.noBackupFilesDir,"metadata-episodes/$hash/$threshold-v4-$attempt").apply { mkdirs() }
+        // Older checkpoints contain text-length timing and must not be reused for subtitles.
+        val root=File(context.noBackupFilesDir,"metadata-episodes/$hash/$threshold-v5-$attempt").apply { mkdirs() }
         val captions=JSONArray();val laughter=mutableListOf<LocalLaugh>();val warnings=mutableSetOf<String>()
         var complete=0;var blocks=0
         var unavailable: String?=null
@@ -61,20 +61,19 @@ object MetadataEpisodes {
                     while(RecordingStore.state.busy) { EpisodeWork.update(context,source.name,"waiting","녹음이 끝나면 기기 분석을 이어갈게요.");delay(2000) }
                     val end=minOf(duration,start+BLOCK);blocks++
                     val saved=File(root,"block-$start.json")
-                    val data=if(saved.isFile) read(saved) else {
+                    val cached=if(saved.isFile)read(saved).takeIf { it.optBoolean("complete") } else null
+                    val data=cached ?: run {
                         EpisodeWork.update(context,source.name,"running","기기에서 웃음·대사를 분석해요 · ${start*100/duration}%")
                         LocalLaughBlock.read(context,source,root,start,end,duration) { !job.isActive }.use { block ->
                             val analysis=block.trim(detector.analyze(block.pcm,threshold) { !job.isActive })
                             write(File(root,"laugh-trace-v3-$start.json"),JSONObject().put("source",LocalLaughter.VERSION)
                                 .put("frames",JSONArray(analysis.frames.map { PlaybackDiagnostics.frame(it) })))
-                            // Upgrade laughter independently. Explicit reanalysis advances localAttempt, so it bypasses this cache.
-                            val previous=legacyRoots.map { File(it,"block-$start.json") }.firstOrNull { it.isFile }?.let(::read)
-                            val transcript=if(previous!=null)LocalTranscript(emptyList(),previous.getBoolean("complete"),previous.optString("stt_error").takeIf { it.isNotEmpty() })
-                                else unavailable?.let { LocalTranscript(emptyList(),false,it) } ?: block.speechPcm().let { pcm ->
+                            val transcript=unavailable?.let { LocalTranscript(emptyList(),false,it) } ?: block.speechPcm().let { pcm ->
                                     try { PleosLocalStt.recognize(context,pcm) } finally { pcm.fill(0f) }
                                 }
+                            if(ProductionConnection.isTransportFailure(transcript.error))throw ProductionConnectionException(transcript.error!!)
                             if(transcript.error in listOf("ON_DEVICE_ENGINE_ERROR","PERMISSION_DENIED","NOT_SUPPORTED_API","UNAVAILABLE_LANGUAGE")) unavailable=transcript.error
-                            val texts=previous?.getJSONArray("captions") ?: JSONArray();val events=JSONArray()
+                            val texts=JSONArray();val events=JSONArray()
                             transcript.captions.forEach { c ->
                                 val a=maxOf(start,start+c.startMs);val b=minOf(end,start+c.endMs)
                                 if(b>a) texts.put(JSONObject().put("start_ms",a).put("end_ms",b).put("text",c.text.take(2000)))
@@ -84,7 +83,7 @@ object MetadataEpisodes {
                                 if(b>a) events.put(JSONObject().put("start_ms",a).put("end_ms",b).put("score",l.score))
                             }
                             JSONObject().put("captions",texts).put("laughter",events).put("complete",transcript.complete)
-                                .put("stt_error",transcript.error ?: "").put("stt_reused",previous!=null).put("detector",LocalLaughter.VERSION).also { write(saved,it) }
+                                .put("stt_error",transcript.error ?: "").put("stt_reused",false).put("detector",LocalLaughter.VERSION).also { write(saved,it) }
                         }
                     }
                     if(data.getBoolean("complete")) complete++
@@ -125,7 +124,8 @@ object MetadataEpisodes {
         for(i in 0 until clips.length()) {
             job.ensureActive()
             val clip=clips.getJSONObject(i)
-            val key="${EpisodeWork.id(source.name)}-local-${plan.getString("plan_id").take(12)}-${i+1}-text4-${settings.optInt("renderGeneration") }"
+            val background=withContext(Dispatchers.IO) { NavigationBackgrounds.select(context,source,clip.getLong("start_ms"),clip.getLong("end_ms")) }
+            val key="${EpisodeWork.id(source.name)}-local-${plan.getString("plan_id").take(12)}-${i+1}-text5-${ProductionSettings.RENDERER.substringAfterLast('-')}-${settings.optInt("renderGeneration") }-${background.fingerprint()}"
             val input=File(root,"$key.m4a");val output=AnimationFiles.output(context,input)
             val range=withContext(Dispatchers.IO) {
                 AudioClipper.export(source,input,HighlightRange(clip.getLong("start_ms"),clip.getLong("end_ms"),clip.getDouble("score").toFloat())) { !job.isActive }
@@ -153,7 +153,8 @@ object MetadataEpisodes {
             val sidecar=File(output.path+".json")
             if(output.isFile && sidecar.isFile && PlaybackDiagnostics.file(output).isFile && File(output.path+".captions.json").isFile &&
                 withContext(Dispatchers.IO) { runCatching { val saved=read(sidecar)
-                    saved.getString("video")==sha256(output) && saved.optJSONObject("story")?.toString()==JSONObject(DialogueStoryRules.json.encodeToString(story)).toString()
+                    saved.getString("video")==sha256(output) && saved.optJSONObject("story")?.toString()==JSONObject(DialogueStoryRules.json.encodeToString(story)).toString() &&
+                        saved.optString("backgroundFingerprint")==background.fingerprint()
                 }.getOrDefault(false) }) {
                 withContext(Dispatchers.IO) { poster(output) }
                 EpisodeWork.update(context,source.name,"running","저장된 영상을 확인했어요.",output);continue
@@ -188,10 +189,10 @@ object MetadataEpisodes {
             val castAssignment=if(automatic && diarization.speakerCount==0)"unknown-voice-fallback" else "detected-speaker-turns"
             EpisodeWork.patch(context,source.name) { it.put("detectedSpeakerCount",diarization.speakerCount)
                 .put("renderCastCount",renderCount).put("castAssignment",castAssignment) }
-            val bundle=bundle(clip,key,range.startMs,clipDuration,audioHash,renderCount,energy,diarization=diarization)
+            val bundle=bundle(clip,key,range.startMs,clipDuration,audioHash,renderCount,energy,diarization=diarization,sourceTimedCaptions=true)
             val base=SceneProject(key,story.title,input.path,audioHash,clipDuration,storyBeats=story.beats,mentionedPlace=story.mentionedPlace)
             val scene=withContext(Dispatchers.IO) {
-                val staged=TikiScene.buildPerformance(context,base,profile,renderCount)
+                val staged=TikiScene.buildPerformance(context,base,profile,renderCount,background)
                 TikiScene.assignSpeakers(staged,diarization.speakerCount,diarization.selfSpeaker,profile.name)
             }
             EpisodeWork.update(context,source.name,"running","웃음·화자 진단 수치를 준비해요.")
@@ -217,10 +218,17 @@ object MetadataEpisodes {
                         catch(e: Exception) { captionsFile.failWrite(stream);throw e }
                         write(PlaybackDiagnostics.file(output),diagnostics)
                         write(sidecar,JSONObject().put("title",base.title).put("source",source.name).put("audio",hash).put("video",sha256(output))
+                            .put("durationMs",clipDuration/1000).put("sourceDurationMs",duration)
+                            .apply {
+                                val recording=RecordingJournal.all(context).firstOrNull { it.optString("source")==source.name }
+                                put("recordedAt",recording?.optLong("createdAt")?.takeIf { it>0 } ?: source.lastModified())
+                                recording?.optJSONObject("journey")?.let { put("journey",it) }
+                            }
+                            .put("navigationBackground",JSONObject(background.json())).put("backgroundFingerprint",background.fingerprint())
                             .put("renderer",scene.rendererVersion).put("width",scene.width).put("height",scene.height).put("planId",plan.getString("plan_id")).put("speakerIdentity","local-diarization").put("diarization",diarization.json()).put("sttStatus",status)
                             .put("castCount",renderCount).put("speakerCount",diarization.speakerCount).put("castAssignment",castAssignment)
                             .put("castMode",if(automatic)ProductionSettings.AUTO_CAST else "legacy-staging").put("voiceModel",profile.voice?.modelId ?: "none")
-                            .put("captionTiming","approximate-within-sdk-segment").put("castNames",JSONArray(scene.people.map { it.name })).put("diagnostics",PlaybackDiagnostics.VERSION)
+                            .put("captionTiming","source-speech-windows-v1").put("castNames",JSONArray(scene.people.map { it.name })).put("diagnostics",PlaybackDiagnostics.VERSION)
                             .put("story",JSONObject(DialogueStoryRules.json.encodeToString(story))))
                         poster(output)
                         EpisodeWork.episodeNumber(context,output)
@@ -269,7 +277,8 @@ object MetadataEpisodes {
     }
 
     internal fun bundle(clip: JSONObject, id: String, offsetMs: Long, durationUs: Long, hash: String,
-        castCount: Int = 2, energy: List<Double>? = null, dialogueActors: Map<Long,Int> = emptyMap(), diarization: DiarizationResult? = null): AnalysisBundle {
+        castCount: Int = 2, energy: List<Double>? = null, dialogueActors: Map<Long,Int> = emptyMap(), diarization: DiarizationResult? = null,
+        sourceTimedCaptions: Boolean = false): AnalysisBundle {
         require(castCount in 1..4)
         val actors=(1..castCount).map { "performance$it" }
         val dialogue=actors.first()
@@ -281,6 +290,13 @@ object MetadataEpisodes {
             val b=((row.getLong("end_ms")-offsetMs)*1000).coerceIn(0,durationUs);if(b>a)block(row,a,b)
         } }
         rows("captions") { r,a,b ->
+            if(sourceTimedCaptions) {
+                val speakers=diarization?.turns.orEmpty().filter { it.startMs*1000<b && it.endMs*1000>a }
+                    .map { it.speaker }.distinct().singleOrNull()
+                captions.add(Caption("c${captions.size}",a,b,r.getString("text"),
+                    speakers?.let { listOf("performance${it+1}") } ?: emptyList(),requiresReview=true))
+                return@rows
+            }
             if(diarization!=null) {
                 captions.addAll(DiarizedCaptions.split(r.getString("text"),a/1000,b/1000,diarization.turns,"c${captions.size}"))
                 return@rows

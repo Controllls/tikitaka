@@ -35,7 +35,8 @@ object TikiScene {
             person.copy(seat=appearance.seat,manifestRef=appearance.manifestRef)
         }
     }
-    fun buildPerformance(context: Context, base: SceneProject, profile: PersonProfile = TikiProfile.get(context), count: Int = 2): SceneProject {
+    fun buildPerformance(context: Context, base: SceneProject, profile: PersonProfile = TikiProfile.get(context), count: Int = 2,
+        background: NavigationBackgroundSelection = NavigationBackgrounds.select(context,File(base.audioLocalRef),0,base.durationUs/1000)): SceneProject {
         val root=install(context)
         require(count in 1..4)
         val character=profile.characterId.takeIf { it in TikiProfile.characters } ?: TikiProfile.characters.first()
@@ -44,7 +45,7 @@ object TikiScene {
             manifestRef=File(root,"characters/${characters[i]}/manifest.json").path) }
         fun vehicle(name: String)=File(root,"vehicles/$name.png").path
         return base.copy(people=people,
-            speakerMapping=people.mapIndexed { i,p -> "performance${i+1}" to p.personId }.toMap(),backgroundRef=File(root,"backgrounds/city-road-loop.mp4").path,backgroundIsVideo=true,
+            speakerMapping=people.mapIndexed { i,p -> "performance${i+1}" to p.personId }.toMap(),backgroundRef=NavigationBackgrounds.file(context,root,background).path,backgroundIsVideo=true,
             vehicleRef=vehicle("01-frame-and-mirror"),seatbeltsRef=vehicle("02-front-seat-belts"),steeringWheelRef=vehicle("06-steering-wheel"),
             vehicleRearRef=vehicle("03-rear-seat"),vehicleFrontRef=vehicle("05-front-seats"),vehicleBottomRef=vehicle("04-bottom-interior-panel"),
             rendererVersion=ProductionSettings.RENDERER,presetFingerprint="designer-defaults-2026-11-12",burnCaptions=false,
@@ -77,8 +78,9 @@ object TikiScene {
                 manifestRef = File(root, "characters/$character/manifest.json").path)
         }
         fun vehicle(name: String) = File(root, "vehicles/$name.png").path
+        val background=NavigationBackgrounds.select(context,File(base.audioLocalRef),0,base.durationUs/1000)
         return base.copy(people = people, speakerMapping = matches.mapIndexed { i, m -> m.speakerId to people[i].personId }.toMap(),
-            backgroundRef = File(root, "backgrounds/city-road-loop.mp4").path, backgroundIsVideo = true,
+            backgroundRef = NavigationBackgrounds.file(context,root,background).path, backgroundIsVideo = true,
             vehicleRef = vehicle("01-frame-and-mirror"), seatbeltsRef = vehicle("02-front-seat-belts"),
             steeringWheelRef = vehicle("06-steering-wheel"),
             vehicleRearRef = vehicle("03-rear-seat"), vehicleFrontRef = vehicle("05-front-seats"),

@@ -49,6 +49,14 @@ open class TikiActivity : AppCompatActivity() {
     private var characterOrigin="character"
     private var carouselBusy=false
     private var productionStarting=false
+    private var permissionForSetup=false
+    private var locationReturn="profile"
+    private var profileSaveFrom="profile"
+    private var savingProfile=false
+    private var setupPauseLaunched=false
+    private var detailLoading=""
+    private var detail: EpisodeDetails?=null
+    private var detailError=""
     private var renderedVoiceStage=""
     private var recoveryId: String?=null
     private var recoveryMissing=false
@@ -61,10 +69,13 @@ open class TikiActivity : AppCompatActivity() {
     private var videoGateAllowed=false
     private var playbackKey=""
     private var pendingGleo=false
+    private var boardingDialog: androidx.appcompat.app.AlertDialog?=null
     private var w=0f
     private var h=0f
     private var lastSize=""
     private var renderedPhase: RecordingPhase?=null
+    private var recordingScreen: TikiRecordingScreen?=null
+    private var recordingLaunched=false
     private var timer: TextView?=null
     private var wave: TikiWave?=null
     private var scrollView: ScrollView?=null
@@ -97,13 +108,46 @@ open class TikiActivity : AppCompatActivity() {
     private val restrictions by lazy { DrivingRestrictions(this) { state ->
         voiceModel.drivingState(state.animationAllowed)
         applyVideoRestriction(state)
+        recordingScreen?.update(RecordingStore.state,state)
+        if(visible && state.available && !state.animationAllowed && setupEditing())pauseSetup()
+        updateBoardingPrompt()
     } }
     private val permission=registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if(granted) { if(pendingVoice) { pendingVoice=false;voiceModel.start() } else startRecording() }
+        if(permissionForSetup) {
+            if(granted) { permissionForSetup=false;locationReturn="profile";go("location") }
+            else go("microphone")
+        }
+        else if(granted) { if(pendingVoice) { pendingVoice=false;voiceModel.start() } else startRecording() }
         else {
             pendingStart=false;pendingVoice=false;if(route=="consent")render()
             go("microphone")
         }
+    }
+    private val boardingPermission=registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if(granted)BoardingService.start(this)
+        else toast(getString(R.string.standby_permission_needed))
+        if(route=="settings")render()
+    }
+    private val boardingObserver: (BoardingState)->Unit = {
+        if(visible && route=="settings")render()
+        updateBoardingPrompt()
+    }
+    private fun updateBoardingPrompt() {
+        val eligible=prefs.getBoolean("setup",false) && visible && lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
+            restrictions.state.animationAllowed && BoardingCoordinator.state.shouldPrompt &&
+            route !in listOf("welcome","permissions","microphone_intro","location","profile","profile_error","consent","record","voice","video","audio")
+        if(!eligible) { boardingDialog?.dismiss();boardingDialog=null;return }
+        if(boardingDialog!=null)return
+        boardingDialog=MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.boarding_notification_title))
+            .setMessage("운전석 탑승을 확인했어요. 이번 이동의 대화를 남겨볼까요?")
+            .setPositiveButton("녹음 준비") { _,_-> BoardingCoordinator.markHandled();go("record") }
+            .setNegativeButton("나중에") { _,_-> BoardingCoordinator.markHandled() }
+            .setOnCancelListener { BoardingCoordinator.markHandled() }
+            .create().also { dialog ->
+                dialog.setOnDismissListener { if(boardingDialog===dialog)boardingDialog=null }
+                dialog.show()
+            }
     }
     private val observer: (RecordingState)->Unit = { state ->
         if(state.busy)runCatching {
@@ -111,6 +155,8 @@ open class TikiActivity : AppCompatActivity() {
         }
         if(route=="video")applyVideoRestriction(restrictions.state)
         timer?.text=formatDuration(state.durationMs());wave?.level=state.level
+        recordingScreen?.update(state,restrictions.state)
+        openActiveRecording()
         if(pendingGleo && state.phase==RecordingPhase.PAUSED) {
             pendingGleo=false;handler.postDelayed({ if(visible && !GleoLauncher.requestListening(this))toast("Gleo를 실행하지 못했어요.") },300)
         }
@@ -128,29 +174,36 @@ open class TikiActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState);art=TikiArt(this)
         try { profile=TikiProfile.get(this) } catch(error: Exception) { toast("내 정보를 불러오지 못했어요. 저장 자료를 확인해 주세요.");finish();return }
-        route=savedInstanceState?.getString("route") ?: if(prefs.getBoolean("setup",false))"home" else "welcome"
+        route=savedInstanceState?.getString("route") ?: if(prefs.getBoolean("profileSavePending",false))"profile_error"
+            else if(prefs.getBoolean("setup",false))"home" else prefs.getString("setupRoute","welcome")!!
         if(route=="phone")route="settings" // Restore removed legacy destination safely.
         tab=savedInstanceState?.getString("tab") ?: "episodes"
-        character=savedInstanceState?.getInt("character") ?: TikiProfile.characters.indexOf(profile.characterId).coerceAtLeast(0)
-        draft=savedInstanceState?.getString("draft") ?: if(prefs.getBoolean("setup",false))profile.name else ""
+        character=(savedInstanceState?.getInt("character") ?: if(!prefs.getBoolean("setup",false) || prefs.getBoolean("profileSavePending",false))prefs.getInt("setupCharacter",3)
+            else TikiProfile.characters.indexOf(profile.characterId)).coerceIn(0,7)
+        draft=savedInstanceState?.getString("draft") ?: if(!prefs.getBoolean("setup",false) || prefs.getBoolean("profileSavePending",false))prefs.getString("setupName","").orEmpty() else profile.name
+        permissionForSetup=savedInstanceState?.getBoolean("permissionForSetup") ?: prefs.getBoolean("permissionForSetup",false)
+        locationReturn=savedInstanceState?.getString("locationReturn") ?: prefs.getString("locationReturn","profile").orEmpty()
+        profileSaveFrom=savedInstanceState?.getString("profileSaveFrom") ?: prefs.getString("profileSaveFrom","profile").orEmpty()
         recordOnly=savedInstanceState?.getBoolean("only") ?: false
         pendingStart=savedInstanceState?.getBoolean("pendingStart") ?: false;pendingVoice=savedInstanceState?.getBoolean("pendingVoice") ?: false
         voiceOrigin=savedInstanceState?.getString("voiceOrigin") ?: "settings"
-        characterOrigin=savedInstanceState?.getString("characterOrigin") ?: "character"
+        characterOrigin=savedInstanceState?.getString("characterOrigin") ?: if(!prefs.getBoolean("setup",false))prefs.getString("setupCharacterOrigin","profile").orEmpty() else "character"
         source=savedInstanceState?.getString("source").orEmpty();movie=savedInstanceState?.getString("movie").orEmpty()
         if(savedInstanceState==null)intent.getStringExtra("episodeMovie")?.let { name ->
             val file=File(AnimationFiles.directory(this),name).canonicalFile
             if(file.parentFile==AnimationFiles.directory(this).canonicalFile && file.isFile) { movie=file.name;route="video" }
         }
         if(savedInstanceState==null) {
-            intent.getStringExtra("tikiDestination")?.takeIf { it in listOf("home","library","character","settings") }?.let { route=it }
+            intent.getStringExtra("tikiDestination")?.takeIf { it in listOf("home","library","character","settings","record") }?.let { route=it }
             pendingVideoResume=route=="video" && intent.getBooleanExtra("resumeSelectedVideo",false)
+            if(intent.getBooleanExtra("resumeSetup",false)) { restoreSetupDraft();route=prefs.getString("setupResume","profile")!! }
         }
         recoveryId=savedInstanceState?.getString("recoveryId");recoveryMissing=savedInstanceState?.getBoolean("recoveryMissing") ?: false
         position=savedInstanceState?.getInt("position") ?: 0;seenFinish=savedInstanceState?.getLong("seenFinish") ?: prefs.getLong("seenFinish",0)
         videoResumeRequired=savedInstanceState?.getBoolean("videoResumeRequired") ?: false
         playbackKey=if(route=="audio")"audio:$source" else if(route=="video")"video:$movie" else ""
         if(savedInstanceState==null && playbackKey.isNotEmpty())position=prefs.getInt("position:$playbackKey",0).coerceAtLeast(0)
+        if(savedInstanceState==null && intent.getBooleanExtra("recordingFinished",false))restoreRecordingResult()
         savedInstanceState?.getBundle("scrolls")?.let { b->b.keySet().forEach { scrolls[it]=b.getInt(it) } }
         window.decorView.setBackgroundColor(TikiDesign.background)
         root=FrameLayout(this).apply { tag="tiki_root";background=TikiDesign.shape(TikiDesign.background,40f,0xffc9cacd.toInt(),this@TikiActivity);clipToOutline=true }
@@ -162,12 +215,17 @@ open class TikiActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this,object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() { when(route) {
                 "home"->moveTaskToBack(true)
-                "welcome","profile"->go("welcome")
+                "welcome","permissions"->go("welcome")
+                "microphone_intro"->go("permissions")
+                "location"->go(if(locationReturn=="profile")"microphone_intro" else locationReturn)
+                "profile"-> { locationReturn="profile";go("location") }
+                "profile_error"->go(profileSaveFrom)
                 "consent"->{ pendingStart=false;go("record") }
                 "voice"->go(voiceOrigin)
                 "character"->go(if(characterOrigin=="profile")"profile" else "home")
                 "name","privacy"->go("settings")
-                "audio","video","progress"->go("library")
+                "video"->go("detail")
+                "audio","detail","progress"->go("library")
                 else->go("home")
             } }
         })
@@ -217,33 +275,59 @@ open class TikiActivity : AppCompatActivity() {
             } }
         } }
         BoardingCoordinator.initialize(this)
+        if(intent.getBooleanExtra("boardingInvitation",false))BoardingCoordinator.markHandled()
     }
     override fun onStart() {
-        super.onStart();visible=true;drivingNoticeLaunched=false;restrictions.start();RecordingStore.observe(observer);BoardingCoordinator.setScreenVisible(true)
+        super.onStart();visible=true;drivingNoticeLaunched=false;recordingLaunched=false;setupPauseLaunched=false;restrictions.start();RecordingStore.observe(observer);BoardingCoordinator.setScreenVisible(true)
+        BoardingCoordinator.observe(boardingObserver)
         if(route=="video" && video==null)render()
     }
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent);setIntent(intent)
+        if(intent.getBooleanExtra("resumeSetup",false)) { restoreSetupDraft();go(prefs.getString("setupResume","profile")!!) }
+        if(intent.getBooleanExtra("boardingInvitation",false))BoardingCoordinator.markHandled()
         intent.getStringExtra("episodeMovie")?.let { name ->
             val file=File(AnimationFiles.directory(this),name).canonicalFile
             if(file.parentFile==AnimationFiles.directory(this).canonicalFile && file.isFile) {
                 movie=file.name;go("video");pendingVideoResume=intent.getBooleanExtra("resumeSelectedVideo",false)
             }
         }
-        intent.getStringExtra("tikiDestination")?.takeIf { it in listOf("home","library","character","settings") }?.let {
+        intent.getStringExtra("tikiDestination")?.takeIf { it in listOf("home","library","character","settings","record") }?.let {
             if(it=="library" && intent.getBooleanExtra("resetLibrary",false))openLibrary() else go(it)
         }
+        if(intent.getBooleanExtra("recordingFinished",false)) { restoreRecordingResult();render() }
     }
-    override fun onResume() { super.onResume();if(pendingStart && ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)startRecording() }
+    private fun restoreRecordingResult() {
+        val journal=RecordingJournal.read(this) ?: return
+        if(journal.optLong("finishedAt")<=0)return
+        source=journal.optString("source");seenFinish=journal.optLong("finishedAt")
+        prefs.edit().putLong("seenFinish",seenFinish).apply()
+        route="saved"
+    }
+    override fun onResume() {
+        super.onResume()
+        if(permissionForSetup && route=="microphone" && ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED) {
+            permissionForSetup=false;locationReturn="profile";go("location")
+        }
+        if(pendingStart && ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)startRecording()
+        if(BoardingCoordinator.state.enabled && !BoardingCoordinator.state.serviceRunning)BoardingService.start(this)
+        if(route=="settings")render()
+        updateBoardingPrompt()
+    }
     override fun onStop() {
-        visible=false;pendingGleo=false;pendingVideoResume=false;RecordingStore.remove(observer);restrictions.stop();BoardingCoordinator.setScreenVisible(false)
+        rememberSetupDraft()
+        boardingDialog?.dismiss();boardingDialog=null
+        visible=false;pendingGleo=false;pendingVideoResume=false;RecordingStore.remove(observer);restrictions.stop();BoardingCoordinator.remove(boardingObserver);BoardingCoordinator.setScreenVisible(false)
         capturePosition()
         if(video!=null)releasePlayback() else runCatching { player?.pause() }
         focus.release();play?.text="재생"
         if(!isChangingConfigurations)voiceModel.stopCapture();super.onStop()
     }
+    override fun onPostResume() { super.onPostResume();updateBoardingPrompt() }
     override fun onDestroy() { handler.removeCallbacksAndMessages(null);releasePlayback();if(::art.isInitialized)art.clear();super.onDestroy() }
     override fun onSaveInstanceState(out: Bundle) {
+        rememberSetupDraft()
+        out.putBoolean("permissionForSetup",permissionForSetup);out.putString("locationReturn",locationReturn);out.putString("profileSaveFrom",profileSaveFrom)
         rememberScroll();capturePosition()
         out.putString("route",route);out.putString("tab",tab);out.putInt("character",character);out.putString("draft",draft)
         out.putBoolean("only",recordOnly);out.putBoolean("pendingStart",pendingStart);out.putBoolean("pendingVoice",pendingVoice)
@@ -274,29 +358,57 @@ open class TikiActivity : AppCompatActivity() {
         go("library")
     }
     private fun go(next: String) { rememberScroll();releasePlayback();position=0;videoResumeRequired=false;pendingVideoResume=false
+        if(next=="detail" && detailError.isNotEmpty()) { detailLoading="";detailError="" }
         playbackKey=if(next=="audio")"audio:$source" else if(next=="video")"video:$movie" else ""
         if(playbackKey.isNotEmpty())position=prefs.getInt("position:$playbackKey",0)
         if(route=="voice" && next!="voice") { pendingVoice=false;voiceModel.stopCapture() }
         if(route=="consent" && next!="consent")pendingStart=false
-        route=next;render() }
+        route=next;rememberSetupDraft();render();updateBoardingPrompt()
+        if(visible && restrictions.state.available && !restrictions.state.animationAllowed && setupEditing())pauseSetup()
+    }
+    private fun setupEditing()=route in listOf("profile","profile_error","name") || route=="character" && characterOrigin=="profile"
+    private fun rememberSetupDraft() {
+        if(!prefs.getBoolean("setup",false) || setupEditing() || prefs.getBoolean("profileSavePending",false)) {
+            prefs.edit().putString("setupName",draft).putInt("setupCharacter",character)
+                .putString("setupCharacterOrigin",characterOrigin).putBoolean("permissionForSetup",permissionForSetup)
+                .putString("locationReturn",locationReturn).putString("profileSaveFrom",profileSaveFrom)
+                .apply { if(!prefs.getBoolean("setup",false) && route in listOf("welcome","permissions","microphone_intro","microphone","location","profile","profile_error","character"))putString("setupRoute",route) }.apply()
+        }
+    }
+    private fun restoreSetupDraft() {
+        draft=prefs.getString("setupName",draft).orEmpty();character=prefs.getInt("setupCharacter",character).coerceIn(0,7)
+        characterOrigin=prefs.getString("setupCharacterOrigin",characterOrigin).orEmpty()
+    }
+    private fun pauseSetup() {
+        if(!visible || setupPauseLaunched)return
+        rememberSetupDraft();prefs.edit().putString("setupResume",route).apply();setupPauseLaunched=true
+        currentFocus?.let { getSystemService(android.view.inputmethod.InputMethodManager::class.java).hideSoftInputFromWindow(it.windowToken,0) }
+        startActivity(Intent(this,SetupPauseActivity::class.java))
+    }
     private fun render() {
         if(!::root.isInitialized || root.width==0)return
         val editing = root.findFocus()?.tag == "profile_name"
         rememberScroll();capturePosition();releasePlayback();timer=null;wave=null;seek=null;play=null;mediaStatus=null;captionView=null;captions=JSONArray();scrollView=null
         diagnosticView=null;diagnosticDetails=null;diagnosticTimeline=null;diagnosticAudioTracks=-1;quickPlay=null;videoBlocker=null;videoContent=null;videoGateAllowed=false
         root.removeAllViews()
+        recordingScreen=null
         val width=(root.width-root.paddingLeft-root.paddingRight)/resources.displayMetrics.density
         h=(root.height-root.paddingTop-root.paddingBottom)/resources.displayMetrics.density
-        val side=if(route in listOf("welcome","profile") || route=="character" && characterOrigin=="profile")0f else if(route in listOf("consent","video"))131f else 130f;w=width-side
+        val side=if(route in listOf("welcome","permissions","microphone_intro","location","profile","profile_error") ||
+            route=="microphone" && permissionForSetup || route=="character" && characterOrigin=="profile")0f else if(route in listOf("consent","video","record"))131f else 130f;w=width-side
         if(side>0)navigation()
         val body=FrameLayout(this).apply { clipChildren=true;tag="tiki_$route" };put(root,body,side,0f,w,h)
         when(route) {
             "home"->home(body);"welcome"->welcome(body);"profile"->name(body,true)
+            "permissions"->flow(body,TikiFlowScreens.permissions(this,art,{go("welcome")},{go("microphone_intro")}))
+            "microphone_intro"->flow(body,TikiFlowScreens.microphone(this,art,{go("permissions")},::requestSetupMicrophone,{permissionForSetup=true;go("microphone")}))
+            "location"->flow(body,TikiFlowScreens.location(this,art,{onBackPressedDispatcher.onBackPressed()},::chooseLocation))
+            "profile_error"->flow(body,TikiFlowScreens.profileError(this,art,character,savingProfile,{go(profileSaveFrom)},::retryProfile))
             "record"->record(body);"saved"->saved(body);"library"->library(body);"character"->characters(body)
             "consent"->consent(body)
             "microphone"->microphone(body)
             "settings"->settings(body);"name"->name(body,false);"voice"->voice(body);"privacy"->privacy(body)
-            "progress"->progress(body);"audio"->audio(body);"video"->video(body)
+            "progress"->progress(body);"audio"->audio(body);"detail"->episodeDetail(body);"video"->video(body)
         }
         if(editing)root.findViewWithTag<EditText>("profile_name")?.let { input ->
             input.requestFocus();input.setSelection(input.text.length)
@@ -337,6 +449,45 @@ open class TikiActivity : AppCompatActivity() {
         val content=FrameLayout(this);view.addView(content,FrameLayout.LayoutParams(-1,dp(minHeight)))
         put(p,view,0f,0f,w,h);scrollView=view;view.post { view.scrollTo(0,scrolls["$route:$tab"] ?: 0) };return content
     }
+    private fun flow(parent: FrameLayout,view: TikiFlowScreen) {
+        put(parent,view,0f,0f,w,h);scrollView=view
+        view.post { view.scrollTo(0,scrolls["$route:$tab"] ?: 0) }
+    }
+    private fun requestSetupMicrophone() {
+        permissionForSetup=true;rememberSetupDraft()
+        if(ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED) {
+            permissionForSetup=false;locationReturn="profile";go("location")
+        } else permission.launch(Manifest.permission.RECORD_AUDIO)
+    }
+    private fun chooseLocation(enabled: Boolean) {
+        if(RecordingStore.state.busy) { toast("녹음을 마친 뒤 위치 사용을 변경해 주세요.");return }
+        if(!restrictions.state.animationAllowed) { toast("주차 후 위치 사용을 선택해 주세요.");return }
+        runCatching { JourneyPreferences.choose(this,enabled) }.onFailure { toast("선택을 저장하지 못했어요. 다시 눌러주세요.");return }
+        val next=locationReturn.takeIf { it in listOf("profile","record","privacy") } ?: "profile"
+        go(next)
+        if(next=="record")requestRecording()
+    }
+    private fun episodeDetail(parent: FrameLayout) {
+        val selected=detail?.takeIf { it.file.name==movie }
+        if(selected!=null) {
+            flow(parent,selected.screen(this,art,::openLibrary) {
+                if(restrictions.state.videoAllowed)go("video") else toast("주차 후 에피소드를 재생해 주세요.")
+            });return
+        }
+        val view=TikiFlowScreen(this,art,"에피소드 상세",onBack=::openLibrary)
+        view.item(view.copy(if(detailLoading==movie && detailError.isNotEmpty())detailError else "에피소드 정보를 확인하고 있어요.",muted=true))
+        if(detailError.isNotEmpty())view.actions("보관함",onPrimary=::openLibrary)
+        flow(parent,view)
+        if(detailLoading==movie)return
+        val requested=movie;detailLoading=requested;detailError=""
+        lifecycleScope.launch {
+            val result=runCatching { withContext(Dispatchers.IO) { EpisodeDetails.load(this@TikiActivity,requested) } }
+            if(movie==requested) {
+                result.onSuccess { detail=it }.onFailure { detailError="영상 정보를 불러오지 못했어요. 보관함에서 다시 확인해 주세요." }
+                if(route=="detail")render()
+            }
+        }
+    }
     private fun heading(p: FrameLayout,title: String,subtitle: String="",back: Boolean=false) {
         val pad=if(w>=900)48f else 32f;val x=pad+if(back)88f else if(route in listOf("character","library"))0f else 32f
         if(back)put(p,art.button("‹",false) { onBackPressedDispatcher.onBackPressed() }.apply { contentDescription="뒤로" },pad,62f,64f,64f)
@@ -355,7 +506,7 @@ open class TikiActivity : AppCompatActivity() {
         put(c,art.character(3),(w-380)/2,bodyTop+132f,380f,380f)
         val copyWidth=min(1100f,w-pad*2)
         text(c,"가장 우리다운 순간을 한 편으로 남기다",(w-copyWidth)/2,bodyTop+544f,copyWidth,32f,24f,center=true,color=muted)
-        val bw=min(340f,w-pad*2);button(c,"시작하기",(w-bw)/2,height-248f,bw) { go("profile") }
+        val bw=min(340f,w-pad*2);button(c,"시작하기",(w-bw)/2,height-248f,bw) { go("permissions") }
     }
     private fun home(p: FrameLayout) {
         val wide=w>=1100;val c=if(wide)p else scroll(p,1800f.coerceAtLeast(h));val hw=if(wide)w*.6246f else w
@@ -393,7 +544,7 @@ open class TikiActivity : AppCompatActivity() {
         ?: RecordingFiles.list(this).firstOrNull { it.file.nameWithoutExtension==file.nameWithoutExtension }?.title ?: "함께 나눈 이야기"
     private fun episodeRow(p: FrameLayout,file: File,index: Int,x: Float,y: Float,width: Float,height: Float,alignRight: Boolean=false) {
         val row=FrameLayout(this).apply { background=TikiDesign.press(this@TikiActivity,TikiDesign.background,12f)
-            contentDescription=movieTitle(file);isFocusable=true;setOnClickListener { movie=file.name;go("video") } }
+            contentDescription=movieTitle(file);isFocusable=true;setOnClickListener { movie=file.name;go("detail") } }
         val iw=min(if(alignRight)176f else 220f,width*.48f);val key=listOf("imgThumbnail","imgThumbnail1","imgThumbnail2","imgThumbnail3")[index%4]
         put(row,art.poster(file,"home-wide",key),0f,(height-iw*.6f)/2,iw,iw*.6f)
         text(row,"EP. ${EpisodeWork.episodeNumber(this,file).toString().padStart(2,'0')}",iw+48,height/2-50,width-iw-48,30f,18f,color=TikiDesign.secondary)
@@ -406,33 +557,24 @@ open class TikiActivity : AppCompatActivity() {
         divider(row,height-1,0f,width);put(p,row,x,y,width,height)
     }
     private fun record(p: FrameLayout) {
-        val state=RecordingStore.state;renderedPhase=state.phase;val height=h.coerceAtLeast(1184f);val c=scroll(p,height)
-        heading(c,if(state.busy)"대화를 기록하고 있어요" else "대화 녹음","오늘 나눈 대화를 한 편의 영상으로 남겨요.",true)
-        val size=min(400f,w-80);put(c,art.character(TikiProfile.characters.indexOf(profile.characterId).coerceAtLeast(0)),(w-size)/2,220f,size,size)
-        val y=650f
-        if(state.busy) {
-            timer=text(c,formatDuration(state.durationMs()),32f,y,w-64,70f,48f,500,true)
-            wave=TikiWave(this).also { put(c,it,(w-300)/2,y+78,300f,48f) }
-            text(c,if(state.phase==RecordingPhase.PAUSED)"잠시 쉬고 있어요. 준비되면 다시 시작하세요." else "지금 이 순간의 이야기를 담고 있어요.",32f,y+135,w-64,60f,20f,center=true)
-            val bw=min(330f,(w-88)/2);val ready=state.phase in listOf(RecordingPhase.RECORDING,RecordingPhase.PAUSED)
-            button(c,if(state.phase==RecordingPhase.PAUSED)"녹음 이어가기" else "잠시 멈추기",(w-bw*2-24)/2,height-248,bw) {
-                command(if(state.phase==RecordingPhase.PAUSED)RecordingService.ACTION_RESUME else RecordingService.ACTION_PAUSE)
-            }.isEnabled=ready
-            button(c,"녹음 마치기",(w+24)/2,height-248,bw,false) {
-                if(restrictions.state.animationAllowed)command(RecordingService.ACTION_STOP) else toast("주차 후 녹음을 마칠 수 있어요.")
-            }.isEnabled=ready
-            put(c,art.button("Gleo 부르기",false) { requestGleo() }.apply { isEnabled=ready;tag="gleo" },(w-240)/2,height-100,240f,64f)
-        } else {
-            text(c,"함께 이야기할 준비가 됐나요?",32f,y,w-64,40f,24f,center=true)
-            text(c,"녹음이 끝나면 영상으로 만들어드려요.",32f,y+48,w-64,40f,24f,center=true,color=TikiDesign.secondary)
-            val check=CheckBox(this).apply { text="이번에는 녹음만 보관";typeface=art.sans;setTextColor(TikiDesign.ink)
-                setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP,24f);isChecked=recordOnly;tag="record_only";setOnCheckedChangeListener { _,v->recordOnly=v } }
-            put(c,check,(w-360)/2,y+100,360f,64f)
-            val bw=min(340f,w-64);button(c,"대화 녹음 시작",(w-bw)/2,height-248,bw) { requestRecording() }.tag="record_confirm"
-        }
+        renderedPhase=RecordingStore.state.phase
+        val view=TikiRecordingScreen(this,art,TikiProfile.characters.indexOf(profile.characterId).coerceAtLeast(0),recordOnly,
+            onBack={ go("home") },onRecordOnly={ recordOnly=it },onStart={ requestRecording() },
+            onPause={ command(if(RecordingStore.state.phase==RecordingPhase.PAUSED)RecordingService.ACTION_RESUME else RecordingService.ACTION_PAUSE) },
+            onFinish={ if(restrictions.state.animationAllowed)command(RecordingService.ACTION_STOP) },onGleo={ requestGleo() })
+        recordingScreen=view;view.update(RecordingStore.state,restrictions.state)
+        put(p,view,0f,0f,w,h);scrollView=view
+        openActiveRecording()
+    }
+    private fun openActiveRecording() {
+        if(!visible || route!="record" || !RecordingStore.state.busy || recordingLaunched)return
+        recordingLaunched=true
+        // Keep recording in the existing Pleos window when switching to split view.
+        startActivity(Intent(this,RecordingActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP))
     }
     private fun requestRecording() {
         if(RecordingStore.state.busy || pendingStart)return
+        if(!JourneyPreferences.decided(this)) { locationReturn="record";go("location");return }
         if(prefs.getString("consentVersion","")=="tikitaka-local-v3") {
             pendingStart=true
             if(ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO)==PackageManager.PERMISSION_GRANTED)startRecording()
@@ -520,7 +662,7 @@ open class TikiActivity : AppCompatActivity() {
             val rw=w-pad*2;val roomy=rw>900;val aw=if(roomy)272f else 152f;val tx=if(roomy)100f else 8f
             val row=FrameLayout(this).apply { background=TikiDesign.shape(Color.WHITE,0f,context=this@TikiActivity) }
             val state=EpisodeWork.status(this,recording.file.name)?.optString("state")?.takeUnless { it=="dismissed" }
-            val badge=when(state) { "completed"->"영상 완성";"failed"->"제작 실패";"empty"->"후보 없음";"waiting"->"처리 대기";"queued","running"->"제작 중";else->"미제작" }
+            val badge=when(state) { "completed"->"영상 완성";"failed"->"제작 실패";"empty"->"후보 없음";"connection_wait"->"연결 대기";"waiting"->"처리 대기";"queued","running"->"제작 중";else->"미제작" }
             if(roomy) {
                 val icon=FrameLayout(this).apply { background=TikiDesign.shape(0xfff4f3f3.toInt(),16f,context=this@TikiActivity) }
                 put(icon,ImageView(this).apply { setImageResource(R.drawable.tiki_recording_mic) },20f,20f,24f,24f);put(row,icon,8f,48f,64f,64f)
@@ -531,7 +673,7 @@ open class TikiActivity : AppCompatActivity() {
             if(roomy)text(row,badge,rw-aw-160,60f,136f,40f,18f,center=true).background=TikiDesign.shape(0xfff4f3f3.toInt(),20f,context=this)
             val label=when(state) { "completed","queued","running"->"녹음 듣기";else->if(roomy)"동영상 생성하기" else "영상 만들기" }
             put(row,art.button(label,state==null) { source=recording.file.name
-                if(state==null)startProduction(recording.file) else if(state in listOf("failed","waiting","empty"))go("progress") else go("audio")
+                if(state==null)startProduction(recording.file) else if(state in listOf("failed","waiting","connection_wait","empty"))go("progress") else go("audio")
             }.apply { setTextSize(android.util.TypedValue.COMPLEX_UNIT_DIP,if(roomy)24f else 20f) },rw-aw-8,36f,aw,88f)
             divider(row,159f,0f,rw)
             row.setOnClickListener { source=recording.file.name;go("audio") };put(c,row,pad,348f+i*160,rw,160f)
@@ -541,7 +683,7 @@ open class TikiActivity : AppCompatActivity() {
                 val textWidth=w-pad*2-64-if(canDelete)168f else 0f
                 val row=FrameLayout(this).apply { background=TikiDesign.press(this@TikiActivity,Color.WHITE,24f)
                     setOnClickListener { source=job.getString("source");go("progress") } }
-                text(row,when(job.optString("state")) { "failed"->"영상 제작 확인이 필요해요";"empty"->"하이라이트 후보를 찾지 못했어요";"waiting"->"저장된 작업부터 제작을 이어갈게요";else->"에피소드를 만들고 있어요" },32f,22f,textWidth,52f,28f,500).apply {
+                text(row,when(job.optString("state")) { "failed"->"영상 제작 확인이 필요해요";"empty"->"하이라이트 후보를 찾지 못했어요";"connection_wait"->"제작 연결을 확인해 주세요";"waiting"->"저장된 작업부터 제작을 이어갈게요";else->"에피소드를 만들고 있어요" },32f,22f,textWidth,52f,28f,500).apply {
                     maxLines=1;ellipsize=android.text.TextUtils.TruncateAt.END
                 }
                 text(row,job.optString("message"),32f,84f,textWidth,50f,20f,color=TikiDesign.secondary).apply {
@@ -566,7 +708,7 @@ open class TikiActivity : AppCompatActivity() {
             movies.forEachIndexed { i,file->
                 val tile=FrameLayout(this).apply { contentDescription=movieTitle(file);isFocusable=true
                     background=TikiDesign.press(this@TikiActivity,TikiDesign.background,20f)
-                    setOnClickListener { movie=file.name;go("video") } }
+                    setOnClickListener { movie=file.name;go("detail") } }
                 val key=listOf("imgOriginalImageFit","imgOriginalImageFit1","imgOriginalImageFit2","imgOriginalImageFit3")[i%4]
                 put(tile,art.poster(file,"library",key),0f,0f,tileWidth,tileWidth*9/16)
                 text(tile,"EP. ${EpisodeWork.episodeNumber(this,file).toString().padStart(2,'0')}",0f,tileWidth*9/16+16,tileWidth,28f,18f,color=TikiDesign.secondary)
@@ -617,6 +759,18 @@ open class TikiActivity : AppCompatActivity() {
     }
     private fun progress(p: FrameLayout) {
         val job=EpisodeWork.status(this,source);val state=job?.optString("state") ?: "queued"
+        if(state=="connection_wait") {
+            flow(p,TikiFlowScreens.connection(this,art,productionStarting,::openLibrary,job?.optString("connectionTarget")=="network") {
+                if(!productionStarting && restrictions.state.animationAllowed && !RecordingStore.state.busy) {
+                    productionStarting=true;render()
+                    lifecycleScope.launch {
+                        runCatching { EpisodeWork.enqueue(this@TikiActivity,File(RecordingFiles.directory(this@TikiActivity),source),retry=true) }
+                            .onFailure { toast("다시 연결하지 못했어요. 원본 녹음은 보관되어 있어요.") }
+                        productionStarting=false;if(route=="progress")render()
+                    }
+                }
+            });return
+        }
         val message=(job?.optString("message") ?: "작업을 준비하고 있어요.") +
             if(job?.optString("engine")==MetadataEpisodes.ENGINE && job.has("laughterCount"))
                 "\n웃음 ${job.optInt("laughterCount")}구간 · 대사 ${job.optInt("captionCount")}구간" else ""
@@ -631,7 +785,7 @@ open class TikiActivity : AppCompatActivity() {
             when(state) {
                 "failed"->lifecycleScope.launch { runCatching { EpisodeWork.enqueue(this@TikiActivity,File(RecordingFiles.directory(this@TikiActivity),source),retry=true) }.onSuccess { render() }.onFailure { toast("작업을 다시 시작하지 못했어요.") } }
                 "empty"->startProduction(File(RecordingFiles.directory(this),source))
-                "completed"->{ movie=EpisodeWork.latestMovie(this,source)?.name.orEmpty();if(movie.isNotEmpty())go("video") else go("library") }
+                "completed"->{ movie=EpisodeWork.latestMovie(this,source)?.name.orEmpty();if(movie.isNotEmpty())go("detail") else go("library") }
                 else->go("library")
             }
         }.tag="episode_result"
@@ -670,7 +824,7 @@ open class TikiActivity : AppCompatActivity() {
         put(c,art.button("›",false) { rotateCharacter((character+1)%8) }.apply { contentDescription="다음 캐릭터" },(w+size)/2,ay,72f,72f)
         val bw=min(if(wide)480f else 360f,w-64);button(c,"이 캐릭터로 선택",(w-bw)/2,height-248,bw) {
             if(characterOrigin=="profile")go("profile")
-            else saveProfile(profile.copy(characterId=TikiProfile.characters[character])) { toast("다음 영상부터 적용돼요.");render() }
+            else saveProfile(profile.copy(characterId=TikiProfile.characters[character]),"character")
         }.tag="character_save"
     }
     private fun rotateCharacter(target: Int) {
@@ -701,7 +855,8 @@ open class TikiActivity : AppCompatActivity() {
         fun row(title: String,value: String,y: Float,destination: String) {
             val box=FrameLayout(this).apply { background=TikiDesign.press(this@TikiActivity,TikiDesign.background,0f)
                 contentDescription="$title, $value";isFocusable=true;setOnClickListener {
-                    if(destination=="production")productionOptions()
+                    if(destination=="boarding")boardingOptions()
+                    else if(destination=="production")productionOptions()
                     else if(destination=="laughter") {
                         if(!restrictions.state.animationAllowed)toast("주차 상태에서 감도를 변경해 주세요.")
                         else MaterialAlertDialogBuilder(this@TikiActivity).setTitle("웃음 감도 · 다음 제작부터 적용")
@@ -715,6 +870,37 @@ open class TikiActivity : AppCompatActivity() {
         }
         row("내 이름",profile.name,136f,"name");row("내 목소리 확인",if(profile.voice?.modelId==LocalVoice.MODEL)"확인 완료" else "확인하기",248f,"voice")
         row("녹음과 개인정보","안내 보기",360f,"privacy")
+        val boarding=BoardingCoordinator.state
+        val status=when {
+            !boarding.enabled->"꺼짐"
+            !BoardingNotifications.allowed(this)->"알림 허용 필요"
+            boarding.startFailed->"다시 시도"
+            boarding.connection==SeatConnection.UNAVAILABLE->"차량 연결 확인"
+            boarding.serviceRunning->"켜짐"
+            else->"대기 시작 중"
+        }
+        row("탑승 시 녹음 알림",status,472f,"boarding")
+        text(c,"운전석 탑승 시 녹음을 안내해요. 앱 화면 밖에서는 알림으로 알려드려요.\n녹음은 직접 시작해야 하며, 대기 중에는 마이크를 사용하지 않아요.",pad+32,600f,rw-64,140f,20f,color=TikiDesign.secondary)
+    }
+    private fun boardingOptions() {
+        if(!restrictions.state.animationAllowed) { toast("주차 상태에서 탑승 알림을 변경해 주세요.");return }
+        MaterialAlertDialogBuilder(this).setTitle("탑승 시 녹음 알림")
+            .setMessage("앱 화면 밖에서도 운전석 탑승을 감지해 ‘이번 이동을 기록할까요?’ 알림을 보내요. 녹음은 자동으로 시작하지 않아요.")
+            .setPositiveButton("켜기") { _,_->
+                BoardingCoordinator.setEnabled(true)
+                if(android.os.Build.VERSION.SDK_INT>=33 && ContextCompat.checkSelfPermission(this,Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)
+                    boardingPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                else if(!BoardingNotifications.allowed(this))openBoardingNotificationSettings()
+                else BoardingService.start(this)
+            }
+            .setNegativeButton("끄기") { _,_->
+                BoardingCoordinator.setEnabled(false)
+                stopService(Intent(this,BoardingService::class.java))
+            }
+            .setNeutralButton("알림 설정") { _,_->openBoardingNotificationSettings() }.show()
+    }
+    private fun openBoardingNotificationSettings() {
+        startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE,packageName))
     }
     private fun name(p: FrameLayout,onboarding: Boolean) {
         val height=h.coerceAtLeast(900f);val c=scroll(p,height);heading(c,if(onboarding)"어떻게 불러드릴까요?" else "내 이름",if(onboarding)"이름과 내 캐릭터를 정해 주세요." else "영상에 표시할 내 이름을 알려주세요.",!onboarding)
@@ -724,7 +910,7 @@ open class TikiActivity : AppCompatActivity() {
             background=TikiDesign.shape(Color.WHITE,24f,TikiDesign.line,this@TikiActivity);tag="profile_name"
             filters=arrayOf(android.text.InputFilter.LengthFilter(30));addTextChangedListener(object: TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?,start: Int,count: Int,after: Int){}
-                override fun onTextChanged(s: CharSequence?,start: Int,before: Int,count: Int) { draft=s.toString();root.findViewWithTag<View>("profile_save")?.isEnabled=draft.trim().isNotEmpty() && draft.none { it.isISOControl() } }
+                override fun onTextChanged(s: CharSequence?,start: Int,before: Int,count: Int) { draft=s.toString();rememberSetupDraft();root.findViewWithTag<View>("profile_save")?.isEnabled=!savingProfile && draft.trim().isNotEmpty() && draft.none { it.isISOControl() } }
                 override fun afterTextChanged(s: Editable?){}
             })
         };put(c,input,(w-iw)/2,250f,iw,112f)
@@ -733,16 +919,34 @@ open class TikiActivity : AppCompatActivity() {
             button(c,"내 캐릭터 선택  ›",(w-320)/2,600f,320f,false) { characterOrigin="profile";go("character") }
         }
         val bw=min(480f,iw);button(c,if(onboarding)"다음" else "저장",(w-bw)/2,height-160,bw) {
-            saveProfile(profile.copy(name=draft.trim(),characterId=if(onboarding)TikiProfile.characters[character] else profile.characterId)) {
-                if(onboarding) { prefs.edit().putBoolean("setup",true).apply();voiceOrigin="home";voiceModel.reset();go("voice") }
-                else { toast("다음 영상부터 적용돼요.");go("settings") }
-            }
-        }.apply { tag="profile_save";isEnabled=draft.trim().isNotEmpty() && draft.none { it.isISOControl() } }
+            saveProfile(profile.copy(name=draft.trim(),characterId=if(onboarding)TikiProfile.characters[character] else profile.characterId),if(onboarding)"profile" else "name")
+        }.apply { tag="profile_save";isEnabled=!savingProfile && draft.trim().isNotEmpty() && draft.none { it.isISOControl() } }
     }
-    private fun saveProfile(value: PersonProfile,done: ()->Unit) { lifecycleScope.launch {
-        if(!restrictions.state.animationAllowed) { toast("주차 상태에서 내 정보를 저장해 주세요.");return@launch }
-        runCatching { withContext(Dispatchers.IO) { TikiProfile.save(this@TikiActivity,value) } }.onSuccess { profile=value;done() }.onFailure { toast(it.message ?: "내 정보를 저장하지 못했어요.") }
-    } }
+    private fun saveProfile(value: PersonProfile,origin: String) {
+        if(savingProfile)return
+        profileSaveFrom=origin;draft=value.name;character=TikiProfile.characters.indexOf(value.characterId).coerceIn(0,7)
+        rememberSetupDraft()
+        prefs.edit().putString("pendingProfileName",value.name).putString("pendingProfileCharacter",value.characterId)
+            .putString("profileSaveFrom",origin).putBoolean("profileSavePending",true).apply()
+        if(!restrictions.state.animationAllowed) { pauseSetup();return }
+        savingProfile=true;root.findViewWithTag<View>("profile_save")?.isEnabled=false
+        lifecycleScope.launch {
+            val result=runCatching { withContext(Dispatchers.IO) { TikiProfile.save(this@TikiActivity,value) } }
+            savingProfile=false
+            result.exceptionOrNull()?.let { if(it is CancellationException)throw it }
+            result.onSuccess {
+                profile=value;prefs.edit().putBoolean("profileSavePending",false).apply()
+                if(origin=="profile") {
+                    prefs.edit().putBoolean("setup",true).remove("setupRoute").apply();voiceOrigin="home";voiceModel.reset();go("voice")
+                } else { toast("다음 영상부터 적용돼요.");go(if(origin=="character")"character" else "settings") }
+            }.onFailure { go("profile_error") }
+        }
+    }
+    private fun retryProfile() {
+        val name=prefs.getString("pendingProfileName",draft).orEmpty()
+        val characterId=prefs.getString("pendingProfileCharacter",TikiProfile.characters[character]).orEmpty()
+        saveProfile(profile.copy(name=name,characterId=characterId),profileSaveFrom)
+    }
     private fun voice(p: FrameLayout) {
         val state=voiceModel.state.value;renderedVoiceStage=state.stage
         val height=h.coerceAtLeast(1184f);val c=scroll(p,height);val recording=state.stage=="recording"
@@ -782,18 +986,24 @@ open class TikiActivity : AppCompatActivity() {
     }
     private fun privacy(p: FrameLayout) {
         val message="함께 있는 분들의 동의를 받아주세요.\n녹음은 버튼을 눌렀을 때만 시작합니다. 원치 않을 때는 일시정지할 수 있어요.\n\n이번에는 녹음만 보관\n원음을 기기에 저장하고 자동 전송·제작하지 않습니다.\n\n영상 만들기\n음성 인식·웃음 감지·화자 구분·하이라이트 선택·영상 제작을 기기 안에서 처리합니다. 원음·전사문·분석 결과·영상은 외부로 전송하지 않습니다.\n\n내 목소리 확인\n확인용 음성은 메모리에서 처리 후 버리며 특징 정보만 기기에 암호화해 저장합니다. 내 목소리로 확인되지 않은 발화는 일반 캐릭터가 연기합니다. 짧은 발화·소음·동시 발화에서는 식별이 어려울 수 있어요.\n\n보관\n기기의 원음·영상·복구 자료와 목소리 특징은 직접 삭제하거나 앱 데이터를 삭제할 때까지 보관합니다. 자동 일괄 삭제는 하지 않습니다."
-        val textView=art.text(message,24f)
-        val contentHeight=android.text.StaticLayout.Builder.obtain(message,0,message.length,textView.paint,dp(w-96)).setIncludePad(true).build().height/resources.displayMetrics.density+80
-        val c=scroll(p,(190f+contentHeight+180f).coerceAtLeast(h));heading(c,"녹음과 개인정보",back=true)
+        val disclosure=message+"\n\n위치 사용 · 선택\n허용한 경우 녹음 중 내비 위치로 영상 배경과 주행 정보를 정합니다. 주소·좌표·이동 경로는 저장하지 않고 도로 분류와 확인된 구간의 시간·거리 합계만 기기에 보관합니다. 위치 없이도 녹음과 영상 만들기를 이용할 수 있어요."
+        val textView=art.text(disclosure,24f)
+        val contentHeight=android.text.StaticLayout.Builder.obtain(disclosure,0,disclosure.length,textView.paint,dp(w-96)).setIncludePad(true).build().height/resources.displayMetrics.density+80
+        val c=scroll(p,(190f+contentHeight+310f).coerceAtLeast(h));heading(c,"녹음과 개인정보",back=true)
         put(c,textView,48f,190f,w-96,contentHeight)
         button(c,"앱 권한 관리",48f,230f+contentHeight,min(360f,w-96),false) { startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,Uri.parse("package:$packageName"))) }
+        button(c,"위치 사용 · ${if(JourneyPreferences.enabled(this))"허용" else "사용 안 함"}",48f,338f+contentHeight,min(440f,w-96),false) {
+            locationReturn="privacy";go("location")
+        }
     }
     private fun microphone(p: FrameLayout) {
         val height=h.coerceAtLeast(1000f);val c=scroll(p,height);heading(c,"마이크 권한이 필요해요",back=true)
         put(c,ImageView(this).apply { setImageResource(R.drawable.tiki_recording_mic) },(w-100)/2,300f,100f,100f)
         text(c,"대화를 녹음하려면\n마이크 사용을 허용해 주세요.",32f,480f,w-64,160f,30f,500,true)
         val bw=min(400f,(w-88)/2)
-        button(c,"나중에",(w-bw*2-24)/2,height-160,bw,false) { go("home") }
+        button(c,"나중에",(w-bw*2-24)/2,height-160,bw,false) {
+            if(permissionForSetup) { permissionForSetup=false;locationReturn="profile";go("location") } else go("home")
+        }
         button(c,"앱 설정 열기",(w+24)/2,height-160,bw) { startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,Uri.parse("package:$packageName"))) }
     }
     private fun audio(p: FrameLayout) {
@@ -903,7 +1113,7 @@ open class TikiActivity : AppCompatActivity() {
             val captionWidth=if(vw>=1000)900f else vw-48
             captionView=text(viewport,"",(vw-captionWidth)/2,vh-128,captionWidth,112f,24f,center=true,color=Color.WHITE).apply {
                 background=TikiDesign.shape(0xe6343434.toInt(),context=this@TikiActivity)
-                maxLines=2;ellipsize=android.text.TextUtils.TruncateAt.END;setPadding(dp(24f),dp(16f),dp(24f),dp(16f));visibility=View.INVISIBLE
+                maxLines=3;ellipsize=android.text.TextUtils.TruncateAt.END;setPadding(dp(24f),dp(8f),dp(24f),dp(8f));visibility=View.INVISIBLE
             }
             put(c,art.button(if(prefs.getBoolean("captions",true))"자막 켜짐" else "자막 꺼짐",false) {
                 val enabled=!prefs.getBoolean("captions",true);prefs.edit().putBoolean("captions",enabled).apply()

@@ -6,13 +6,16 @@ import android.os.SystemClock
 import java.util.Locale
 
 enum class RecordingPhase { IDLE, STARTING, RECORDING, PAUSED, STOPPING, ERROR }
+enum class RecordingLocation { DISABLED, CONNECTING, AVAILABLE, UNAVAILABLE }
 
 data class RecordingState(
     val phase: RecordingPhase = RecordingPhase.IDLE,
     val startedAt: Long = 0,
     val elapsedMs: Long = 0,
     val level: Float = 0f,
-    val message: Int? = null
+    val message: Int? = null,
+    val pausedForGleo: Boolean = false,
+    val location: RecordingLocation = RecordingLocation.DISABLED
 ) {
     val busy: Boolean get() = phase == RecordingPhase.STARTING ||
         phase == RecordingPhase.RECORDING || phase == RecordingPhase.PAUSED || phase == RecordingPhase.STOPPING

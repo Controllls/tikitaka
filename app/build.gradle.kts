@@ -15,8 +15,8 @@ android {
         applicationId = "com.example.hd_project"
         minSdk = 28
         targetSdk = 37
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2.0"
         buildConfigField("boolean", "PLAYBACK_DIAGNOSTICS", "false")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -47,6 +47,7 @@ android {
 dependencies {
     implementation(libs.litert)
     implementation(libs.pleos.vehicle)
+    implementation("ai.pleos.playground:NaviHelper:3.0.5")
     implementation("ai.pleos.playground:SpeechToText:3.3.1")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)

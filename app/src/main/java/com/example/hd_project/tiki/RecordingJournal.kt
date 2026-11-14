@@ -33,6 +33,12 @@ object RecordingJournal {
         try { out.write(state.toString().toByteArray(Charsets.UTF_8));target.finishWrite(out) }
         catch(e: Exception) { target.failWrite(out);throw e }
     }
+    @Synchronized fun navigation(context: Context, sessionId: String, timeline: JSONObject, journey: JSONObject? = null) {
+        val current=read(context) ?: return
+        if(current.optString("sessionId")!=sessionId || current.optString("state") !in listOf("recording","paused","saving"))return
+        if(journey!=null)current.put("journey",journey)
+        save(context,current.put("navigationBackground",timeline))
+    }
     @Synchronized fun all(context: Context): List<JSONObject> {
         val saved=File(RecordingFiles.directory(context),"journals").listFiles().orEmpty().filter { it.extension=="json" }.mapNotNull {
             runCatching { JSONObject(AtomicFile(it).readFully().toString(Charsets.UTF_8)) }.getOrNull()

@@ -57,6 +57,7 @@ object EpisodeWork {
     @Synchronized fun update(context: Context, source: String, state: String, message: String, movie: File? = null) {
         val data = status(context, source) ?: JSONObject().put("source", source).put("createdAt", System.currentTimeMillis())
         data.put("state", state).put("message", message)
+        if(state!="connection_wait")data.remove("connectionReason")
         if(movie != null) {
             val list = data.optJSONArray("movies") ?: JSONArray()
             if ((0 until list.length()).none { list.getString(it) == movie.name }) list.put(movie.name)
@@ -142,6 +143,10 @@ class EpisodeWorker(context: Context, parameters: WorkerParameters): CoroutineWo
                 MetadataEpisodes.run(context,source)
             }
             Result.success()
+        } catch(error: ProductionConnectionException) {
+            EpisodeWork.patch(context,name) { it.put("state","connection_wait").put("connectionReason",error.reason)
+                .put("message",error.message).put("connectionTarget",if(error.reason=="NETWORK_ERROR")"network" else "device-stt") }
+            Result.failure() // Explicit reconnect retries from the existing checkpoints.
         } catch(error: TimeoutCancellationException) {
             EpisodeWork.update(context,name,"waiting","저장된 분석부터 자동으로 이어서 처리해요.")
             EpisodeWork.continueWork(context,name)

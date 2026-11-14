@@ -44,6 +44,25 @@ class RebuildLocalEpisodeTest {
             assertEquals(ProductionSettings.RENDERER,info.getString("renderer"))
             assertTrue(info.has("diarization"))
             com.example.hd_project.momo.render.VideoComposer.validateMp4(movie,1280,720)
+            val frames=JSONObject(PlaybackDiagnostics.file(movie).readText()).getJSONArray("frames")
+            val lastDirection=mutableMapOf<Int,String>()
+            val returnedFront=mutableMapOf<Int,Long>()
+            repeat(frames.length()) { frameIndex ->
+                val frame=frames.getJSONObject(frameIndex);val time=frame.getLong("timeMs")
+                val actors=frame.getJSONArray("actors")
+                repeat(actors.length()) { person ->
+                    val actor=actors.getJSONObject(person);val direction=actor.getString("gaze")
+                    if(direction!="front") {
+                        assertEquals("turning",actor.getString("action"))
+                        assertFalse(actor.getBoolean("speech"));assertFalse(actor.getBoolean("smile"))
+                        assertEquals(0.0,actor.getDouble("mouth"),0.0)
+                        if(lastDirection[person] in listOf(null,"front"))returnedFront[person]?.let { end ->
+                            assertTrue("Head turn cooldown violated at $time ms",time-end>=1000)
+                        } else assertEquals("A head cannot change direction without cooldown",lastDirection[person],direction)
+                    } else if(lastDirection[person] !in listOf(null,"front"))returnedFront[person]=time
+                    lastDirection[person]=direction
+                }
+            }
             if(requestedThreshold!=null)assertEquals(requestedThreshold,JSONObject(PlaybackDiagnostics.file(movie).readText()).getDouble("threshold"),.00001)
         }
         MetadataEpisodes.write(File(context.cacheDir,"cast-rebuild-report.json"),JSONObject().put("state",result)

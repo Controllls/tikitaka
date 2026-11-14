@@ -32,8 +32,10 @@ object BoardingNotifications {
             }
     }
 
-    private fun open(context: Context): PendingIntent = PendingIntent.getActivity(context, 2100,
+    private fun open(context: Context, invitation: Boolean = false): PendingIntent = PendingIntent.getActivity(context, if (invitation) 2102 else 2100,
         Intent(context, MainActivity::class.java)
+            .putExtra("tikiDestination", "record")
+            .putExtra("boardingInvitation", invitation)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP),
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
@@ -65,7 +67,7 @@ object BoardingNotifications {
         .setSmallIcon(R.drawable.ic_car)
         .setContentTitle(context.getString(R.string.boarding_notification_title))
         .setContentText(context.getString(R.string.boarding_notification_text))
-        .setContentIntent(open(context))
+        .setContentIntent(open(context, invitation = true))
         .setDeleteIntent(action(context, BoardingActionReceiver.SKIP, 2104))
         .setAutoCancel(true).setOnlyAlertOnce(true)
         .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)

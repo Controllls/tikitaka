@@ -114,9 +114,7 @@ class SceneRenderer(val project: SceneProject, private val analysis: AnalysisBun
             canvas.rotate(Math.toDegrees(state.tilt).toFloat());canvas.scale(ratio,ratio);canvas.translate(-character.rootX,-character.rootY)
             fun part(path: String)=image(canvas,path,0f,0f,character.width,character.height)
             if(character.sprites.isNotEmpty()) {
-                val sprite = if(state.laughing) "happy" else if(state.mouth>.18) "talk"
-                    else motion.gazeAt(person.personId,timeUs)?.takeIf { it in character.sprites }
-                        ?: person.pose.takeIf { it in character.sprites } ?: "neutral"
+                val sprite=state.sprite(person.pose).takeIf { it in character.sprites } ?: "neutral"
                 part(character.sprites.getValue(sprite))
                 canvas.restore()
                 return@forEachIndexed

@@ -163,6 +163,10 @@ class PlaybackDiagnosticsTest {
         repeat(frames.length()) { i -> val actors=frames.getJSONObject(i).getJSONArray("actors")
             repeat(actors.length()) { j -> val actor=actors.getJSONObject(j)
                 if(actor.getBoolean("smile") || actor.getDouble("mouth")>.18)assertEquals("front",actor.getString("gaze"))
+                if(actor.getString("action")=="speaking")assertEquals("front",actor.getString("gaze"))
+                if(actor.getString("action")=="turning") {
+                    assertFalse(actor.getBoolean("speech"));assertEquals(0.0,actor.getDouble("mouth"),0.0)
+                }
             }
         }
         val overlap=frames.getJSONObject(14).getJSONArray("actors")

@@ -82,8 +82,8 @@ object PlaybackDiagnostics {
                     val speaker=scene.speakerMapping.entries.firstOrNull { it.value==person.personId }?.key
                     JSONObject().put("speech",speaker in speech).put("laughAssigned",speaker in event?.laughingSpeakerIds.orEmpty())
                         .put("mouth",state.mouth).put("smile",state.laughing)
-                        // Supplied sprites prioritize happy/talk over a requested side pose, just as SceneRenderer does.
-                        .put("gaze",if(state.laughing || state.mouth>.18)"front" else motion.gazeAt(person.personId,us) ?: "front")
+                        .put("action",state.action.name.lowercase()).put("sprite",state.sprite(person.pose))
+                        .put("gaze",state.gaze ?: "front")
                 })))
         }
         return JSONObject().put("schema",VERSION).put("renderer",scene.rendererVersion).put("sourceOffsetMs",offsetMs)
