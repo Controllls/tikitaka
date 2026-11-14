@@ -88,6 +88,47 @@
 
 ## 실행 방법
 
+### 제출용 APK 설치
+
+1. [GitHub Release에서 서명된 APK를 다운로드합니다.](https://github.com/Controllls/tikitaka/releases/tag/v1.1.0)
+2. Android Studio의 Device Manager에서 **Pleos Connect Emulator v2.1.0 / Android 14(API 34), x86_64** 환경을 준비합니다. 기존 개발 앱과 서명키가 다를 수 있으므로 테스트용 새 AVD를 사용합니다.
+3. 에뮬레이터가 부팅되면 아래 명령으로 APK를 설치합니다. `<APK파일경로>`에는 다운로드한 파일의 경로를 넣습니다.
+
+```powershell
+adb devices
+adb install "<APK파일경로>"
+adb shell am start -n com.example.hd_project/.MainActivity
+```
+
+여러 에뮬레이터가 연결되어 있으면 각 명령에 `adb -s <기기번호>`를 사용합니다. 이미 같은 서명의 버전이 설치되어 있으면 `adb install -r "<APK파일경로>"`로 데이터를 유지하며 업데이트할 수 있습니다.
+
+### 테스트 환경과 설정
+
+| 항목 | 설정 |
+| --- | --- |
+| 플랫폼 | Pleos Connect Emulator v2.1.0 / Android 14(API 34) / x86_64 |
+| 기본 가로 테스트 규격 | 앱 창 **1700 × 1184dp**, 160dpi — FormFactorConsole의 Standard 17인치 Landscape |
+| 화면 크기 변경 | [공식 FormFactorConsole 가이드](https://document.pleos.ai/docs/pleos-only/app-test-guide/form-factor-test-guide)에 따라 별도 가상 디스플레이에서 실행 |
+| 음성 입력 | PC 마이크 접근 및 에뮬레이터 마이크 입력 활성화, 앱의 마이크 권한 허용 |
+| 영상 감상 | 주차 상태, 차량의 주행 제한이 해제된 상태 |
+| 추가 서버·API 키 | 필요 없음 |
+| 추가 언어 모델 다운로드 | 없음. 제목은 대화문에서 규칙으로 추출 |
+
+일반 에뮬레이터 창은 Pleos 시스템의 창 배치에 따라 크기가 달라집니다. 정확한 규격 테스트에는 FormFactorConsole을 사용합니다. 화면에 배치된 가상 차량 상태는 [Pleos Virtual Console](https://document.pleos.ai/docs/pleos-only/app-test-guide/virtual-console-guide)에서 변경합니다.
+
+### 기본 시연 순서
+
+1. **초기 설정:** 시작하기를 누르고 이름·캐릭터를 설정합니다. 내 목소리 등록은 선택 사항입니다.
+2. **녹음:** 주차 상태에서 대화 녹음 시작을 누르고 동의 확인과 마이크 권한 허용을 진행합니다. 동의받은 대화를 녹음하고 일시정지·재개·저장을 확인합니다.
+3. **영상 제작:** 영상 제작을 선택한 녹음을 종료한 뒤 보관함에서 분석·제작 상태를 확인합니다. ‘녹음만 보관’을 선택한 경우 녹음 보관함에서 원음을 확인합니다.
+4. **감상:** 제작 완료된 에피소드에서 영상·원음·자막·재생 위치 이동을 확인합니다. 처음부터 완성된 영상이 포함되어 있지는 않습니다.
+5. **저장 유지:** 앱을 종료하고 다시 실행해 녹음과 완성 영상이 유지되는지 확인합니다.
+6. **주행 제한:** 가상 주행 상태에서 영상 재생·탐색 차단을 확인합니다. 주차 상태로 돌아온 뒤에는 재생 버튼을 직접 누릅니다.
+
+### 확인된 release 실행 범위
+
+새 Pleos 에뮬레이터에서 APK 설치, 첫 실행, 이름 설정, 빈 보관함과 앱 재실행을 확인했습니다. 이 release APK의 녹음부터 영상 완성까지 전체 시나리오 및 실차 동작은 별도 검증 대상입니다.
+
 ### Pleos Connect에서 실행
 
 1. Android Studio에서 **Pleos Connect Emulator v2.1.0 / Android 14(API 34)** 환경을 준비합니다.
