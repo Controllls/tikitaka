@@ -28,9 +28,11 @@ object EpisodeWork {
         return number
     }
     fun status(context: Context, source: String): JSONObject? = preferences(context).getString(source, null)?.let { JSONObject(it) }
+    /** Productions that ended without an episode. Their card can be removed; the recording stays. */
+    val DISMISSIBLE=listOf("failed","empty")
     @Synchronized fun dismissFailed(context: Context, source: String): Boolean {
         val data=status(context,source) ?: return false
-        if(data.optString("state")!="failed")return false
+        if(data.optString("state") !in DISMISSIBLE)return false
         // Retain a durable marker so startup recovery cannot recreate a deleted card.
         data.put("state","dismissed").put("message","")
         check(preferences(context).edit().putString(source,data.toString()).commit())

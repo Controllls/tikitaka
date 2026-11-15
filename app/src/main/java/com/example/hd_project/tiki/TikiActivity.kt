@@ -686,7 +686,7 @@ open class TikiActivity : AppCompatActivity() {
             row.setOnClickListener { source=recording.file.name;go("audio") };put(c,row,pad,348f+i*160,rw,160f)
         } } else {
             jobs.forEachIndexed { i,job->
-                val canDelete=job.optString("state")=="failed"
+                val canDelete=job.optString("state") in EpisodeWork.DISMISSIBLE
                 val textWidth=w-pad*2-64-if(canDelete)168f else 0f
                 val row=FrameLayout(this).apply { background=TikiDesign.press(this@TikiActivity,Color.WHITE,24f)
                     setOnClickListener { source=job.getString("source");go("progress") } }
