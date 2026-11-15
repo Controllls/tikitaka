@@ -86,13 +86,13 @@
 
 ### 제출용 APK 설치
 
-1. [GitHub Release에서 서명된 APK를 다운로드합니다.](https://github.com/Controllls/tikitaka/releases/tag/v1.2.0) 파일 크기(약 292MB) 때문에 저장소 대신 Release에 등록했으며, 위치 안내는 [apk/README.md](apk/README.md)에 있습니다.
+1. [GitHub Release에서 서명된 APK를 다운로드합니다.](https://github.com/Controllls/tikitaka/releases/tag/v1.2.1) 파일 크기(약 292MB) 때문에 저장소 대신 Release에 등록했으며, 위치 안내는 [apk/README.md](apk/README.md)에 있습니다.
 2. Android Studio의 Device Manager에서 **Pleos Connect Emulator v2.1.0 / Android 14(API 34), x86_64** 환경을 준비합니다. 기존 개발 앱과 서명키가 다를 수 있으므로 테스트용 새 AVD를 사용합니다.
 3. APK를 내려받아 설치하고 실행합니다.
 
 ```powershell
 adb devices
-curl.exe -L -o TikiTaka_release.apk https://github.com/Controllls/tikitaka/releases/download/v1.2.0/TikiTaka_release.apk
+curl.exe -L -o TikiTaka_release.apk https://github.com/Controllls/tikitaka/releases/download/v1.2.1/TikiTaka_release.apk
 adb install TikiTaka_release.apk
 adb shell am start -n com.example.hd_project/.MainActivity
 ```
@@ -116,7 +116,7 @@ adb shell am start -n com.example.hd_project/.MainActivity
 3. **영상 제작:** 영상 제작을 선택한 녹음을 종료한 뒤 보관함에서 분석·제작 상태를 확인합니다. ‘녹음만 보관’을 선택한 경우 녹음 보관함에서 원음을 확인합니다.
 4. **감상:** 제작 완료된 에피소드의 상세에서 제목·날짜·영상 길이를 확인한 뒤 재생합니다.
 5. **저장 유지:** 앱을 종료하고 다시 실행해 녹음과 완성 영상이 유지되는지 확인합니다.
-6. **주행 제한:** 가상 주행 상태에서 영상 재생·탐색 차단을 확인합니다. 주차 상태로 돌아온 뒤에는 재생 버튼을 직접 누릅니다.
+6. **주행 제한:** 녹음 중 가상 주행 상태(기어 D)로 바꾸면 녹음 화면이 유지되고, 녹음 종료는 주차 후에만 할 수 있습니다. 영상 재생·탐색은 차단되며, 주차 상태로 돌아온 뒤에는 재생 버튼을 직접 누릅니다.
 
 ### 소스 빌드
 
@@ -130,7 +130,7 @@ adb shell am start -n com.example.hd_project/.MainActivity
 
 | 항목 | 프로젝트 설정 |
 | --- | --- |
-| 패키지 / 버전 | `com.example.hd_project` / `1.2.0` (`versionCode 3`) |
+| 패키지 / 버전 | `com.example.hd_project` / `1.2.1` (`versionCode 4`) |
 | Android SDK | minSdk **28**, compileSdk / targetSdk **37** |
 | Gradle / Android Gradle Plugin | **9.6.0 / 9.4.1** |
 | Gradle JVM / Java 소스 호환성 | **JDK 25 / Java 17** |
