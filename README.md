@@ -20,7 +20,7 @@
 
 [![티키타카 시연 영상 미리보기 — 눌러서 소리와 함께 보기](docs/videos/tikitaka-demo-preview.gif)](docs/videos/tikitaka-demo.mp4)
 
-<sub>첫 설정부터 녹음, 주행 중 녹음 화면, 저장, 에피소드 감상까지 에뮬레이터에서 직접 조작한 화면입니다. 미리보기는 4배속·무음이며, 누르면 소리가 있는 [전체 영상(1분 17초)](docs/videos/tikitaka-demo.mp4)을 볼 수 있습니다.</sub>
+<sub>티키타카 시연 영상입니다. 미리보기는 4배속·무음이며, 누르면 소리가 있는 [전체 영상(36초)](docs/videos/tikitaka-demo.mp4)을 볼 수 있습니다.</sub>
 
 ## 주요 기능
 
