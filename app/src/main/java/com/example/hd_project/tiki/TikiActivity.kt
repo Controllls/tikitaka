@@ -383,7 +383,7 @@ open class TikiActivity : AppCompatActivity() {
         if(!visible || setupPauseLaunched)return
         rememberSetupDraft();prefs.edit().putString("setupResume",route).apply();setupPauseLaunched=true
         currentFocus?.let { getSystemService(android.view.inputmethod.InputMethodManager::class.java).hideSoftInputFromWindow(it.windowToken,0) }
-        startActivity(Intent(this,SetupPauseActivity::class.java))
+        startActivity(Intent(this,SetupPauseActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP))
     }
     private fun render() {
         if(!::root.isInitialized || root.width==0)return
@@ -569,8 +569,12 @@ open class TikiActivity : AppCompatActivity() {
     private fun openActiveRecording() {
         if(!visible || route!="record" || !RecordingStore.state.busy || recordingLaunched)return
         recordingLaunched=true
-        // Keep recording in the existing Pleos window when switching to split view.
-        startActivity(Intent(this,RecordingActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP))
+        // Posted: onStart runs before onNewIntent, and a destination delivered there wins over reopening the recording.
+        handler.post {
+            if(!visible || route!="record" || !RecordingStore.state.busy) { recordingLaunched=false;return@post }
+            // Own task: inside this parked-only task the Pleos home screen covers the recording controls while driving.
+            startActivity(Intent(this,RecordingActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP))
+        }
     }
     private fun requestRecording() {
         if(RecordingStore.state.busy || pendingStart)return

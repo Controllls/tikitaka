@@ -22,12 +22,12 @@ class SetupPauseActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this,object: OnBackPressedCallback(true) { override fun handleOnBackPressed()=home() })
         render()
     }
-    override fun onStart() { super.onStart();visible=true;restrictions.start() }
+    override fun onStart() { super.onStart();visible=true;closeParkedTask();restrictions.start() }
     override fun onStop() { visible=false;restrictions.stop();super.onStop() }
     override fun onDestroy() { art.clear();super.onDestroy() }
     private fun home() {
         if(restrictions.state.animationAllowed) {
-            startActivity(Intent(this,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP).putExtra("tikiDestination","home"))
+            startActivity(Intent(this,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP).putExtra("tikiDestination","home"))
         } else startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         finish()
     }
@@ -37,7 +37,7 @@ class SetupPauseActivity : AppCompatActivity() {
         val character=getSharedPreferences("tikitaka-ui",MODE_PRIVATE).getInt("setupCharacter",3).coerceIn(0,7)
         root.addView(TikiFlowScreens.setupPaused(this,art,character,restrictions.state.animationAllowed,::home) {
             if(restrictions.state.animationAllowed) {
-                startActivity(Intent(this,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP).putExtra("resumeSetup",true))
+                startActivity(Intent(this,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP).putExtra("resumeSetup",true))
                 finish()
             }
         },FrameLayout.LayoutParams(-1,-1))

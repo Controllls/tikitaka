@@ -53,12 +53,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <!-- These activities contain only driving-safe controls. The player and settings remain parked-only. -->
+        <!-- These activities contain only driving-safe controls. The player and settings remain parked-only.
+             Each runs as the root of its own task: the Pleos home screen decides per task, from the activity
+             that created it, whether to cover the window while driving. Inside MainActivity's task they are covered.
+             The recording and setup notices close MainActivity's task while shown (see SingleWindow.kt). -->
         <activity android:name=".tiki.RecordingActivity" android:exported="false"
+            android:taskAffinity="${applicationId}.recording"
             android:launchMode="singleTop">
             <meta-data android:name="distractionOptimized" android:value="true" />
         </activity>
-        <activity android:name=".tiki.SetupPauseActivity" android:exported="false" android:launchMode="singleTop">
+        <activity android:name=".tiki.SetupPauseActivity" android:exported="false"
+            android:taskAffinity="${applicationId}.setupNotice"
+            android:launchMode="singleTop">
             <meta-data android:name="distractionOptimized" android:value="true" />
         </activity>
         <activity android:name=".tiki.DrivingPauseActivity" android:exported="false"

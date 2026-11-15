@@ -55,6 +55,7 @@ class RecordingActivity : AppCompatActivity() {
     }
     override fun onStart() {
         super.onStart();visible=true;leaving=false
+        closeParkedTask()
         restrictions.start();RecordingStore.observe(observer);BoardingCoordinator.setScreenVisible(true)
     }
     override fun onStop() {
@@ -107,7 +108,7 @@ class RecordingActivity : AppCompatActivity() {
         if (!visible || leaving || !restrictions.state.animationAllowed) return
         leaving=true
         startActivity(Intent(this,MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             .putExtra("tikiDestination",destination).putExtra("resetLibrary",destination=="library")
             .putExtra("recordingFinished",completed))
         finish()
