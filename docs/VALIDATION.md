@@ -82,6 +82,13 @@ PC 실험 서버, 디자인 중간 추출물, 오래된 구성안·일일 보고
 
 산출물 `tikitaka-1.2.1.apk`의 SHA-256은 `781593d09349fb1cd5de270a475716828beed075f404db424b326b003e456f54`입니다. 캡처는 `build/reports/driving-recording-1.2.1/`에 있습니다.
 
+### 1.2.2 — 화면 전환 깜빡임, 시동 OFF 제거 (2026-11-15)
+
+- 화면 전환: 새 화면이 내용 없이 먼저 그려지던 문제를 고쳤습니다. 단일 창에서 녹음 시작·홈 복귀·녹음 재진입·종료 네 전환을 녹화해 빈 프레임이 1.2.1의 37프레임(30fps)에서 0프레임이 된 것을 확인했습니다(별도 `.verification` 앱). Pleos 홈 화면의 태스크 전환 애니메이션(약 0.2초)은 남아 있고, 분할 화면에서는 전환 직후 옆 창이 약 0.5초 바뀌었다가 돌아옵니다.
+- 시동 OFF: release 빌드는 Android 표준 `IGNITION_STATE`를 구독했지만 Pleos 에뮬레이터와 Vehicle SDK 2.3.2가 시동 상태를 제공하지 않아 동작하지 않았습니다. 관련 코드와 권한(`CAR_POWERTRAIN`)을 제거했습니다.
+- 서명 release 1.2.2: 1.2.1 위 업데이트 설치 후 기어 P→D→P로 녹음 화면 유지, 주차 후 종료와 저장을 확인했습니다. 단위 테스트 102개 통과, release lint 통과. 기기 테스트는 깜빡임 수정 시점에 2개 통과했고 시동 OFF 제거 뒤에는 다시 실행하지 않았습니다.
+- 산출물 `tikitaka-1.2.2.apk`의 SHA-256은 `38ddac0caaa07b3ede4287a7a167f03ff4bbf197d26c62cc6da9e3b18d72eafb`입니다.
+
 재현 자료: `build/missing-ui-build.log`, `build/missing-ui-final-device.log`, `build/reports/missing-ui-20261115/`. 해당 폴더는 로컬 빌드 산출물입니다.
 
 새 화면의 미검증 범위는 최신 Figma와의 픽셀 대조, 실제 차량 GPS 정확도, 실제 STT 서비스 강제 연결 해제와 재연결 전체 과정, Android 권한 창의 모든 거부/영구 거부 조합, 모든 FormFactorConsole 프리셋의 실행 중 창 전환입니다. 기기 테스트에서는 마이크 권한을 사전 허용하고 앱 자체 안내·보류 분기를 확인했습니다.

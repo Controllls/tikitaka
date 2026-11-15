@@ -71,7 +71,6 @@ flowchart LR
         seat["운전석 착석"]
         gleo["Gleo 음성 비서 사용"]
         drive["주행 · 주차 상태"]
-        ignition["시동 OFF"]
     end
 
     subgraph app["티키타카 · 기기 안에서 처리"]
@@ -88,15 +87,16 @@ flowchart LR
     seat -. "녹음 시작 안내" .-> record
     gleo -. "일시정지" .-> record
     drive -. "주행 중 종료 제한" .-> record
-    ignition -. "종료 · 저장" .-> record
     drive -. "주차 중에만 재생" .-> library
 ```
 
 주행 중에는 녹음 화면만 남기고, 녹음 종료와 영상 감상은 주차 후에 합니다. 원음과 전사문은 기기 밖으로 보내지 않습니다.
 
-### 핵심 흐름: 시동만 꺼도 대화가 에피소드가 된다
+시동을 끄면 녹음을 자동으로 마감하는 기능은 넣지 않았습니다. 현재 Pleos Vehicle SDK와 에뮬레이터가 시동 상태를 제공하지 않기 때문이며, SDK에 추가되면 연동할 계획입니다.
 
-운전자가 화면을 만지지 않아도 녹음이 저장되고 영상 제작으로 이어지는 순서입니다.
+### 핵심 흐름: 녹음을 마치면 대화가 에피소드가 된다
+
+주차 후 녹음을 종료하면 저장 확인부터 영상 제작까지 자동으로 이어지는 순서입니다.
 
 ```mermaid
 sequenceDiagram
@@ -109,7 +109,8 @@ sequenceDiagram
 
     U->>A: 대화 녹음 시작 (동승자 안내 확인)
     A->>S: 원음 기록 시작
-    V->>A: 시동 OFF 신호 (또는 주차 후 직접 종료)
+    V->>A: 주차 상태 확인
+    U->>A: 녹음 종료
     A->>S: 파일 마감 · 저장 확인
     S-->>A: 저장 성공
     A->>M: 자동 제작 등록 · 녹음당 한 번
@@ -120,7 +121,7 @@ sequenceDiagram
 
 | 경우 | 처리 |
 | --- | --- |
-| "이번에는 녹음만 보관"을 골랐을 때 | 6번을 건너뛰고 녹음 보관함에만 저장 |
+| "이번에는 녹음만 보관"을 골랐을 때 | 7번을 건너뛰고 녹음 보관함에만 저장 |
 | 저장 실패 · 무음 · 중단 후 복구한 녹음 | 자동 제작에서 제외. 원음은 보관하고, 보관함에서 직접 제작 가능 |
 | 다른 녹음이 진행 중일 때 | 제작을 대기로 두었다가 녹음이 끝나면 이어감 |
 
@@ -186,13 +187,13 @@ sequenceDiagram
 
 ### 제출용 APK 설치
 
-1. [GitHub Release에서 서명된 APK를 다운로드합니다.](https://github.com/Controllls/tikitaka/releases/tag/v1.2.1) 파일 크기(약 292MB) 때문에 저장소 대신 Release에 등록했으며, 위치 안내는 [apk/README.md](apk/README.md)에 있습니다.
+1. [GitHub Release에서 서명된 APK를 다운로드합니다.](https://github.com/Controllls/tikitaka/releases/tag/v1.2.2) 파일 크기(약 292MB) 때문에 저장소 대신 Release에 등록했으며, 위치 안내는 [apk/README.md](apk/README.md)에 있습니다.
 2. Android Studio의 Device Manager에서 **Pleos Connect Emulator v2.1.0 / Android 14(API 34), x86_64** 환경을 준비합니다. 기존 개발 앱과 서명키가 다를 수 있으므로 테스트용 새 AVD를 사용합니다.
 3. APK를 내려받아 설치하고 실행합니다.
 
 ```powershell
 adb devices
-curl.exe -L -o TikiTaka_release.apk https://github.com/Controllls/tikitaka/releases/download/v1.2.1/TikiTaka_release.apk
+curl.exe -L -o TikiTaka_release.apk https://github.com/Controllls/tikitaka/releases/download/v1.2.2/TikiTaka_release.apk
 adb install TikiTaka_release.apk
 adb shell am start -n com.example.hd_project/.MainActivity
 ```
@@ -216,7 +217,7 @@ adb shell am start -n com.example.hd_project/.MainActivity
 ```mermaid
 flowchart LR
     s1["① 첫 드라이브 · 녹음부터 감상까지"]
-    s2["② 시동만 끄고 내림"]
+    s2["② 주차 후 종료 · 자동 제작"]
     s3["③ 이번엔 녹음만 보관"]
     s4["④ 잠깐, 이 얘기는 빼고 · 일시정지"]
     s5["⑤ Gleo를 쓰고 돌아옴"]
@@ -269,7 +270,7 @@ adb shell am start -n com.example.hd_project/.MainActivity
 
 | 항목 | 프로젝트 설정 |
 | --- | --- |
-| 패키지 / 버전 | `com.example.hd_project` / `1.2.1` (`versionCode 4`) |
+| 패키지 / 버전 | `com.example.hd_project` / `1.2.2` (`versionCode 5`) |
 | Android SDK | minSdk **28**, compileSdk / targetSdk **37** |
 | Gradle / Android Gradle Plugin | **9.6.0 / 9.4.1** |
 | Gradle JVM / Java 소스 호환성 | **JDK 25 / Java 17** |
