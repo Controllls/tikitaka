@@ -88,11 +88,12 @@
 
 1. [GitHub Release에서 서명된 APK를 다운로드합니다.](https://github.com/Controllls/tikitaka/releases/tag/v1.2.0) 파일 크기(약 292MB) 때문에 저장소 대신 Release에 등록했으며, 위치 안내는 [apk/README.md](apk/README.md)에 있습니다.
 2. Android Studio의 Device Manager에서 **Pleos Connect Emulator v2.1.0 / Android 14(API 34), x86_64** 환경을 준비합니다. 기존 개발 앱과 서명키가 다를 수 있으므로 테스트용 새 AVD를 사용합니다.
-3. APK를 설치하고 실행합니다.
+3. APK를 내려받아 설치하고 실행합니다.
 
 ```powershell
 adb devices
-adb install "<APK파일경로>"
+curl.exe -L -o TikiTaka_release.apk https://github.com/Controllls/tikitaka/releases/download/v1.2.0/TikiTaka_release.apk
+adb install TikiTaka_release.apk
 adb shell am start -n com.example.hd_project/.MainActivity
 ```
 
