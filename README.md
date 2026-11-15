@@ -54,6 +54,41 @@
 
 [Figma 디자인 원본](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/Untitled?node-id=616-3028) · [이미지 출처](docs/images/readme/sources.json)
 
+## 한눈에 보는 구조
+
+운전자와 동승자는 평소처럼 대화만 합니다. 앱은 차량 신호로 녹음 화면과 종료 시점을 맞추고, 저장한 녹음을 기기 안에서 에피소드 영상으로 만듭니다.
+
+```mermaid
+flowchart LR
+    talk["운전자 · 동승자<br/>차 안 대화"]
+
+    subgraph car["차량 · Pleos Connect"]
+        mic["마이크<br/>대화 녹음"]
+        drive["주행 · 주차 상태<br/>녹음 종료 · 영상 감상 조건"]
+        ignition["시동 OFF 신호<br/>녹음 종료 · 저장"]
+        seat["운전석 착석<br/>탑승 시 녹음 안내"]
+        gleo["Gleo 음성 비서<br/>사용 중 녹음 일시정지"]
+        navi["내비 위치 · 선택<br/>영상 배경 · 이동 정보"]
+    end
+
+    subgraph app["티키타카 · 기기 안에서 처리"]
+        record["녹음 · 저장 확인"]
+        make["에피소드 제작<br/>웃음 · 화자 분석 → 하이라이트<br/>→ 제목 · 장면 → 캐릭터 영상"]
+        library["보관함<br/>원음 · 에피소드"]
+    end
+
+    talk --> mic --> record
+    drive --> record
+    ignition --> record
+    seat --> record
+    gleo --> record
+    navi --> record
+    record -- "저장된 녹음" --> make -- "완성 에피소드" --> library
+    drive -. "주차 중에만 재생" .-> library
+```
+
+주행 중에는 녹음 화면만 남기고, 녹음 종료와 영상 감상은 주차 후에 합니다. 원음과 전사문은 기기 밖으로 보내지 않습니다.
+
 ## 기술 구성
 
 ### 활용 Pleos SDK
