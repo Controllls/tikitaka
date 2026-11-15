@@ -56,34 +56,39 @@
 
 ## 한눈에 보는 구조
 
-운전자와 동승자는 평소처럼 대화만 합니다. 앱은 차량 신호로 녹음 화면과 종료 시점을 맞추고, 저장한 녹음을 기기 안에서 에피소드 영상으로 만듭니다.
+운전자와 동승자는 평소처럼 대화만 합니다. 실선은 기록되어 영상의 재료가 되는 것이고, 점선은 녹음의 시작·일시정지·종료와 감상 시점을 바꾸는 차량 신호입니다.
 
 ```mermaid
 flowchart LR
     talk["운전자 · 동승자<br/>차 안 대화"]
 
-    subgraph car["차량 · Pleos Connect"]
-        mic["마이크<br/>대화 녹음"]
-        drive["주행 · 주차 상태<br/>녹음 종료 · 영상 감상 조건"]
-        ignition["시동 OFF 신호<br/>녹음 종료 · 저장"]
-        seat["운전석 착석<br/>탑승 시 녹음 안내"]
-        gleo["Gleo 음성 비서<br/>사용 중 녹음 일시정지"]
-        navi["내비 위치 · 선택<br/>영상 배경 · 이동 정보"]
+    subgraph source["기록하는 것"]
+        mic["마이크<br/>대화 음성"]
+        navi["내비 위치 · 선택<br/>도로 환경 · 이동 정보"]
+    end
+
+    subgraph signal["흐름을 바꾸는 차량 신호"]
+        seat["운전석 착석"]
+        gleo["Gleo 음성 비서 사용"]
+        drive["주행 · 주차 상태"]
+        ignition["시동 OFF"]
     end
 
     subgraph app["티키타카 · 기기 안에서 처리"]
-        record["녹음 · 저장 확인"]
+        record["녹음"]
         make["에피소드 제작<br/>웃음 · 화자 분석 → 하이라이트<br/>→ 제목 · 장면 → 캐릭터 영상"]
         library["보관함<br/>원음 · 에피소드"]
     end
 
-    talk --> mic --> record
-    drive --> record
-    ignition --> record
-    seat --> record
-    gleo --> record
-    navi --> record
+    talk --> mic
+    mic -- "음성" --> record
+    navi -- "녹음 중 위치" --> record
     record -- "저장된 녹음" --> make -- "완성 에피소드" --> library
+
+    seat -. "녹음 시작 안내" .-> record
+    gleo -. "일시정지" .-> record
+    drive -. "주행 중 종료 제한" .-> record
+    ignition -. "종료 · 저장" .-> record
     drive -. "주차 중에만 재생" .-> library
 ```
 
