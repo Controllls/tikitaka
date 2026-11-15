@@ -92,7 +92,7 @@
 
 </details>
 
-[Figma 디자인 원본](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/Untitled?node-id=616-3028) · [이미지 출처](docs/images/readme/sources.json)
+[Figma 디자인 원본](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/%ED%98%84%EB%8C%80%EC%9E%90%EB%8F%99%EC%B0%A8%EA%B7%B8%EB%A3%B9_%EC%B0%A8%EB%9F%89%EC%9A%A9_%EC%95%B1_%EA%B0%9C%EB%B0%9C_%EA%B3%B5%EB%AA%A8%EC%A0%84?node-id=616-3027&p=f&t=Few87s4eOpQAWe6L-0) · [이미지 출처](docs/images/readme/sources.json)
 
 ## 한눈에 보는 구조
 
