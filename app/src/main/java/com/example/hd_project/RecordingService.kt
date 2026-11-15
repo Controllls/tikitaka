@@ -22,7 +22,6 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.hd_project.tiki.RecordingJournal
 import com.example.hd_project.tiki.EpisodeWork
-import com.example.hd_project.pleos.RecordingPowerSignals
 import com.example.hd_project.pleos.RecordingNavigation
 import com.example.hd_project.tiki.RecordingRoadTimeline
 import com.example.hd_project.tiki.NavigationBackgroundPolicy
@@ -56,7 +55,6 @@ class RecordingService : Service() {
     private var maxPeak = 0
     private var sessionFile: File? = null
     private val segments = mutableListOf<File>()
-    private var powerSignals: AutoCloseable? = null
     private var navigation: RecordingNavigation? = null
     private val roadTimeline = RecordingRoadTimeline()
     private var navigationSession = ""
@@ -107,20 +105,12 @@ class RecordingService : Service() {
             if (Build.VERSION.SDK_INT >= 30) {
                 startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE)
             } else startForeground(NOTIFICATION_ID, notification)
-            val sessionStartedAtMs = System.currentTimeMillis()
             androidx.core.content.ContextCompat.registerReceiver(this, shutdownReceiver,
                 IntentFilter(Intent.ACTION_SHUTDOWN), androidx.core.content.ContextCompat.RECEIVER_NOT_EXPORTED)
             shutdownRegistered = true
             if(com.example.hd_project.tiki.JourneyPreferences.enabled(this))
                 navigation = RecordingNavigation(this).also { it.start() }
             worker.execute { beginRecording() }
-            powerSignals = RecordingPowerSignals.watch(this, sessionStartedAtMs) {
-                if (acceptedStart && !stopping && !finished) {
-                    stopTrigger = "ignition_off"
-                    Log.i(TAG, "Ignition Off: finalize and validate recording")
-                    requestStop()
-                }
-            }
         } catch (error: Exception) {
             Log.w(TAG, "Foreground microphone start failed", error)
             finished = true
@@ -279,7 +269,6 @@ class RecordingService : Service() {
         if (finished) return
         finished = true
         stopping = true
-        powerSignals?.close()
         samples?.cancel(false)
         var message = reason
         var saved = false
@@ -365,7 +354,6 @@ class RecordingService : Service() {
     }
 
     override fun onDestroy() {
-        powerSignals?.close()
         navigation?.close()
         if (shutdownRegistered) { unregisterReceiver(shutdownReceiver); shutdownRegistered = false }
         main.removeCallbacksAndMessages(null)

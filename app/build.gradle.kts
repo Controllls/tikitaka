@@ -15,8 +15,8 @@ android {
         applicationId = "com.example.hd_project"
         minSdk = 28
         targetSdk = 37
-        versionCode = 4
-        versionName = "1.2.1"
+        versionCode = 5
+        versionName = "1.2.2"
         buildConfigField("boolean", "PLAYBACK_DIAGNOSTICS", "false")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
