@@ -37,20 +37,35 @@
 
 에뮬레이터에서 직접 조작한 화면입니다. 미리보기는 무음이며, 누르면 소리가 있는 영상을 볼 수 있습니다.
 
-| ① 나를 닮은 캐릭터 · 이름과 캐릭터 설정 | ② 나를 닮은 캐릭터 · 내 목소리 등록 |
-| :---: | :---: |
-| [![이름과 캐릭터 설정 영상 미리보기](docs/videos/feature-1-profile-setup-preview.gif)](docs/videos/feature-1-profile-setup.mp4) | [![내 목소리 등록 영상 미리보기](docs/videos/feature-2-voice-enroll-preview.gif)](docs/videos/feature-2-voice-enroll.mp4) |
-| 시작 안내와 마이크 권한을 지나 이름과 내 캐릭터를 정합니다. (12초) | 안내 문장을 읽어 내 목소리를 등록하면, 영상에서 내 캐릭터가 내 대사를 맡습니다. (10초) |
+**① 나를 닮은 캐릭터 · 이름과 캐릭터 설정**
 
-| ③ 대화 녹음 · 차량 환경에 맞춘 재생 · 에피소드 보관함 | ④ 하이라이트 찾기 |
-| :---: | :---: |
-| [![대화 녹음과 주행 전환 영상 미리보기](docs/videos/feature-3-recording-driving-preview.gif)](docs/videos/feature-3-recording-driving.mp4) | [![하이라이트 분석과 에피소드 제작 영상 미리보기](docs/videos/feature-4-highlight-production-preview.gif)](docs/videos/feature-4-highlight-production.mp4) |
-| 동승자 안내 후 녹음을 시작하고, 기어를 D로 바꿔도 녹음 화면이 유지됩니다. 주차 후 녹음을 마치고 저장합니다. (25초) | 녹음을 마치면 기기에서 분석이 진행되고, 완성된 에피소드가 보관함에 추가됩니다. (16초) |
+[![이름과 캐릭터 설정 영상 미리보기](docs/videos/feature-1-profile-setup-preview.gif)](docs/videos/feature-1-profile-setup.mp4)
 
-| ⑤ 제목과 캐릭터 동작 |
-| :---: |
-| [<img src="docs/videos/feature-5-episode-playback-preview.gif" width="560" alt="에피소드 재생 영상 미리보기">](docs/videos/feature-5-episode-playback.mp4) |
-| 대사에서 뽑은 제목이 붙고, 말하는 사람과 웃음에 맞춰 캐릭터가 움직입니다. (13초) |
+<sub>시작 안내와 마이크 권한을 지나 이름과 내 캐릭터를 정합니다. (12초)</sub>
+
+**② 나를 닮은 캐릭터 · 내 목소리 등록**
+
+[![내 목소리 등록 영상 미리보기](docs/videos/feature-2-voice-enroll-preview.gif)](docs/videos/feature-2-voice-enroll.mp4)
+
+<sub>안내 문장을 읽어 내 목소리를 등록하면, 영상에서 내 캐릭터가 내 대사를 맡습니다. (10초)</sub>
+
+**③ 대화 녹음 · 차량 환경에 맞춘 재생 · 에피소드 보관함**
+
+[![대화 녹음과 주행 전환 영상 미리보기](docs/videos/feature-3-recording-driving-preview.gif)](docs/videos/feature-3-recording-driving.mp4)
+
+<sub>동승자 안내 후 녹음을 시작하고, 기어를 D로 바꿔도 녹음 화면이 유지됩니다. 주차 후 녹음을 마치고 저장합니다. (25초)</sub>
+
+**④ 하이라이트 찾기**
+
+[![하이라이트 분석과 에피소드 제작 영상 미리보기](docs/videos/feature-4-highlight-production-preview.gif)](docs/videos/feature-4-highlight-production.mp4)
+
+<sub>녹음을 마치면 기기에서 분석이 진행되고, 완성된 에피소드가 보관함에 추가됩니다. (16초)</sub>
+
+**⑤ 제목과 캐릭터 동작**
+
+[![에피소드 재생 영상 미리보기](docs/videos/feature-5-episode-playback-preview.gif)](docs/videos/feature-5-episode-playback.mp4)
+
+<sub>대사에서 뽑은 제목이 붙고, 말하는 사람과 웃음에 맞춰 캐릭터가 움직입니다. (13초)</sub>
 
 ### 사용 흐름
 
