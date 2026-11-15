@@ -16,21 +16,15 @@
 
 </div>
 
-## 어떤 순간을 남기나요?
-
-여행지로 향하며 나눈 이야기, 친구들과 돌아오는 길의 농담, 가족끼리 함께 웃었던 순간. 티키타카는 사진으로 남기기 어려운 **차 안의 대화**를 짧은 에피소드로 보관합니다.
-
-탑승자의 동의를 확인하고 녹음을 시작하면 원음을 기기에 저장합니다. 녹음이 끝난 뒤 웃음과 대화 구간을 분석하고, 캐릭터의 말하기·웃음 동작과 함께 영상으로 구성합니다. 완성된 에피소드는 **주차 상태에서** 다시 볼 수 있습니다.
-
 ## 주요 기능
 
 | 기능 | 티키타카에서 하는 일 |
 | --- | --- |
 | **대화 녹음** | 동의 후 녹음·일시정지·재개·저장. 영상 제작 없이 녹음만 보관할 수도 있습니다. |
 | **하이라이트 찾기** | 기기에서 웃음과 음성을 분석하고, 전후 대화 맥락을 포함한 구간을 규칙 기반으로 선택합니다. |
-| **대화에 맞는 제목과 캐릭터 동작** | 전사문에서 반복되는 단어와 문장 길이를 기준으로 핵심 문장을 골라 24자 이내 제목을 설정합니다. 차량 구도는 고정하고, 음성과 질문 구간에 맞춰 캐릭터가 말하고 서로 바라봅니다. |
+| **제목과 캐릭터 동작** | 대사에서 제목을 추출하고, 발화·웃음·질문 구간에 맞춰 캐릭터 동작을 구성합니다. |
 | **나를 닮은 캐릭터** | 8종 캐릭터 중 내 캐릭터를 선택하고, 화자 분석 결과를 바탕으로 영상 속 인물을 배치합니다. |
-| **에피소드 보관함** | 원본 녹음, 제작 상태, 완성 영상을 확인하고 다시 듣거나 재생합니다. 보관함 메뉴를 다시 누르면 에피소드 탭의 맨 위로 돌아갑니다. |
+| **에피소드 보관함** | 원본 녹음, 제작 상태, 완성 영상을 확인하고 재생합니다. |
 | **차량 환경에 맞춘 재생** | 주행 제한이나 차량 상태 미확인 시 영상을 잠급니다. 주차로 돌아와도 사용자가 눌러야 재생합니다. |
 
 ### 사용 흐름
@@ -58,7 +52,7 @@
 
 </details>
 
-[Figma 디자인 원본](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/Untitled?node-id=616-3028) · [제출 자료 페이지](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/Untitled?node-id=1042-1935) · [이미지 출처](docs/images/readme/sources.json)
+[Figma 디자인 원본](https://www.figma.com/design/Y5hqYUqZsj6gQu1QyixBYv/Untitled?node-id=616-3028) · [이미지 출처](docs/images/readme/sources.json)
 
 ## 기술 구성
 
@@ -86,31 +80,21 @@
 | 캐릭터 영상 저장 | Android Media3, 제공된 캐릭터·차량·배경 에셋 |
 | 주행 중 영상 제한 | Android Automotive `CarUxRestrictions` |
 
-**제목 설정에 별도 언어 모델 다운로드나 외부 API가 필요하지 않습니다.** 대사가 있으면 원문에서 제목을 고르고, 확인된 대사가 없으면 기본 제목과 전체 구도를 사용합니다. 이전 버전이 저장한 제목 모델과 미완료 다운로드는 업데이트 후 앱 실행 시 정리하며, 기존 녹음·완성 영상·분석 기록은 유지합니다.
-
-**배경은 녹음 당시 내비 환경에 맞춰 자동 선택합니다.** 고속도로 명칭 또는 가장 가까운 고속도로 출구 안내를 근거로 판별하면 `highway_rearview_loop_10s.mp4`, 일반 도로명으로 판별하면 `city_rearview_loop_10s.mp4`를 사용합니다. 공개 NaviHelper API에는 도로 등급 필드가 없어 이는 주소·분기 안내에 기반한 추정이며, 목적지나 대화 속 지명으로 배경을 바꾸지 않습니다.
-
-최초 설정의 위치 사용 선택(A-03)에서 허용한 경우에만 녹음 중 내비 정보를 조회합니다. 위치 없이도 녹음·제작할 수 있고, 설정 → 녹음과 개인정보에서 선택을 바꿀 수 있습니다. 기기에는 도로 분류·판별 근거·녹음 시간 구간과 확인된 구간의 이동 시간·거리 합계만 저장합니다. 좌표·주소·목적지·이동 경로는 저장하지 않습니다. 일시정지 시간은 제외하며, 15초 이상 갱신되지 않은 정보와 연결 실패는 미확인으로 처리합니다. 하이라이트 길이의 절반 이상에서 정보가 확인되면 그중 더 오래 관찰된 환경을 선택합니다. 내비 정보가 없는 기존 녹음이나 근거가 부족한 구간은 `city-road-loop.mp4`를 사용합니다. 선택 결과는 완성 영상의 메타데이터와 재사용 판별 키에 포함됩니다. 배경 영상은 길이에 맞춰 반복하고, 소리는 원본 녹음만 사용합니다.
-
-차량 화면은 최초 권한 안내(A-01/A-02/A-03), 프로필 저장 실패 재시도(O-03), 주차 후 설정 재개(O-04), 녹음 중 위치 연결 안내(R-05), 제작 서비스 연결 실패 재시도(G-02), 에피소드 상세(E-01)를 제공합니다. 주행 안내는 편집 기능이 없는 별도 Activity에서 표시하며 이름·캐릭터 초안을 유지합니다. G-02는 실제 SDK 통신 오류에만 표시하고, 일반 로컬 작업 대기와 구분합니다. 홈·보관함에서 선택한 에피소드는 상세에서 날짜·길이·저장 상태를 확인한 뒤 재생합니다. 주행 정보가 없는 과거 영상에 시간·거리를 임의로 넣지 않습니다.
-
-연동 기준: [NaviHelper 3.0.5 공식 가이드](https://document.pleos.ai/docs/pleos-only/connect-sdk-pleos/NaviHelper/intro). 조회 권한인 `pleos.car.permission.NAVI_ROUTE`만 사용하며 목적지·경로를 변경하지 않습니다.
+위치 사용을 허용하면 녹음 중 주소·분기 안내로 도로 환경을 추정해 도시·고속도로 배경을 선택합니다. 정보가 부족하면 기본 배경을 사용합니다. 배경은 영상 길이에 맞춰 반복하고, 원본 녹음을 오디오로 사용합니다.
 
 ## 실행 방법
 
 ### 제출용 APK 설치
 
-1. [GitHub Release에서 서명된 APK를 다운로드합니다.](https://github.com/Controllls/tikitaka/releases/tag/v1.2.0)
+1. [GitHub Release에서 서명된 APK를 다운로드합니다.](https://github.com/Controllls/tikitaka/releases/tag/v1.2.0) 파일 크기(약 292MB) 때문에 저장소 대신 Release에 등록했으며, 위치 안내는 [apk/README.md](apk/README.md)에 있습니다.
 2. Android Studio의 Device Manager에서 **Pleos Connect Emulator v2.1.0 / Android 14(API 34), x86_64** 환경을 준비합니다. 기존 개발 앱과 서명키가 다를 수 있으므로 테스트용 새 AVD를 사용합니다.
-3. 에뮬레이터가 부팅되면 아래 명령으로 APK를 설치합니다. `<APK파일경로>`에는 다운로드한 파일의 경로를 넣습니다.
+3. APK를 설치하고 실행합니다.
 
 ```powershell
 adb devices
 adb install "<APK파일경로>"
 adb shell am start -n com.example.hd_project/.MainActivity
 ```
-
-여러 에뮬레이터가 연결되어 있으면 각 명령에 `adb -s <기기번호>`를 사용합니다. 이미 같은 서명의 버전이 설치되어 있으면 `adb install -r "<APK파일경로>"`로 데이터를 유지하며 업데이트할 수 있습니다.
 
 ### 테스트 환경과 설정
 
@@ -121,8 +105,6 @@ adb shell am start -n com.example.hd_project/.MainActivity
 | 화면 크기 변경 | [공식 FormFactorConsole 가이드](https://document.pleos.ai/docs/pleos-only/app-test-guide/form-factor-test-guide)에 따라 별도 가상 디스플레이에서 실행 |
 | 음성 입력 | PC 마이크 접근 및 에뮬레이터 마이크 입력 활성화, 앱의 마이크 권한 허용 |
 | 영상 감상 | 주차 상태, 차량의 주행 제한이 해제된 상태 |
-| 추가 서버·API 키 | 필요 없음 |
-| 추가 언어 모델 다운로드 | 없음. 제목은 대화문에서 규칙으로 추출 |
 
 일반 에뮬레이터 창은 Pleos 시스템의 창 배치에 따라 크기가 달라집니다. 정확한 규격 테스트에는 FormFactorConsole을 사용합니다. 화면에 배치된 가상 차량 상태는 [Pleos Virtual Console](https://document.pleos.ai/docs/pleos-only/app-test-guide/virtual-console-guide)에서 변경합니다.
 
@@ -131,27 +113,14 @@ adb shell am start -n com.example.hd_project/.MainActivity
 1. **초기 설정:** 시작하기 → 권한 안내 → 마이크 허용 → 위치 사용 선택 후 이름·캐릭터를 설정합니다. 위치 사용과 내 목소리 등록은 선택 사항입니다.
 2. **녹음:** 주차 상태에서 대화 녹음 시작을 누르고 동의 확인과 마이크 권한 허용을 진행합니다. 동의받은 대화를 녹음하고 일시정지·재개·저장을 확인합니다.
 3. **영상 제작:** 영상 제작을 선택한 녹음을 종료한 뒤 보관함에서 분석·제작 상태를 확인합니다. ‘녹음만 보관’을 선택한 경우 녹음 보관함에서 원음을 확인합니다.
-4. **감상:** 제작 완료된 에피소드의 상세에서 제목·날짜·영상 길이를 확인한 뒤 재생을 누릅니다. 영상·원음·자막·재생 위치 이동을 확인합니다. 처음부터 완성된 영상이 포함되어 있지는 않습니다.
+4. **감상:** 제작 완료된 에피소드의 상세에서 제목·날짜·영상 길이를 확인한 뒤 재생합니다.
 5. **저장 유지:** 앱을 종료하고 다시 실행해 녹음과 완성 영상이 유지되는지 확인합니다.
 6. **주행 제한:** 가상 주행 상태에서 영상 재생·탐색 차단을 확인합니다. 주차 상태로 돌아온 뒤에는 재생 버튼을 직접 누릅니다.
 
-### 확인된 release 실행 범위
-
-새 Pleos 에뮬레이터에서 APK 설치, 첫 실행, 이름 설정, 빈 보관함과 앱 재실행을 확인했습니다. 이 release APK의 녹음부터 영상 완성까지 전체 시나리오 및 실차 동작은 별도 검증 대상입니다.
-
-### Pleos Connect에서 실행
-
-1. Android Studio에서 **Pleos Connect Emulator v2.1.0 / Android 14(API 34)** 환경을 준비합니다.
-2. 아래 소스 빌드 방법으로 debug APK를 생성합니다.
-3. 테스트용 에뮬레이터에 설치하고 앱 목록에서 **티키타카**를 실행합니다.
-4. 내 프로필과 마이크 권한을 설정합니다. 영상 재생은 주차 상태에서 확인합니다.
-5. 짧은 대화를 녹음하고 종료한 뒤 보관함에서 제작 상태와 결과를 확인합니다.
+### 소스 빌드
 
 ```powershell
-# Windows / 프로젝트 루트
 .\gradlew.bat :app:assembleDebug
-
-# adb가 PATH에 등록된 환경. 여러 기기 연결 시 -s <serial>을 추가합니다.
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.example.hd_project/.MainActivity
 ```
@@ -168,7 +137,9 @@ adb shell am start -n com.example.hd_project/.MainActivity
 | Media3 | **1.9.0** |
 | 음성 분석 네이티브 라이브러리 | ONNX Runtime / sherpa-onnx, `arm64-v8a`·`x86_64` 포함 |
 
-Pleos Maven 저장소는 [settings.gradle.kts](settings.gradle.kts)에 설정되어 있습니다. 제목 설정 코드는 Kotlin으로 빌드되며 별도 C++ 빌드 단계가 없습니다. 음성 분석용 네이티브 라이브러리의 출처는 [서드파티 고지](docs/THIRD_PARTY.md)를 참고하세요.
+Pleos Maven 저장소: [settings.gradle.kts](settings.gradle.kts)
+
+검증 현황: [VALIDATION.md](docs/VALIDATION.md)
 
 ```powershell
 # 단위 테스트 및 release 정적 검사
