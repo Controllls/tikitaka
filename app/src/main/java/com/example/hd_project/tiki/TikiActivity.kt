@@ -76,6 +76,7 @@ open class TikiActivity : AppCompatActivity() {
     private var renderedPhase: RecordingPhase?=null
     private var recordingScreen: TikiRecordingScreen?=null
     private var recordingLaunched=false
+    private var firstFrame=true
     private var timer: TextView?=null
     private var wave: TikiWave?=null
     private var scrollView: ScrollView?=null
@@ -210,8 +211,9 @@ open class TikiActivity : AppCompatActivity() {
         setContentView(root);root.applyPleosInsets()
         root.addOnLayoutChangeListener { _,l,t,r,b,_,_,_,_ ->
             val key="${r-l}:${b-t}:${root.paddingLeft}:${root.paddingTop}:${root.paddingBottom}:${root.paddingRight}"
-            if(lastSize!=key) { lastSize=key;root.post { if(!isFinishing)render() } }
+            if(lastSize!=key) { lastSize=key;if(!firstFrame)root.post { if(!isFinishing)render() } }
         }
+        root.renderBeforeFirstDraw { firstFrame=false;render();root.afterNextFrame { handler.postDelayed({ LeavingScreen.finish() },TASK_SWITCH_MS) } }
         onBackPressedDispatcher.addCallback(this,object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() { when(route) {
                 "home"->moveTaskToBack(true)
@@ -278,6 +280,7 @@ open class TikiActivity : AppCompatActivity() {
         if(intent.getBooleanExtra("boardingInvitation",false))BoardingCoordinator.markHandled()
     }
     override fun onStart() {
+        if(!firstFrame)handler.postDelayed({ LeavingScreen.finish() },TASK_SWITCH_MS)
         super.onStart();visible=true;drivingNoticeLaunched=false;recordingLaunched=false;setupPauseLaunched=false;restrictions.start();RecordingStore.observe(observer);BoardingCoordinator.setScreenVisible(true)
         BoardingCoordinator.observe(boardingObserver)
         if(route=="video" && video==null)render()

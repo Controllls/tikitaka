@@ -29,6 +29,7 @@ class RecordingActivity : AppCompatActivity() {
     private var leaving = false
     private var pendingGleo = false
     private var lastSize = ""
+    private var firstFrame = true
     private val handler = Handler(Looper.getMainLooper())
     private val destinations = mutableListOf<View>()
     private val restrictions by lazy { DrivingRestrictions(this) { update(RecordingStore.state) } }
@@ -47,22 +48,27 @@ class RecordingActivity : AppCompatActivity() {
         setContentView(root); root.applyPleosInsets()
         root.addOnLayoutChangeListener { _,l,t,r,b,_,_,_,_ ->
             val key = "${r-l}:${b-t}:${root.paddingLeft}:${root.paddingTop}:${root.paddingRight}:${root.paddingBottom}"
-            if (key != lastSize) { lastSize=key;root.post { if (!isFinishing) render() } }
+            if (key != lastSize) { lastSize=key;if (!firstFrame) root.post { if (!isFinishing) render() } }
         }
+        root.renderBeforeFirstDraw { firstFrame=false;render();root.afterNextFrame { closeParkedTaskSoon() } }
         onBackPressedDispatcher.addCallback(this,object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() { home() }
         })
     }
     override fun onStart() {
-        super.onStart();visible=true;leaving=false
-        closeParkedTask()
+        super.onStart();visible=true;leaving=false;LeavingScreen.clear(this)
+        if (!firstFrame) closeParkedTaskSoon()
         restrictions.start();RecordingStore.observe(observer);BoardingCoordinator.setScreenVisible(true)
     }
     override fun onStop() {
         visible=false;pendingGleo=false;handler.removeCallbacksAndMessages(null)
+        if (leaving) finish()
         RecordingStore.remove(observer);restrictions.stop();BoardingCoordinator.setScreenVisible(false);super.onStop()
     }
     override fun onDestroy() { if (::art.isInitialized) art.clear();super.onDestroy() }
+    // Reopened while it was still leaving: stay, and close the screen it was leaving for.
+    override fun onNewIntent(intent: Intent) { super.onNewIntent(intent);leaving=false;LeavingScreen.clear(this);closeParkedTaskSoon() }
+    private fun closeParkedTaskSoon() { handler.postDelayed({ if (visible && !leaving) closeParkedTask() },TASK_SWITCH_MS) }
 
     private fun update(state: RecordingState) {
         if (!visible || leaving) return
@@ -106,12 +112,13 @@ class RecordingActivity : AppCompatActivity() {
     }
     private fun open(destination: String, completed: Boolean=false) {
         if (!visible || leaving || !restrictions.state.animationAllowed) return
-        leaving=true
+        leaving=true;LeavingScreen.set(this)
         startActivity(Intent(this,MainActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             .putExtra("tikiDestination",destination).putExtra("resetLibrary",destination=="library")
             .putExtra("recordingFinished",completed))
-        finish()
+        // Stay until the next screen is shown (it finishes this one); finishing now would show an empty window in between.
+        handler.postDelayed({ if (leaving) finish() },1500)
     }
     private fun render() {
         if (root.width==0) return
