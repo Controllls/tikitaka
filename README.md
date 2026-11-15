@@ -199,8 +199,8 @@ sequenceDiagram
 
 ```powershell
 adb devices
-curl.exe -L -o TikiTaka_release.apk https://github.com/Controllls/tikitaka/releases/download/v1.2.3/TikiTaka_release.apk
-adb install TikiTaka_release.apk
+curl.exe -L -o GongDongGeun_TikiTaka_release.apk https://github.com/Controllls/tikitaka/releases/download/v1.2.3/GongDongGeun_TikiTaka_release.apk
+adb install GongDongGeun_TikiTaka_release.apk
 adb shell am start -n com.example.hd_project/.MainActivity
 ```
 
@@ -266,7 +266,12 @@ flowchart LR
 
 ### 소스 빌드
 
+Android SDK Platform 37과 JDK 25가 필요합니다. Android Studio로 프로젝트를 열면 SDK 위치가 담긴 `local.properties`가 자동으로 만들어집니다. 명령줄에서만 빌드할 때는 이 파일이 없으므로 `ANDROID_HOME`에 SDK 경로를 먼저 지정합니다.
+
 ```powershell
+# 명령줄에서만 빌드할 때: SDK 경로 지정 (Android Studio 기본 설치 위치)
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+
 .\gradlew.bat :app:assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 adb shell am start -n com.example.hd_project/.MainActivity

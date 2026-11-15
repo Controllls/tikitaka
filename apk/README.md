@@ -5,8 +5,8 @@ release APK는 약 292MB로 GitHub 저장소의 파일 크기 제한(100MB)을 �
 | 항목 | 내용 |
 | --- | --- |
 | Release 페이지 | https://github.com/Controllls/tikitaka/releases/tag/v1.2.3 |
-| 제출용 파일 | Release 목록에 `팀명_티키타카_release.apk`로 표시되는 파일 |
-| 다운로드 파일명 | [`TikiTaka_release.apk`](https://github.com/Controllls/tikitaka/releases/download/v1.2.3/TikiTaka_release.apk) — GitHub Release는 한글 파일명을 저장하지 않아 영문으로 내려받습니다 |
+| 제출용 파일 | Release 목록에 `공동근_티키타카_release.apk`로 표시되는 파일 |
+| 다운로드 파일명 | [`GongDongGeun_TikiTaka_release.apk`](https://github.com/Controllls/tikitaka/releases/download/v1.2.3/GongDongGeun_TikiTaka_release.apk) — GitHub Release는 한글 파일명을 저장하지 않아 팀명·앱 이름을 영문으로 적은 이름으로 내려받습니다 |
 | SHA-256 | `91b6ee17e744e1b41742be507794d863eafa0c1f6f3fda2434f53eb84b6ca74c` |
 | 버전 | `1.2.3` (`versionCode 6`), 서명된 release 빌드 |
 | 빌드 기준 소스 커밋 | `2c3e332bdf689206f137731903aaaa2e0d9ff834` |
